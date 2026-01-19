@@ -406,23 +406,38 @@ export default function Game({ gameMode, questionType, onBack }: GameProps) {
     // 播放投篮球音效
     playSoundEffect('correct');
 
-    // 直接使用偏移量作为初始速度（x方向速度 = xOffset, y方向速度 = yOffset）
-    // 但需要考虑重力影响，所以 vy 需要调整
+    // 计算初始速度（根据轨迹偏移量计算方向，固定力度）
+    const targetX = ballPosition.x + trajectoryOffset.x;
+    const targetY = ballPosition.y + trajectoryOffset.y;
+
+    // 计算从篮球到目标点的方向
+    const dx = targetX - ballPosition.x;
+    const dy = targetY - ballPosition.y;
+
+    // 计算距离
+    const distance = Math.sqrt(dx * dx + dy * dy);
+
+    // 固定力度，按方向标准化
+    const fixedPower = 3.0; // 固定力度值
+    const velocityX = (dx / distance) * fixedPower;
+    const velocityY = (dy / distance) * fixedPower;
+
+    // 动画参数
     let currentX = ballPosition.x;
     let currentY = ballPosition.y;
-    const vx = trajectoryOffset.x; // 水平速度直接等于x偏移量
-    let vy = trajectoryOffset.y; // 垂直速度（负值表示向上）
-    const gravity = 0.08; // 重力加速度
-    const dt = 0.5; // 时间步长
+    let currentVx = velocityX;
+    let currentVy = velocityY;
+    const gravity = 0.15; // 重力加速度
+    const dt = 1.0; // 时间步长
 
     // 开始动画
     const animate = () => {
       // 更新位置
-      currentX += vx * dt;
-      currentY += vy * dt;
+      currentX += currentVx * dt;
+      currentY += currentVy * dt;
 
       // 应用重力
-      vy += gravity * dt;
+      currentVy += gravity * dt;
 
       // 更新篮球位置
       setBallPosition({ x: currentX, y: currentY });
@@ -514,14 +529,23 @@ export default function Game({ gameMode, questionType, onBack }: GameProps) {
     let x = ballPosition.x;
     let y = ballPosition.y;
 
-    // 使用与发射相同的逻辑
-    const vx = trajectoryOffset.x;
-    let vy = trajectoryOffset.y;
-    const gravity = 0.08;
-    const dt = 0.5;
+    // 计算目标点（基于偏移量）
+    const targetX = ballPosition.x + trajectoryOffset.x;
+    const targetY = ballPosition.y + trajectoryOffset.y;
 
-    // 预测50个点
-    for (let i = 0; i < 50; i++) {
+    // 计算方向向量（固定力度）
+    const dx = targetX - ballPosition.x;
+    const dy = targetY - ballPosition.y;
+    const distance = Math.sqrt(dx * dx + dy * dy);
+
+    const fixedPower = 3.0;
+    const vx = (dx / distance) * fixedPower;
+    let vy = (dy / distance) * fixedPower;
+    const gravity = 0.15;
+    const dt = 1.0;
+
+    // 预测30个点
+    for (let i = 0; i < 30; i++) {
       x += vx * dt;
       y += vy * dt;
       vy += gravity * dt;
@@ -1208,27 +1232,22 @@ export default function Game({ gameMode, questionType, onBack }: GameProps) {
 
           {/* 抛物线预览 */}
           {!isBallThrown && (
-            <svg
-              className="absolute inset-0 w-full h-full"
-              viewBox="0 0 100 100"
-              preserveAspectRatio="none"
-              style={{ zIndex: 5 }}
-            >
+            <svg className="absolute inset-0 w-full h-full" style={{ zIndex: 5 }}>
               <polyline
                 points={drawTrajectory()
-                  ?.map(p => `${p.x},${p.y}`)
+                  ?.map(p => `${p.x * 8},${p.y * 4}`)
                   .join(' ')}
                 fill="none"
                 stroke="rgba(59, 130, 246, 0.7)"
-                strokeWidth="1.5"
-                strokeDasharray="3,2"
+                strokeWidth="4"
+                strokeDasharray="8,4"
               />
               {/* 轨迹终点指示点 */}
               {drawTrajectory() && drawTrajectory()!.length > 0 && (
                 <circle
-                  cx={drawTrajectory()![drawTrajectory()!.length - 1].x}
-                  cy={drawTrajectory()![drawTrajectory()!.length - 1].y}
-                  r="2"
+                  cx={drawTrajectory()![drawTrajectory()!.length - 1].x * 8}
+                  cy={drawTrajectory()![drawTrajectory()!.length - 1].y * 4}
+                  r="8"
                   fill="rgba(59, 130, 246, 0.9)"
                   className="cursor-move"
                   onMouseDown={(e) => {
