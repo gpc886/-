@@ -3018,13 +3018,6 @@ export const judgeQuestions: JudgeQuestion[] = [
     difficulty: 2
   },
   {
-    id: 'judge-2-9',
-    question: '《三字经》是一本儿童启蒙读物。',
-    answer: true,
-    explanation: '正确。《三字经》是中国传统启蒙教材之一。',
-    difficulty: 2
-  },
-  {
     id: 'judge-2-10',
     question: '"学富五车"形容一个人车很多。',
     answer: false,
