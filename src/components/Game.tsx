@@ -309,7 +309,7 @@ export default function Game({ gameMode, questionType, onBack }: GameProps) {
   const [ballPosition, setBallPosition] = useState({ x: 50, y: 80 }); // 篮球位置（百分比）
   const [isBallThrown, setIsBallThrown] = useState(false); // 篮球是否已发射
   const [trajectoryOffset, setTrajectoryOffset] = useState({ x: 0, y: -30 }); // 虚拟抛物线偏移量（百分比）
-  const [throwPower, setThrowPower] = useState(6.0); // 发射力度（范围2.0-16.0）
+  const [throwPower, setThrowPower] = useState(5.4); // 发射力度（范围1.8-14.4，缩小10%）
   const [ladderShowResult, setLadderShowResult] = useState(false); // 显示结果
   const [ladderResult, setLadderResult] = useState<'correct' | 'wrong' | null>(null); // 天梯赛结果
   const [animationId, setAnimationId] = useState<number | null>(null); // 动画ID
@@ -359,7 +359,7 @@ export default function Game({ gameMode, questionType, onBack }: GameProps) {
       // 根据拖拽距离计算力度（距离越远，力度越大）
       // 最小距离约15%，最大距离约270%
       const normalizedDistance = Math.max(15, Math.min(270, distance));
-      const newPower = 2.0 + ((normalizedDistance - 15) / 255) * 14; // 转换到2.0-16.0
+      const newPower = 1.8 + ((normalizedDistance - 15) / 255) * 12.6; // 转换到1.8-14.4（缩小10%）
 
       // 使用批处理更新，减少重新渲染次数
       setTrajectoryOffset({ x: limitedOffsetX, y: limitedOffsetY });
@@ -415,7 +415,7 @@ export default function Game({ gameMode, questionType, onBack }: GameProps) {
       // 根据拖拽距离计算力度（距离越远，力度越大）
       // 最小距离约15%，最大距离约270%
       const normalizedDistance = Math.max(15, Math.min(270, distance));
-      const newPower = 2.0 + ((normalizedDistance - 15) / 255) * 14; // 转换到2.0-16.0
+      const newPower = 1.8 + ((normalizedDistance - 15) / 255) * 12.6; // 转换到1.8-14.4（缩小10%）
 
       // 使用批处理更新，减少重新渲染次数
       setTrajectoryOffset({ x: limitedOffsetX, y: limitedOffsetY });
@@ -440,7 +440,7 @@ export default function Game({ gameMode, questionType, onBack }: GameProps) {
     setBallPosition({ x: 50, y: 80 });
     setIsBallThrown(false);
     setTrajectoryOffset({ x: 0, y: -30 });
-    setThrowPower(6.0); // 重置力度到默认值
+    setThrowPower(5.4); // 重置力度到默认值（缩小10%）
     setBallRotation(0); // 重置旋转角度
     setHoopScored(null); // 重置投中状态
   };
@@ -478,7 +478,7 @@ export default function Game({ gameMode, questionType, onBack }: GameProps) {
     let currentVx = velocityX;
     let currentVy = velocityY;
     let rotation = ballRotation; // 篮球旋转角度
-    const gravity = 0.15; // 重力加速度
+    const gravity = 0.13; // 重力加速度（下落更慢约13%）
     const dt = 1.0; // 时间步长
     const ballRadius = 3; // 篮球半径（百分比）
     let prevY = currentY; // 记录上一帧的Y位置用于检测穿过篮筐
@@ -552,10 +552,10 @@ export default function Game({ gameMode, questionType, onBack }: GameProps) {
 
   // 检测碰撞 - 返回玩家选择的篮筐（检测篮球是否从上往下穿过篮筐）
   const checkCollision = (x: number, y: number, prevY: number): 'left' | 'right' | null => {
-    // 左篮筐（玩家认为正确）：x: 10-25, y: 42-52
-    const leftHoop = { xMin: 10, xMax: 25, yMin: 42, yMax: 52 };
-    // 右篮筐（玩家认为错误）：x: 75-90, y: 42-52
-    const rightHoop = { xMin: 75, xMax: 90, yMin: 42, yMax: 52 };
+    // 左篮筐（玩家认为正确）：x: 8-27, y: 40-54（扩大约15%）
+    const leftHoop = { xMin: 8, xMax: 27, yMin: 40, yMax: 54 };
+    // 右篮筐（玩家认为错误）：x: 73-92, y: 40-54（扩大约15%）
+    const rightHoop = { xMin: 73, xMax: 92, yMin: 40, yMax: 54 };
 
     // 检测是否从上往下穿过左篮筐
     // 条件：上一帧在篮筐上方，当前帧在篮筐范围内（或下方），且水平位置在篮筐范围内
@@ -651,7 +651,7 @@ export default function Game({ gameMode, questionType, onBack }: GameProps) {
 
     const vx = (dx / distance) * throwPower;
     let vy = (dy / distance) * throwPower;
-    const gravity = 0.15;
+    const gravity = 0.13; // 重力加速度（下落更慢约13%）
     const dt = 1.0;
 
     // 预测30个点，根据力度调整点数（力度越大，轨迹越长）
@@ -1495,7 +1495,7 @@ export default function Game({ gameMode, questionType, onBack }: GameProps) {
                   ?.map(p => `${p.x},${p.y}`)
                   .join(' ')}
                 fill="none"
-                stroke={throwPower < 6 ? 'rgba(59, 130, 246, 0.7)' : throwPower < 10 ? 'rgba(249, 115, 22, 0.7)' : 'rgba(239, 68, 68, 0.7)'}
+                stroke={throwPower < 5.4 ? 'rgba(59, 130, 246, 0.7)' : throwPower < 9 ? 'rgba(249, 115, 22, 0.7)' : 'rgba(239, 68, 68, 0.7)'}
                 strokeWidth="0.8"
                 strokeDasharray="2,1"
               />
@@ -1506,7 +1506,7 @@ export default function Game({ gameMode, questionType, onBack }: GameProps) {
                     cx={drawTrajectory()![drawTrajectory()!.length - 1].x}
                     cy={drawTrajectory()![drawTrajectory()!.length - 1].y}
                     r="1.5"
-                    fill={throwPower < 6 ? 'rgba(59, 130, 246, 0.9)' : throwPower < 10 ? 'rgba(249, 115, 22, 0.9)' : 'rgba(239, 68, 68, 0.9)'}
+                    fill={throwPower < 5.4 ? 'rgba(59, 130, 246, 0.9)' : throwPower < 9 ? 'rgba(249, 115, 22, 0.9)' : 'rgba(239, 68, 68, 0.9)'}
                     className="cursor-move"
                     onMouseDown={(e) => {
                       e.preventDefault();
@@ -1516,7 +1516,7 @@ export default function Game({ gameMode, questionType, onBack }: GameProps) {
                   {/* 力度指示箭头 */}
                   {(() => {
                     const lastPoint = drawTrajectory()![drawTrajectory()!.length - 1];
-                    const arrowLength = (throwPower / 16) * 6; // 根据力度计算箭头长度
+                    const arrowLength = (throwPower / 14.4) * 6; // 根据力度计算箭头长度（缩小10%）
                     const angle = Math.atan2(
                       lastPoint.y - ballPosition.y,
                       lastPoint.x - ballPosition.x
@@ -1529,7 +1529,7 @@ export default function Game({ gameMode, questionType, onBack }: GameProps) {
                         y1={lastPoint.y}
                         x2={arrowX}
                         y2={arrowY}
-                        stroke={throwPower < 6 ? '#3b82f6' : throwPower < 10 ? '#f97316' : '#ef4444'}
+                        stroke={throwPower < 5.4 ? '#3b82f6' : throwPower < 9 ? '#f97316' : '#ef4444'}
                         strokeWidth="0.8"
                         markerEnd="url(#arrowhead)"
                       />
@@ -1547,7 +1547,7 @@ export default function Game({ gameMode, questionType, onBack }: GameProps) {
                     >
                       <polygon
                         points="0 0, 10 3, 0 6"
-                        fill={throwPower < 6 ? '#3b82f6' : throwPower < 10 ? '#f97316' : '#ef4444'}
+                        fill={throwPower < 5.4 ? '#3b82f6' : throwPower < 9 ? '#f97316' : '#ef4444'}
                       />
                     </marker>
                   </defs>
