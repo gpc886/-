@@ -7,6 +7,51 @@ import { Progress } from '@/components/ui/progress';
 import { getQuestionsByType, Question, QuestionType, shuffleArray, JudgeQuestion, getJudgeQuestionByLevel } from '@/lib/questions';
 import { ArrowLeft, CheckCircle, XCircle, Clock, Trophy, RotateCcw, Crown, Shuffle, Plus, Trash2, Users } from 'lucide-react';
 
+// 火焰动画样式
+const fireAnimations = `
+  @keyframes fire-pulse {
+    0%, 100% {
+      opacity: 1;
+      transform: scale(1);
+    }
+    50% {
+      opacity: 0.8;
+      transform: scale(1.05);
+    }
+  }
+
+  @keyframes fire-wave {
+    0%, 100% {
+      opacity: 0.9;
+      transform: scale(1) rotate(0deg);
+    }
+    50% {
+      opacity: 0.7;
+      transform: scale(1.08) rotate(5deg);
+    }
+  }
+
+  @keyframes fire-bounce {
+    0%, 100% {
+      transform: scale(1);
+    }
+    50% {
+      transform: scale(1.2);
+    }
+  }
+`;
+
+// 注入动画样式
+if (typeof window !== 'undefined') {
+  const styleId = 'fire-animations';
+  if (!document.getElementById(styleId)) {
+    const style = document.createElement('style');
+    style.id = styleId;
+    style.textContent = fireAnimations;
+    document.head.appendChild(style);
+  }
+}
+
 interface GameProps {
   gameMode: 'single' | 'multi' | 'ladder';
   questionType: QuestionType;
@@ -315,6 +360,7 @@ export default function Game({ gameMode, questionType, onBack }: GameProps) {
   const [animationId, setAnimationId] = useState<number | null>(null); // 动画ID
   const [isDragging, setIsDragging] = useState(false); // 是否正在拖拽轨迹
   const [ballRotation, setBallRotation] = useState(0); // 篮球旋转角度
+  const [streak, setStreak] = useState(0); // 连进次数
   const gameAreaRef = useRef<HTMLDivElement | null>(null); // 游戏区域引用
 
   // 初始化天梯赛题目
@@ -512,11 +558,14 @@ export default function Game({ gameMode, questionType, onBack }: GameProps) {
 
       // 检测是否落地（超过篮筐高度）
       if (currentY > 90) {
-        // 落地但没有命中任何篮筐，重置篮球
+        // 落地但没有命中任何篮筐，重置篮球和连进计数
         if (animationId) {
           cancelAnimationFrame(animationId);
           setAnimationId(null);
         }
+
+        // 重置连进计数
+        setStreak(0);
 
         // 延迟后重置篮球，允许看到落地效果
         setTimeout(() => {
@@ -583,11 +632,13 @@ export default function Game({ gameMode, questionType, onBack }: GameProps) {
     // 2秒后处理层级变化
     setTimeout(() => {
       if (result === 'correct') {
-        // 答对，进入下一层
+        // 答对，进入下一层并增加连进计数
+        setStreak(prev => prev + 1);
         setLadderMaxLevel(prev => Math.max(prev, ladderLevel + 1));
         setLadderLevel(ladderLevel + 1);
       } else {
-        // 答错，退回前一层（最低第一层）
+        // 答错，退回前一层并重置连进计数
+        setStreak(0);
         setLadderLevel(prev => Math.max(prev - 1, 1));
       }
 
@@ -1208,6 +1259,12 @@ export default function Game({ gameMode, questionType, onBack }: GameProps) {
                 <Crown className="w-5 h-5 text-purple-600" />
                 <span className="text-sm">最高: {ladderMaxLevel} 层</span>
               </div>
+              {streak > 0 && (
+                <div className="flex items-center gap-2 px-4 py-2 bg-gradient-to-r from-orange-500 to-red-500 rounded-lg shadow-lg animate-pulse">
+                  <span className="text-2xl">🔥</span>
+                  <span className="font-bold text-white">连进 {streak} 次</span>
+                </div>
+              )}
             </div>
           </div>
         </div>
@@ -1425,10 +1482,82 @@ export default function Game({ gameMode, questionType, onBack }: GameProps) {
               boxShadow: `
                 inset -4px -4px 10px rgba(0,0,0,0.3),
                 inset 4px 4px 10px rgba(255,255,255,0.2),
-                0 10px 30px rgba(0,0,0,0.5)
+                0 10px 30px rgba(0,0,0,0.5),
+                ${streak > 0 ? `
+                  0 0 ${10 + streak * 3}px ${5 + streak * 2}px rgba(255, ${100 - streak * 5}, 0, ${0.3 + streak * 0.1}),
+                  0 0 ${20 + streak * 5}px ${10 + streak * 3}px rgba(255, ${150 - streak * 8}, 0, ${0.2 + streak * 0.08})
+                ` : ''}
               `,
             }}
           >
+            {/* 连进火焰效果 */}
+            {streak > 0 && (
+              <>
+                {/* 火焰层1 - 内层 */}
+                <div
+                  className="absolute inset-0 rounded-full"
+                  style={{
+                    animation: 'fire-pulse 0.3s ease-in-out infinite',
+                    boxShadow: `
+                      inset 0 0 ${5 + streak * 2}px rgba(255, ${150 - streak * 10}, 0, ${0.4 + streak * 0.05}),
+                      0 0 ${8 + streak * 3}px rgba(255, ${200 - streak * 15}, 0, ${0.3 + streak * 0.05})
+                    `,
+                  }}
+                />
+                {/* 火焰层2 - 中层 */}
+                <div
+                  className="absolute inset-0 rounded-full"
+                  style={{
+                    animation: 'fire-wave 0.4s ease-in-out infinite',
+                    animationDelay: '0.1s',
+                    boxShadow: `
+                      inset 0 0 ${10 + streak * 3}px rgba(255, ${100 - streak * 8}, 0, ${0.3 + streak * 0.04}),
+                      0 0 ${15 + streak * 4}px rgba(255, ${180 - streak * 12}, 0, ${0.2 + streak * 0.04})
+                    `,
+                  }}
+                />
+                {/* 火焰层3 - 外层 */}
+                {streak >= 2 && (
+                  <div
+                    className="absolute inset-0 rounded-full"
+                    style={{
+                      animation: 'fire-pulse 0.5s ease-in-out infinite',
+                      animationDelay: '0.2s',
+                      boxShadow: `
+                        inset 0 0 ${15 + streak * 4}px rgba(255, ${80 - streak * 6}, 0, ${0.25 + streak * 0.03}),
+                        0 0 ${25 + streak * 6}px rgba(255, ${150 - streak * 10}, 0, ${0.15 + streak * 0.03})
+                      `,
+                    }}
+                  />
+                )}
+                {/* 火焰层4 - 特殊层（连进3次以上） */}
+                {streak >= 3 && (
+                  <div
+                    className="absolute inset-0 rounded-full"
+                    style={{
+                      animation: 'fire-wave 0.6s ease-in-out infinite',
+                      animationDelay: '0.15s',
+                      boxShadow: `
+                        inset 0 0 ${20 + streak * 5}px rgba(255, ${60 - streak * 5}, 0, ${0.2 + streak * 0.03}),
+                        0 0 ${35 + streak * 8}px rgba(255, ${120 - streak * 8}, 0, ${0.1 + streak * 0.02})
+                      `,
+                    }}
+                  />
+                )}
+                {/* 连进次数显示 */}
+                <div
+                  className="absolute -top-2 -right-2 w-6 h-6 rounded-full flex items-center justify-center font-bold text-xs"
+                  style={{
+                    backgroundColor: `rgba(255, ${Math.max(50, 100 - streak * 5)}, 0, 0.9)`,
+                    color: '#ffffff',
+                    boxShadow: `0 0 ${10 + streak * 2}px rgba(255, ${100 - streak * 5}, 0, 0.8)`,
+                    animation: 'fire-bounce 0.5s ease-in-out infinite'
+                  }}
+                >
+                  {streak}
+                </div>
+              </>
+            )}
             {/* 篮球纹理 - 3D效果 */}
             <div className="absolute inset-0 flex items-center justify-center rounded-full overflow-hidden">
               {/* 水平线 */}
