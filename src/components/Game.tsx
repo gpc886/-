@@ -338,7 +338,7 @@ export default function Game({ gameMode, questionType, onBack }: GameProps) {
 
       // 限制偏移范围（扩大可调节范围）
       const newOffsetX = Math.max(-45, Math.min(45, x - ballPosition.x));
-      const newOffsetY = Math.max(-90, Math.min(20, y - ballPosition.y));
+      const newOffsetY = Math.max(-270, Math.min(20, y - ballPosition.y));
 
       setTrajectoryOffset({ x: newOffsetX, y: newOffsetY });
     };
@@ -371,7 +371,7 @@ export default function Game({ gameMode, questionType, onBack }: GameProps) {
 
       // 限制偏移范围（扩大可调节范围）
       const newOffsetX = Math.max(-45, Math.min(45, x - ballPosition.x));
-      const newOffsetY = Math.max(-90, Math.min(20, y - ballPosition.y));
+      const newOffsetY = Math.max(-270, Math.min(20, y - ballPosition.y));
 
       setTrajectoryOffset({ x: newOffsetX, y: newOffsetY });
     };
@@ -1192,7 +1192,7 @@ export default function Game({ gameMode, questionType, onBack }: GameProps) {
 
             // 限制偏移范围（扩大可调节范围）
             const newOffsetX = Math.max(-45, Math.min(45, x - ballPosition.x));
-            const newOffsetY = Math.max(-90, Math.min(20, y - ballPosition.y));
+            const newOffsetY = Math.max(-270, Math.min(20, y - ballPosition.y));
 
             setTrajectoryOffset({ x: newOffsetX, y: newOffsetY });
           }}
@@ -1207,7 +1207,7 @@ export default function Game({ gameMode, questionType, onBack }: GameProps) {
 
             // 限制偏移范围（扩大可调节范围）
             const newOffsetX = Math.max(-45, Math.min(45, x - ballPosition.x));
-            const newOffsetY = Math.max(-90, Math.min(20, y - ballPosition.y));
+            const newOffsetY = Math.max(-270, Math.min(20, y - ballPosition.y));
 
             setTrajectoryOffset({ x: newOffsetX, y: newOffsetY });
           }}
