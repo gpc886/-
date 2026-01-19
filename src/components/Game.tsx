@@ -13,6 +13,13 @@ interface GameProps {
   onBack: () => void;
 }
 
+// 答题记录接口
+interface AnswerRecord {
+  question: Question;
+  userAnswer: number | null;
+  isCorrect: boolean;
+}
+
 // 玩家状态接口
 interface PlayerState {
   currentQuestionIndex: number;
@@ -20,6 +27,7 @@ interface PlayerState {
   isAnswered: boolean;
   score: number;
   showExplanation: boolean;
+  answerRecords: AnswerRecord[];
 }
 
 export default function Game({ gameMode, questionType, onBack }: GameProps) {
@@ -58,6 +66,7 @@ export default function Game({ gameMode, questionType, onBack }: GameProps) {
     isAnswered: false,
     score: 0,
     showExplanation: false,
+    answerRecords: [],
   });
 
   // 双人模式状态 - 玩家1和玩家2
@@ -67,6 +76,7 @@ export default function Game({ gameMode, questionType, onBack }: GameProps) {
     isAnswered: false,
     score: 0,
     showExplanation: false,
+    answerRecords: [],
   });
 
   const [player2State, setPlayer2State] = useState<PlayerState>({
@@ -75,6 +85,7 @@ export default function Game({ gameMode, questionType, onBack }: GameProps) {
     isAnswered: false,
     score: 0,
     showExplanation: false,
+    answerRecords: [],
   });
 
   // 倒计时（仅双人模式）
@@ -118,6 +129,7 @@ export default function Game({ gameMode, questionType, onBack }: GameProps) {
         isAnswered: false,
         score: playerState.score,
         showExplanation: false,
+        answerRecords: playerState.answerRecords,
       });
     } else {
       setGameEnded(true);
@@ -130,45 +142,38 @@ export default function Game({ gameMode, questionType, onBack }: GameProps) {
     const state = player === 1 ? player1State : player2State;
     const setState = player === 1 ? setPlayer1State : setPlayer2State;
     const playerQuestions = player === 1 ? questionsData.player1Questions : questionsData.player2Questions;
+    const otherState = player === 1 ? player2State : player1State;
     
     if (state.isAnswered) return;
     
     const currentQuestion = playerQuestions[state.currentQuestionIndex];
-    const newScore = answerIndex === currentQuestion.answer ? state.score + 1 : state.score;
+    const isCorrect = answerIndex === currentQuestion.answer;
+    const newScore = isCorrect ? state.score + 1 : state.score;
+    
+    // 记录答题
+    const newAnswerRecord: AnswerRecord = {
+      question: currentQuestion,
+      userAnswer: answerIndex,
+      isCorrect,
+    };
+    
+    // 自动跳转到下一题
+    const nextQuestionIndex = state.currentQuestionIndex + 1;
+    const isLastQuestion = nextQuestionIndex >= playerQuestions.length;
     
     setState({
-      ...state,
-      selectedAnswer: answerIndex,
-      isAnswered: true,
-      showExplanation: true,
+      currentQuestionIndex: nextQuestionIndex,
+      selectedAnswer: null,
+      isAnswered: false,
       score: newScore,
+      showExplanation: false,
+      answerRecords: [...state.answerRecords, newAnswerRecord],
     });
-  };
-
-  const handleMultiNext = (player: 1 | 2) => {
-    const state = player === 1 ? player1State : player2State;
-    const setState = player === 1 ? setPlayer1State : setPlayer2State;
     
-    if (state.currentQuestionIndex < questionsData.player1Questions.length - 1) {
-      setState({
-        currentQuestionIndex: state.currentQuestionIndex + 1,
-        selectedAnswer: null,
-        isAnswered: false,
-        score: state.score,
-        showExplanation: false,
-      });
-    } else {
-      setState({
-        ...state,
-        currentQuestionIndex: state.currentQuestionIndex + 1,
-      });
-      
-      // 检查是否两个玩家都完成了
-      const otherState = player === 1 ? player2State : player1State;
-      if (otherState.currentQuestionIndex >= questionsData.player1Questions.length - 1) {
-        setGameEnded(true);
-        setShowResult(true);
-      }
+    // 检查是否两个玩家都完成了
+    if (isLastQuestion && otherState.currentQuestionIndex >= playerQuestions.length) {
+      setGameEnded(true);
+      setShowResult(true);
     }
   };
 
@@ -179,6 +184,7 @@ export default function Game({ gameMode, questionType, onBack }: GameProps) {
       isAnswered: false,
       score: 0,
       showExplanation: false,
+      answerRecords: [],
     });
     
     setPlayer1State({
@@ -187,6 +193,7 @@ export default function Game({ gameMode, questionType, onBack }: GameProps) {
       isAnswered: false,
       score: 0,
       showExplanation: false,
+      answerRecords: [],
     });
     
     setPlayer2State({
@@ -195,6 +202,7 @@ export default function Game({ gameMode, questionType, onBack }: GameProps) {
       isAnswered: false,
       score: 0,
       showExplanation: false,
+      answerRecords: [],
     });
     
     setGameEnded(false);
@@ -225,6 +233,8 @@ export default function Game({ gameMode, questionType, onBack }: GameProps) {
           player2Score={player2Score}
           player1Correct={player1State.score}
           player2Correct={player2State.score}
+          player1AnswerRecords={player1State.answerRecords}
+          player2AnswerRecords={player2State.answerRecords}
           totalCount={questionsData.player1Questions.length}
           questionType={questionType}
           onRestart={handleRestart}
@@ -274,8 +284,9 @@ export default function Game({ gameMode, questionType, onBack }: GameProps) {
             questions={questionsData.player1Questions}
             playerState={player1State}
             onAnswer={(answer) => handleMultiAnswer(1, answer)}
-            onNext={() => handleMultiNext(1)}
+            onNext={() => {}}
             questionType={questionType}
+            showExplanationAndNextButton={false}
           />
 
           {/* VS分隔符 */}
@@ -292,8 +303,9 @@ export default function Game({ gameMode, questionType, onBack }: GameProps) {
             questions={questionsData.player2Questions}
             playerState={player2State}
             onAnswer={(answer) => handleMultiAnswer(2, answer)}
-            onNext={() => handleMultiNext(2)}
+            onNext={() => {}}
             questionType={questionType}
+            showExplanationAndNextButton={false}
           />
         </div>
 
@@ -349,6 +361,7 @@ function PlayerArea({
   onAnswer,
   onNext,
   questionType,
+  showExplanationAndNextButton = true,
 }: {
   playerName: string;
   playerColor: 'blue' | 'pink';
@@ -357,6 +370,7 @@ function PlayerArea({
   onAnswer: (answerIndex: number) => void;
   onNext: () => void;
   questionType: QuestionType;
+  showExplanationAndNextButton?: boolean;
 }) {
   const currentQuestion = questions[playerState.currentQuestionIndex];
   const progress = ((playerState.currentQuestionIndex + (playerState.isAnswered ? 1 : 0)) / questions.length) * 100;
@@ -462,7 +476,7 @@ function PlayerArea({
           </div>
 
           {/* 解析 */}
-          {playerState.showExplanation && (
+          {showExplanationAndNextButton && playerState.showExplanation && (
             <div className="p-3 bg-amber-50 dark:bg-amber-900/20 rounded-xl">
               <p className="text-sm text-gray-700 dark:text-gray-300">
                 <span className="font-semibold">解析：</span>
@@ -472,7 +486,7 @@ function PlayerArea({
           )}
 
           {/* 下一题按钮 */}
-          {playerState.isAnswered && (
+          {showExplanationAndNextButton && playerState.isAnswered && (
             <Button onClick={onNext} className="w-full" size="default">
               {playerState.currentQuestionIndex < questions.length - 1 ? '下一题' : '完成'}
             </Button>
@@ -574,6 +588,8 @@ function ResultMulti({
   player2Score,
   player1Correct,
   player2Correct,
+  player1AnswerRecords,
+  player2AnswerRecords,
   totalCount,
   questionType,
   onRestart,
@@ -583,11 +599,14 @@ function ResultMulti({
   player2Score: number;
   player1Correct: number;
   player2Correct: number;
+  player1AnswerRecords: AnswerRecord[];
+  player2AnswerRecords: AnswerRecord[];
   totalCount: number;
   questionType: QuestionType;
   onRestart: () => void;
   onBack: () => void;
 }) {
+  const [showDetailedAnalysis, setShowDetailedAnalysis] = useState(false);
   const winner = player1Score > player2Score ? 1 : player2Score > player1Score ? 2 : 0;
 
   return (
@@ -676,6 +695,71 @@ function ResultMulti({
                   </div>
                 </div>
               </div>
+            </div>
+
+            {/* 题目详细解析 */}
+            <div>
+              <Button
+                onClick={() => setShowDetailedAnalysis(!showDetailedAnalysis)}
+                variant="outline"
+                className="w-full mb-4"
+              >
+                {showDetailedAnalysis ? '收起题目解析' : '查看题目解析'}
+              </Button>
+
+              {showDetailedAnalysis && (
+                <div className="space-y-4 max-h-96 overflow-y-auto">
+                  <h3 className="text-lg font-bold text-gray-800 dark:text-white">题目详细解析</h3>
+                  
+                  {player1AnswerRecords.map((record, index) => {
+                    const player2Record = player2AnswerRecords[index];
+                    const question = record.question;
+                    
+                    return (
+                      <Card key={index} className="border-2 border-gray-200 dark:border-gray-700">
+                        <CardHeader className="pb-3">
+                          <CardTitle className="text-base flex items-center gap-2">
+                            <span className="flex-shrink-0 w-7 h-7 flex items-center justify-center rounded-full bg-blue-100 dark:bg-blue-900 text-blue-600 dark:text-blue-400 text-sm">
+                              {index + 1}
+                            </span>
+                            {question.question}
+                          </CardTitle>
+                        </CardHeader>
+                        <CardContent className="space-y-3">
+                          {/* 正确答案 */}
+                          <div className="p-3 bg-green-50 dark:bg-green-900/20 rounded-lg">
+                            <p className="text-sm font-semibold text-green-700 dark:text-green-300 mb-1">
+                              ✓ 正确答案：{question.options[question.answer]}
+                            </p>
+                          </div>
+                          
+                          {/* 玩家1的回答 */}
+                          <div className={`p-3 rounded-lg ${record.isCorrect ? 'bg-green-50 dark:bg-green-900/20' : 'bg-red-50 dark:bg-red-900/20'}`}>
+                            <p className={`text-sm font-semibold mb-1 ${record.isCorrect ? 'text-green-700 dark:text-green-300' : 'text-red-700 dark:text-red-300'}`}>
+                              {record.isCorrect ? '✓' : '✗'} 玩家1回答：{record.userAnswer !== null ? question.options[record.userAnswer] : '未作答'}
+                            </p>
+                          </div>
+                          
+                          {/* 玩家2的回答 */}
+                          <div className={`p-3 rounded-lg ${player2Record.isCorrect ? 'bg-green-50 dark:bg-green-900/20' : 'bg-red-50 dark:bg-red-900/20'}`}>
+                            <p className={`text-sm font-semibold mb-1 ${player2Record.isCorrect ? 'text-green-700 dark:text-green-300' : 'text-red-700 dark:text-red-300'}`}>
+                              {player2Record.isCorrect ? '✓' : '✗'} 玩家2回答：{player2Record.userAnswer !== null ? question.options[player2Record.userAnswer] : '未作答'}
+                            </p>
+                          </div>
+                          
+                          {/* 解析 */}
+                          <div className="p-3 bg-amber-50 dark:bg-amber-900/20 rounded-lg">
+                            <p className="text-sm text-gray-700 dark:text-gray-300">
+                              <span className="font-semibold">解析：</span>
+                              {question.explanation}
+                            </p>
+                          </div>
+                        </CardContent>
+                      </Card>
+                    );
+                  })}
+                </div>
+              )}
             </div>
 
             {/* 操作按钮 */}
