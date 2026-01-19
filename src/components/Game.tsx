@@ -315,6 +315,7 @@ export default function Game({ gameMode, questionType, onBack }: GameProps) {
   const [animationId, setAnimationId] = useState<number | null>(null); // 动画ID
   const [isDragging, setIsDragging] = useState(false); // 是否正在拖拽轨迹
   const [ballRotation, setBallRotation] = useState(0); // 篮球旋转角度
+  const gameAreaRef = useRef<HTMLDivElement | null>(null); // 游戏区域引用
 
   // 初始化天梯赛题目
   useEffect(() => {
@@ -329,13 +330,17 @@ export default function Game({ gameMode, questionType, onBack }: GameProps) {
   useEffect(() => {
     if (!isDragging || gameMode !== 'ladder') return;
 
-    const handleMouseMove = (e: MouseEvent) => {
-      const container = document.querySelector('[data-game-area="true"]');
-      if (!container) return;
+    // 获取容器位置信息（只查询一次）
+    const container = gameAreaRef.current;
+    if (!container) return;
+    const rect = container.getBoundingClientRect();
+    const width = rect.width;
+    const height = rect.height;
 
-      const rect = container.getBoundingClientRect();
-      const x = ((e.clientX - rect.left) / rect.width) * 100;
-      const y = ((e.clientY - rect.top) / rect.height) * 100;
+    const handleMouseMove = (e: MouseEvent) => {
+      // 直接使用缓存的尺寸信息，避免重复查询 DOM
+      const x = ((e.clientX - rect.left) / width) * 100;
+      const y = ((e.clientY - rect.top) / height) * 100;
 
       // 计算偏移量
       const offsetX = x - ballPosition.x;
@@ -345,20 +350,17 @@ export default function Game({ gameMode, questionType, onBack }: GameProps) {
       const distance = Math.sqrt(offsetX * offsetX + offsetY * offsetY);
 
       // 限制水平方向范围（-45到45）
-      let limitedOffsetX = offsetX;
-      if (offsetX > 45) limitedOffsetX = 45;
-      if (offsetX < -45) limitedOffsetX = -45;
+      const limitedOffsetX = Math.max(-45, Math.min(45, offsetX));
 
       // 限制垂直方向范围（-270到20）
-      let limitedOffsetY = offsetY;
-      if (offsetY > 20) limitedOffsetY = 20;
-      if (offsetY < -270) limitedOffsetY = -270;
+      const limitedOffsetY = Math.max(-270, Math.min(20, offsetY));
 
       // 根据拖拽距离计算力度（距离越远，力度越大）
       // 最小距离约15%，最大距离约270%
       const normalizedDistance = Math.max(15, Math.min(270, distance));
       const newPower = 1.0 + ((normalizedDistance - 15) / 255) * 7; // 转换到1.0-8.0
 
+      // 使用批处理更新，减少重新渲染次数
       setTrajectoryOffset({ x: limitedOffsetX, y: limitedOffsetY });
       setThrowPower(newPower);
     };
@@ -367,7 +369,8 @@ export default function Game({ gameMode, questionType, onBack }: GameProps) {
       setIsDragging(false);
     };
 
-    document.addEventListener('mousemove', handleMouseMove);
+    // 使用 passive: false 提高性能
+    document.addEventListener('mousemove', handleMouseMove, { passive: false });
     document.addEventListener('mouseup', handleMouseUp);
 
     return () => {
@@ -380,14 +383,20 @@ export default function Game({ gameMode, questionType, onBack }: GameProps) {
   useEffect(() => {
     if (!isDragging || gameMode !== 'ladder') return;
 
-    const handleTouchMove = (e: TouchEvent) => {
-      const touch = e.touches[0];
-      const container = document.querySelector('[data-game-area="true"]');
-      if (!container) return;
+    // 获取容器位置信息（只查询一次）
+    const container = gameAreaRef.current;
+    if (!container) return;
+    const rect = container.getBoundingClientRect();
+    const width = rect.width;
+    const height = rect.height;
 
-      const rect = container.getBoundingClientRect();
-      const x = ((touch.clientX - rect.left) / rect.width) * 100;
-      const y = ((touch.clientY - rect.top) / rect.height) * 100;
+    const handleTouchMove = (e: TouchEvent) => {
+      e.preventDefault();
+
+      const touch = e.touches[0];
+      // 直接使用缓存的尺寸信息，避免重复查询 DOM
+      const x = ((touch.clientX - rect.left) / width) * 100;
+      const y = ((touch.clientY - rect.top) / height) * 100;
 
       // 计算偏移量
       const offsetX = x - ballPosition.x;
@@ -397,20 +406,17 @@ export default function Game({ gameMode, questionType, onBack }: GameProps) {
       const distance = Math.sqrt(offsetX * offsetX + offsetY * offsetY);
 
       // 限制水平方向范围（-45到45）
-      let limitedOffsetX = offsetX;
-      if (offsetX > 45) limitedOffsetX = 45;
-      if (offsetX < -45) limitedOffsetX = -45;
+      const limitedOffsetX = Math.max(-45, Math.min(45, offsetX));
 
       // 限制垂直方向范围（-270到20）
-      let limitedOffsetY = offsetY;
-      if (offsetY > 20) limitedOffsetY = 20;
-      if (offsetY < -270) limitedOffsetY = -270;
+      const limitedOffsetY = Math.max(-270, Math.min(20, offsetY));
 
       // 根据拖拽距离计算力度（距离越远，力度越大）
       // 最小距离约15%，最大距离约270%
       const normalizedDistance = Math.max(15, Math.min(270, distance));
       const newPower = 1.0 + ((normalizedDistance - 15) / 255) * 7; // 转换到1.0-8.0
 
+      // 使用批处理更新，减少重新渲染次数
       setTrajectoryOffset({ x: limitedOffsetX, y: limitedOffsetY });
       setThrowPower(newPower);
     };
@@ -1223,6 +1229,7 @@ export default function Game({ gameMode, questionType, onBack }: GameProps) {
 
         {/* 游戏区域 */}
         <div
+          ref={gameAreaRef}
           className="max-w-6xl mx-auto relative h-[500px] z-10"
           data-game-area="true"
           onClick={(e) => {
