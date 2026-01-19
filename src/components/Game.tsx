@@ -329,8 +329,7 @@ export default function Game({ gameMode, questionType, onBack }: GameProps) {
 
   // 倒计时（仅双人模式）
   useEffect(() => {
-    // 只在游戏真正开始后才播放滴答声（321语音播放完成后）
-    if (gameMode === 'multi' && timeLeft > 0 && !gameEnded && gameStarted) {
+    if (gameMode === 'multi' && timeLeft > 0 && !gameEnded) {
       // 启动滴答音效
       if (!tickTimerRef.current) {
         const tickTimer = setInterval(() => {
@@ -365,7 +364,7 @@ export default function Game({ gameMode, questionType, onBack }: GameProps) {
         tickTimerRef.current = null;
       }
     };
-  }, [gameMode, timeLeft, gameEnded, gameStarted]);
+  }, [gameMode, timeLeft, gameEnded]);
 
   // 赛跑动画（仅双人模式）
   useEffect(() => {
