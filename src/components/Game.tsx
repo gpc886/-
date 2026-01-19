@@ -518,7 +518,14 @@ export default function Game({ gameMode, questionType, onBack }: GameProps) {
       } else {
         // 检测碰撞（检测篮球是否从上往下穿过篮筐）
         const hitResult = checkCollision(currentX, currentY, prevY);
+
+        // 调试：打印篮球位置
+        if (currentY >= 35 && currentY <= 60) {
+          console.log(`🏀 篮球位置: x=${currentX.toFixed(1)}%, y=${currentY.toFixed(1)}%, prevY=${prevY.toFixed(1)}%`);
+        }
+
         if (hitResult !== null) {
+          console.log(`✅ 命中篮筐: ${hitResult}`);
           // 命中篮筐，设置状态但继续动画让玩家看到篮球穿过篮筐的效果
           setHoopScored(hitResult);
           localHoopScored = hitResult;
@@ -552,23 +559,31 @@ export default function Game({ gameMode, questionType, onBack }: GameProps) {
 
   // 检测碰撞 - 返回玩家选择的篮筐（检测篮球是否穿过篮筐）
   const checkCollision = (x: number, y: number, prevY: number): 'left' | 'right' | null => {
-    // 左篮筐（玩家认为正确）：x: 5-30, y: 38-56（再扩大30%）
-    const leftHoop = { xMin: 5, xMax: 30, yMin: 38, yMax: 56 };
-    // 右篮筐（玩家认为错误）：x: 70-95, y: 38-56（再扩大30%）
-    const rightHoop = { xMin: 70, xMax: 95, yMin: 38, yMax: 56 };
+    // 左篮筐（玩家认为正确）：容器在左侧20%，篮筐在容器中居中
+    // 调整为更准确的检测范围：x: 0-20%, y: 45-55%
+    const leftHoop = { xMin: 0, xMax: 20, yMin: 45, yMax: 55 };
+    // 右篮筐（玩家认为错误）：容器在右侧20%，篮筐在容器中居中
+    // 调整为更准确的检测范围：x: 80-100%, y: 45-55%
+    const rightHoop = { xMin: 80, xMax: 100, yMin: 45, yMax: 55 };
+
+    console.log(`🎯 检测碰撞 - 左篮筐: x[${leftHoop.xMin}-${leftHoop.xMax}], y[${leftHoop.yMin}-${leftHoop.yMax}]`);
+    console.log(`🎯 检测碰撞 - 右篮筐: x[${rightHoop.xMin}-${rightHoop.xMax}], y[${rightHoop.yMin}-${rightHoop.yMax}]`);
 
     // 检测是否穿过左篮筐
     if (x >= leftHoop.xMin && x <= leftHoop.xMax) {
       // 从下往上穿过：上一帧在篮筐下方，当前帧在篮筐范围内
       if (prevY > leftHoop.yMax && y >= leftHoop.yMin && y <= leftHoop.yMax) {
+        console.log('✅ 从下往上穿过左篮筐');
         return 'left';
       }
       // 从上往下穿过：上一帧在篮筐上方，当前帧在篮筐范围内
       if (prevY < leftHoop.yMin && y >= leftHoop.yMin && y <= leftHoop.yMax) {
+        console.log('✅ 从上往下穿过左篮筐');
         return 'left';
       }
       // 已经在篮筐范围内，继续移动
       if (y >= leftHoop.yMin && y <= leftHoop.yMax) {
+        console.log('✅ 已经在左篮筐范围内');
         return 'left';
       }
     }
@@ -577,18 +592,22 @@ export default function Game({ gameMode, questionType, onBack }: GameProps) {
     if (x >= rightHoop.xMin && x <= rightHoop.xMax) {
       // 从下往上穿过：上一帧在篮筐下方，当前帧在篮筐范围内
       if (prevY > rightHoop.yMax && y >= rightHoop.yMin && y <= rightHoop.yMax) {
+        console.log('✅ 从下往上穿过右篮筐');
         return 'right';
       }
       // 从上往下穿过：上一帧在篮筐上方，当前帧在篮筐范围内
       if (prevY < rightHoop.yMin && y >= rightHoop.yMin && y <= rightHoop.yMax) {
+        console.log('✅ 从上往下穿过右篮筐');
         return 'right';
       }
       // 已经在篮筐范围内，继续移动
       if (y >= rightHoop.yMin && y <= rightHoop.yMax) {
+        console.log('✅ 已经在右篮筐范围内');
         return 'right';
       }
     }
 
+    console.log('❌ 未命中任何篮筐');
     return null;
   };
 
