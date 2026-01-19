@@ -1233,11 +1233,23 @@ export default function Game({ gameMode, questionType, onBack }: GameProps) {
             const x = ((e.clientX - rect.left) / rect.width) * 100;
             const y = ((e.clientY - rect.top) / rect.height) * 100;
 
-            // 限制偏移范围（扩大可调节范围）
-            const newOffsetX = Math.max(-45, Math.min(45, x - ballPosition.x));
-            const newOffsetY = Math.max(-270, Math.min(20, y - ballPosition.y));
+            // 计算偏移量
+            const offsetX = x - ballPosition.x;
+            const offsetY = y - ballPosition.y;
+
+            // 计算距离
+            const distance = Math.sqrt(offsetX * offsetX + offsetY * offsetY);
+
+            // 限制偏移范围
+            const newOffsetX = Math.max(-45, Math.min(45, offsetX));
+            const newOffsetY = Math.max(-270, Math.min(20, offsetY));
+
+            // 根据距离计算力度
+            const normalizedDistance = Math.max(15, Math.min(270, distance));
+            const newPower = 1.0 + ((normalizedDistance - 15) / 255) * 7;
 
             setTrajectoryOffset({ x: newOffsetX, y: newOffsetY });
+            setThrowPower(newPower);
           }}
           onTouchStart={(e) => {
             if (isBallThrown || ladderShowResult) return;
@@ -1248,11 +1260,23 @@ export default function Game({ gameMode, questionType, onBack }: GameProps) {
             const x = ((touch.clientX - rect.left) / rect.width) * 100;
             const y = ((touch.clientY - rect.top) / rect.height) * 100;
 
-            // 限制偏移范围（扩大可调节范围）
-            const newOffsetX = Math.max(-45, Math.min(45, x - ballPosition.x));
-            const newOffsetY = Math.max(-270, Math.min(20, y - ballPosition.y));
+            // 计算偏移量
+            const offsetX = x - ballPosition.x;
+            const offsetY = y - ballPosition.y;
+
+            // 计算距离
+            const distance = Math.sqrt(offsetX * offsetX + offsetY * offsetY);
+
+            // 限制偏移范围
+            const newOffsetX = Math.max(-45, Math.min(45, offsetX));
+            const newOffsetY = Math.max(-270, Math.min(20, offsetY));
+
+            // 根据距离计算力度
+            const normalizedDistance = Math.max(15, Math.min(270, distance));
+            const newPower = 1.0 + ((normalizedDistance - 15) / 255) * 7;
 
             setTrajectoryOffset({ x: newOffsetX, y: newOffsetY });
+            setThrowPower(newPower);
           }}
         >
           {/* 左篮筐（正确） */}
