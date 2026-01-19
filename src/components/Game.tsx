@@ -1289,10 +1289,52 @@ export default function Game({ gameMode, questionType, onBack }: GameProps) {
           {/* 左篮筐（正确） */}
           <div className="absolute left-0 top-0 w-[20%] h-full flex items-center justify-center">
             <div className="relative">
-              {/* 篮筐 */}
-              <div className="w-32 h-8 border-4 border-green-500 rounded-b-full bg-green-100 dark:bg-green-900/30 shadow-lg">
-                <div className="absolute bottom-0 left-1/2 -translate-x-1/2 w-1 h-20 bg-gray-400 dark:bg-gray-600"></div>
+              {/* 篮板 */}
+              <div className="absolute bottom-16 left-1/2 -translate-x-1/2 w-36 h-24 bg-gradient-to-br from-gray-100 to-gray-200 dark:from-gray-700 dark:to-gray-800 rounded border-2 border-gray-300 dark:border-gray-600 shadow-xl overflow-hidden">
+                {/* 篮板内框 */}
+                <div className="absolute inset-4 border-2 border-green-500/50 rounded"></div>
+                {/* 玻璃反光效果 */}
+                <div className="absolute inset-0 bg-gradient-to-tr from-white/20 via-transparent to-transparent"></div>
               </div>
+
+              {/* 篮筐主体 */}
+              <div className="absolute bottom-8 left-1/2 -translate-x-1/2 w-28 h-4 relative">
+                {/* 篮筐环 - 金属质感 */}
+                <div className="absolute inset-0 border-[5px] border-green-600 rounded-full shadow-2xl"
+                     style={{
+                       background: 'linear-gradient(135deg, #22c55e 0%, #16a34a 50%, #15803d 100%)',
+                       boxShadow: 'inset 0 2px 4px rgba(255,255,255,0.3), 0 4px 12px rgba(0,0,0,0.3)'
+                     }}>
+                </div>
+
+                {/* 篮网 - 使用渐变和条纹模拟 */}
+                <div className="absolute -bottom-16 left-1/2 -translate-x-1/2 w-24 h-16 overflow-hidden">
+                  <svg className="w-full h-full" viewBox="0 0 100 80" preserveAspectRatio="none">
+                    {/* 篮网线条 */}
+                    <defs>
+                      <linearGradient id="netGradient" x1="0%" y1="0%" x2="0%" y2="100%">
+                        <stop offset="0%" style={{ stopColor: '#ffffff', stopOpacity: 0.8 }} />
+                        <stop offset="100%" style={{ stopColor: '#ffffff', stopOpacity: 0.3 }} />
+                      </linearGradient>
+                    </defs>
+                    {/* 垂直线 */}
+                    <line x1="10" y1="0" x2="15" y2="80" stroke="url(#netGradient)" strokeWidth="1" />
+                    <line x1="25" y1="0" x2="30" y2="80" stroke="url(#netGradient)" strokeWidth="1" />
+                    <line x1="40" y1="0" x2="45" y2="80" stroke="url(#netGradient)" strokeWidth="1" />
+                    <line x1="55" y1="0" x2="50" y2="80" stroke="url(#netGradient)" strokeWidth="1" />
+                    <line x1="70" y1="0" x2="75" y2="80" stroke="url(#netGradient)" strokeWidth="1" />
+                    <line x1="85" y1="0" x2="90" y2="80" stroke="url(#netGradient)" strokeWidth="1" />
+                    {/* 水平线 */}
+                    <line x1="10" y1="20" x2="90" y2="20" stroke="url(#netGradient)" strokeWidth="1" />
+                    <line x1="12" y1="40" x2="88" y2="40" stroke="url(#netGradient)" strokeWidth="1" />
+                    <line x1="14" y1="60" x2="86" y2="60" stroke="url(#netGradient)" strokeWidth="1" />
+                  </svg>
+                </div>
+
+                {/* 篮筐支架 */}
+                <div className="absolute -bottom-20 left-1/2 -translate-x-1/2 w-2 h-20 bg-gradient-to-b from-gray-400 to-gray-500 rounded-full shadow-md"></div>
+              </div>
+
               <div className="absolute -top-16 left-1/2 -translate-x-1/2 text-center">
                 <CheckCircle className="w-12 h-12 text-green-600 dark:text-green-400 mx-auto mb-2" />
                 <span className="font-bold text-green-700 dark:text-green-300">正确</span>
@@ -1303,10 +1345,52 @@ export default function Game({ gameMode, questionType, onBack }: GameProps) {
           {/* 右篮筐（错误） */}
           <div className="absolute right-0 top-0 w-[20%] h-full flex items-center justify-center">
             <div className="relative">
-              {/* 篮筐 */}
-              <div className="w-32 h-8 border-4 border-red-500 rounded-b-full bg-red-100 dark:bg-red-900/30 shadow-lg">
-                <div className="absolute bottom-0 left-1/2 -translate-x-1/2 w-1 h-20 bg-gray-400 dark:bg-gray-600"></div>
+              {/* 篮板 */}
+              <div className="absolute bottom-16 left-1/2 -translate-x-1/2 w-36 h-24 bg-gradient-to-br from-gray-100 to-gray-200 dark:from-gray-700 dark:to-gray-800 rounded border-2 border-gray-300 dark:border-gray-600 shadow-xl overflow-hidden">
+                {/* 篮板内框 */}
+                <div className="absolute inset-4 border-2 border-red-500/50 rounded"></div>
+                {/* 玻璃反光效果 */}
+                <div className="absolute inset-0 bg-gradient-to-tr from-white/20 via-transparent to-transparent"></div>
               </div>
+
+              {/* 篮筐主体 */}
+              <div className="absolute bottom-8 left-1/2 -translate-x-1/2 w-28 h-4 relative">
+                {/* 篮筐环 - 金属质感 */}
+                <div className="absolute inset-0 border-[5px] border-red-600 rounded-full shadow-2xl"
+                     style={{
+                       background: 'linear-gradient(135deg, #ef4444 0%, #dc2626 50%, #b91c1c 100%)',
+                       boxShadow: 'inset 0 2px 4px rgba(255,255,255,0.3), 0 4px 12px rgba(0,0,0,0.3)'
+                     }}>
+                </div>
+
+                {/* 篮网 - 使用渐变和条纹模拟 */}
+                <div className="absolute -bottom-16 left-1/2 -translate-x-1/2 w-24 h-16 overflow-hidden">
+                  <svg className="w-full h-full" viewBox="0 0 100 80" preserveAspectRatio="none">
+                    {/* 篮网线条 */}
+                    <defs>
+                      <linearGradient id="netGradientRight" x1="0%" y1="0%" x2="0%" y2="100%">
+                        <stop offset="0%" style={{ stopColor: '#ffffff', stopOpacity: 0.8 }} />
+                        <stop offset="100%" style={{ stopColor: '#ffffff', stopOpacity: 0.3 }} />
+                      </linearGradient>
+                    </defs>
+                    {/* 垂直线 */}
+                    <line x1="10" y1="0" x2="15" y2="80" stroke="url(#netGradientRight)" strokeWidth="1" />
+                    <line x1="25" y1="0" x2="30" y2="80" stroke="url(#netGradientRight)" strokeWidth="1" />
+                    <line x1="40" y1="0" x2="45" y2="80" stroke="url(#netGradientRight)" strokeWidth="1" />
+                    <line x1="55" y1="0" x2="50" y2="80" stroke="url(#netGradientRight)" strokeWidth="1" />
+                    <line x1="70" y1="0" x2="75" y2="80" stroke="url(#netGradientRight)" strokeWidth="1" />
+                    <line x1="85" y1="0" x2="90" y2="80" stroke="url(#netGradientRight)" strokeWidth="1" />
+                    {/* 水平线 */}
+                    <line x1="10" y1="20" x2="90" y2="20" stroke="url(#netGradientRight)" strokeWidth="1" />
+                    <line x1="12" y1="40" x2="88" y2="40" stroke="url(#netGradientRight)" strokeWidth="1" />
+                    <line x1="14" y1="60" x2="86" y2="60" stroke="url(#netGradientRight)" strokeWidth="1" />
+                  </svg>
+                </div>
+
+                {/* 篮筐支架 */}
+                <div className="absolute -bottom-20 left-1/2 -translate-x-1/2 w-2 h-20 bg-gradient-to-b from-gray-400 to-gray-500 rounded-full shadow-md"></div>
+              </div>
+
               <div className="absolute -top-16 left-1/2 -translate-x-1/2 text-center">
                 <XCircle className="w-12 h-12 text-red-600 dark:text-red-400 mx-auto mb-2" />
                 <span className="font-bold text-red-700 dark:text-red-300">错误</span>
