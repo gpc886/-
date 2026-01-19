@@ -365,13 +365,7 @@ export default function Game({ gameMode, questionType, onBack }: GameProps) {
   const gameAreaRef = useRef<HTMLDivElement | null>(null); // 游戏区域引用
 
   // 挑战者姓名和最高记录
-  const [challengerName, setChallengerName] = useState(() => {
-    if (typeof window !== 'undefined') {
-      const saved = localStorage.getItem('ladder-challenger-name');
-      return saved || '';
-    }
-    return '';
-  });
+  const [challengerName, setChallengerName] = useState('');
   const [showNameInput, setShowNameInput] = useState(false); // 是否显示姓名输入框
   const [highestRecord, setHighestRecord] = useState<{ name: string; level: number }>(() => {
     if (typeof window !== 'undefined') {
@@ -390,24 +384,11 @@ export default function Game({ gameMode, questionType, onBack }: GameProps) {
   // 初始化天梯赛题目
   useEffect(() => {
     if (gameMode === 'ladder') {
-      // 如果没有挑战者姓名，显示输入框
-      if (!challengerName) {
-        setShowNameInput(true);
-        return;
-      }
-
-      const question = getJudgeQuestionByLevel(ladderLevel);
-      setCurrentJudgeQuestion(question);
-      resetBall();
+      // 每次进入天梯赛模式，清空姓名并显示输入框
+      setChallengerName('');
+      setShowNameInput(true);
     }
-  }, [gameMode, ladderLevel, challengerName]);
-
-  // 保存挑战者姓名到 localStorage
-  useEffect(() => {
-    if (typeof window !== 'undefined' && challengerName) {
-      localStorage.setItem('ladder-challenger-name', challengerName);
-    }
-  }, [challengerName]);
+  }, [gameMode]);
 
   // 保存最高记录到 localStorage
   useEffect(() => {
