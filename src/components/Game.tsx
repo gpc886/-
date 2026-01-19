@@ -844,77 +844,172 @@ function RaceTrack({
   player2Name: string;
 }) {
   return (
-    <Card className="shadow-xl mb-6 bg-gradient-to-r from-green-50 via-emerald-50 to-teal-50 dark:from-green-900/20 dark:via-emerald-900/20 dark:to-teal-900/20">
+    <Card className="shadow-2xl mb-6 bg-gradient-to-br from-green-100 via-emerald-100 to-teal-100 dark:from-green-900/30 dark:via-emerald-900/30 dark:to-teal-900/30 border-2 border-green-300 dark:border-green-700">
       <CardHeader className="pb-3">
-        <CardTitle className="text-xl text-center flex items-center justify-center gap-2">
-          🏃 赛跑竞技场
+        <CardTitle className="text-2xl text-center flex items-center justify-center gap-2 bg-gradient-to-r from-green-600 to-teal-600 bg-clip-text text-transparent">
+          🏆 赛跑竞技场 🏆
         </CardTitle>
+        <p className="text-center text-sm text-gray-600 dark:text-gray-400">
+          答对题目可以让你的小动物加速前进！
+        </p>
       </CardHeader>
-      <CardContent className="space-y-4">
+      <CardContent className="space-y-5">
         {/* 玩家1跑道 */}
         <div className="relative">
-          <div className="flex items-center justify-between mb-2">
-            <div className="flex items-center gap-2">
-              <span className="text-3xl">🐰</span>
-              <span className="font-bold text-blue-600 dark:text-blue-400">{player1Name}</span>
+          <div className="flex items-center justify-between mb-3">
+            <div className="flex items-center gap-3 bg-blue-50 dark:bg-blue-900/30 px-4 py-2 rounded-full border-2 border-blue-200 dark:border-blue-700">
+              <span className="text-4xl animate-bounce">🐰</span>
+              <div>
+                <span className="font-bold text-lg text-blue-700 dark:text-blue-300">{player1Name}</span>
+                <div className="flex items-center gap-2">
+                  <span className="text-sm text-blue-600 dark:text-blue-400">速度：</span>
+                  <div className="w-20 h-2 bg-blue-200 dark:bg-blue-800 rounded-full overflow-hidden">
+                    <div
+                      className="h-full bg-blue-500 dark:bg-blue-400 transition-all duration-300"
+                      style={{ width: `${position1}%` }}
+                    />
+                  </div>
+                </div>
+              </div>
             </div>
-            <span className="text-sm text-gray-600 dark:text-gray-400">{position1.toFixed(0)}%</span>
+            <div className="bg-blue-500 dark:bg-blue-600 text-white px-4 py-2 rounded-lg shadow-lg">
+              <span className="font-bold text-xl">{position1.toFixed(0)}%</span>
+            </div>
           </div>
-          <div className="h-12 bg-white dark:bg-gray-800 rounded-full border-2 border-blue-200 dark:border-blue-800 relative overflow-hidden">
-            {/* 跑道装饰 */}
-            <div className="absolute inset-0 flex items-center">
+          <div className="relative">
+            {/* 跑道背景 */}
+            <div className="h-16 bg-gradient-to-r from-green-200 via-green-100 to-green-200 dark:from-green-900/50 dark:via-green-800/50 dark:to-green-900/50 rounded-2xl border-4 border-green-400 dark:border-green-600 relative overflow-hidden shadow-inner">
+              {/* 跑道纹理 */}
+              <div className="absolute inset-0 opacity-30">
+                <div className="flex items-center h-full">
+                  {[0, 10, 20, 30, 40, 50, 60, 70, 80, 90].map((pos, i) => (
+                    <div
+                      key={i}
+                      className="flex-shrink-0 w-full h-full border-r-2 border-green-400 dark:border-green-700"
+                      style={{ left: `${pos}%` }}
+                    />
+                  ))}
+                </div>
+              </div>
+              {/* 起点线 */}
+              <div className="absolute left-0 top-0 h-full w-2 bg-green-600 dark:bg-green-500 border-r-4 border-white dark:border-gray-300" />
+              {/* 终点线 */}
+              <div className="absolute right-0 top-0 h-full w-2 bg-red-500 dark:bg-red-400 border-l-4 border-white dark:border-gray-300" />
+              {/* 赛跑标记 */}
               {[0, 25, 50, 75, 100].map((pos, i) => (
-                <div
-                  key={i}
-                  className="w-0.5 h-8 bg-blue-200 dark:bg-blue-800/50"
-                  style={{ left: `${pos}%` }}
-                />
+                <div key={i} className="absolute top-0 bottom-0 flex flex-col items-center justify-center">
+                  <div className="w-0.5 h-6 bg-green-500 dark:bg-green-700 mb-1" />
+                  <span className="text-xs text-green-700 dark:text-green-300 font-semibold">{pos}%</span>
+                </div>
               ))}
-            </div>
-            {/* 小动物 */}
-            <div
-              className="absolute top-1/2 transform -translate-y-1/2 transition-all duration-300 ease-out"
-              style={{ left: `${Math.max(0, Math.min(position1 - 2, 96))}%` }}
-            >
-              <span className="text-3xl">🐰</span>
+              {/* 小动物 */}
+              <div
+                className="absolute top-1/2 transform -translate-y-1/2 transition-all duration-300 ease-out z-10"
+                style={{ left: `${Math.max(2, Math.min(position1, 94))}%` }}
+              >
+                <div className="relative">
+                  <div className="absolute -inset-2 bg-blue-400 dark:bg-blue-600 rounded-full opacity-30 animate-ping" />
+                  <span className="text-4xl relative z-10 drop-shadow-lg">🐰</span>
+                  {/* 速度线 */}
+                  <div className="absolute -left-2 top-1/2 transform -translate-y-1/2 flex gap-0.5">
+                    {[0, 1, 2].map((i) => (
+                      <div
+                        key={i}
+                        className="w-1 h-0.5 bg-blue-400 dark:bg-blue-300 rounded-full"
+                        style={{ opacity: 0.6 - i * 0.2 }}
+                      />
+                    ))}
+                  </div>
+                </div>
+              </div>
             </div>
           </div>
         </div>
 
         {/* 玩家2跑道 */}
         <div className="relative">
-          <div className="flex items-center justify-between mb-2">
-            <div className="flex items-center gap-2">
-              <span className="text-3xl">🐢</span>
-              <span className="font-bold text-pink-600 dark:text-pink-400">{player2Name}</span>
+          <div className="flex items-center justify-between mb-3">
+            <div className="flex items-center gap-3 bg-pink-50 dark:bg-pink-900/30 px-4 py-2 rounded-full border-2 border-pink-200 dark:border-pink-700">
+              <span className="text-4xl animate-bounce" style={{ animationDelay: '0.5s' }}>🐢</span>
+              <div>
+                <span className="font-bold text-lg text-pink-700 dark:text-pink-300">{player2Name}</span>
+                <div className="flex items-center gap-2">
+                  <span className="text-sm text-pink-600 dark:text-pink-400">速度：</span>
+                  <div className="w-20 h-2 bg-pink-200 dark:bg-pink-800 rounded-full overflow-hidden">
+                    <div
+                      className="h-full bg-pink-500 dark:bg-pink-400 transition-all duration-300"
+                      style={{ width: `${position2}%` }}
+                    />
+                  </div>
+                </div>
+              </div>
             </div>
-            <span className="text-sm text-gray-600 dark:text-gray-400">{position2.toFixed(0)}%</span>
+            <div className="bg-pink-500 dark:bg-pink-600 text-white px-4 py-2 rounded-lg shadow-lg">
+              <span className="font-bold text-xl">{position2.toFixed(0)}%</span>
+            </div>
           </div>
-          <div className="h-12 bg-white dark:bg-gray-800 rounded-full border-2 border-pink-200 dark:border-pink-800 relative overflow-hidden">
-            {/* 跑道装饰 */}
-            <div className="absolute inset-0 flex items-center">
+          <div className="relative">
+            {/* 跑道背景 */}
+            <div className="h-16 bg-gradient-to-r from-green-200 via-green-100 to-green-200 dark:from-green-900/50 dark:via-green-800/50 dark:to-green-900/50 rounded-2xl border-4 border-green-400 dark:border-green-600 relative overflow-hidden shadow-inner">
+              {/* 跑道纹理 */}
+              <div className="absolute inset-0 opacity-30">
+                <div className="flex items-center h-full">
+                  {[0, 10, 20, 30, 40, 50, 60, 70, 80, 90].map((pos, i) => (
+                    <div
+                      key={i}
+                      className="flex-shrink-0 w-full h-full border-r-2 border-green-400 dark:border-green-700"
+                      style={{ left: `${pos}%` }}
+                    />
+                  ))}
+                </div>
+              </div>
+              {/* 起点线 */}
+              <div className="absolute left-0 top-0 h-full w-2 bg-green-600 dark:bg-green-500 border-r-4 border-white dark:border-gray-300" />
+              {/* 终点线 */}
+              <div className="absolute right-0 top-0 h-full w-2 bg-red-500 dark:bg-red-400 border-l-4 border-white dark:border-gray-300" />
+              {/* 赛跑标记 */}
               {[0, 25, 50, 75, 100].map((pos, i) => (
-                <div
-                  key={i}
-                  className="w-0.5 h-8 bg-pink-200 dark:bg-pink-800/50"
-                  style={{ left: `${pos}%` }}
-                />
+                <div key={i} className="absolute top-0 bottom-0 flex flex-col items-center justify-center">
+                  <div className="w-0.5 h-6 bg-green-500 dark:bg-green-700 mb-1" />
+                  <span className="text-xs text-green-700 dark:text-green-300 font-semibold">{pos}%</span>
+                </div>
               ))}
-            </div>
-            {/* 小动物 */}
-            <div
-              className="absolute top-1/2 transform -translate-y-1/2 transition-all duration-300 ease-out"
-              style={{ left: `${Math.max(0, Math.min(position2 - 2, 96))}%` }}
-            >
-              <span className="text-3xl">🐢</span>
+              {/* 小动物 */}
+              <div
+                className="absolute top-1/2 transform -translate-y-1/2 transition-all duration-300 ease-out z-10"
+                style={{ left: `${Math.max(2, Math.min(position2, 94))}%` }}
+              >
+                <div className="relative">
+                  <div className="absolute -inset-2 bg-pink-400 dark:bg-pink-600 rounded-full opacity-30 animate-ping" style={{ animationDelay: '0.5s' }} />
+                  <span className="text-4xl relative z-10 drop-shadow-lg">🐢</span>
+                  {/* 速度线 */}
+                  <div className="absolute -left-2 top-1/2 transform -translate-y-1/2 flex gap-0.5">
+                    {[0, 1, 2].map((i) => (
+                      <div
+                        key={i}
+                        className="w-1 h-0.5 bg-pink-400 dark:bg-pink-300 rounded-full"
+                        style={{ opacity: 0.6 - i * 0.2 }}
+                      />
+                    ))}
+                  </div>
+                </div>
+              </div>
             </div>
           </div>
         </div>
 
-        {/* 提示文字 */}
-        <p className="text-center text-sm text-gray-600 dark:text-gray-400">
-          💡 答对题目可以让你的小动物加速前进！
-        </p>
+        {/* 领先指示 */}
+        {position1 !== position2 && (
+          <div className="text-center">
+            <span className="text-sm font-semibold bg-white dark:bg-gray-800 px-4 py-2 rounded-full shadow-md">
+              {position1 > position2 ? (
+                <span className="text-blue-600 dark:text-blue-400">🐰 {player1Name} 暂时领先！</span>
+              ) : (
+                <span className="text-pink-600 dark:text-pink-400">🐢 {player2Name} 暂时领先！</span>
+              )}
+            </span>
+          </div>
+        )}
       </CardContent>
     </Card>
   );
