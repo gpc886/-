@@ -56,6 +56,86 @@ const playSoundEffect = (type: 'correct' | 'wrong') => {
   }
 };
 
+// 321并发语音提示函数
+const play321 = (onVoiceComplete: () => void) => {
+  console.log('🎤 播放321倒计时...');
+  if (typeof window !== 'undefined' && 'speechSynthesis' in window) {
+    try {
+      // 取消之前的播放
+      window.speechSynthesis.cancel();
+
+      // 同时创建3、2、1三个语音
+      const count3 = new SpeechSynthesisUtterance('3');
+      const count2 = new SpeechSynthesisUtterance('2');
+      const count1 = new SpeechSynthesisUtterance('1');
+      const start = new SpeechSynthesisUtterance('开始');
+
+      // 设置参数
+      [count3, count2, count1].forEach(utt => {
+        utt.rate = 1.0;
+        utt.pitch = 1.0;
+        utt.volume = 1.0;
+        utt.lang = 'zh-CN';
+      });
+
+      // "开始"参数
+      start.rate = 1.2;
+      start.pitch = 1.2;
+      start.volume = 1.0;
+      start.lang = 'zh-CN';
+
+      // 监听1播放完成后再播放"开始"
+      count1.onend = () => {
+        console.log('▶️ 321播放完成，开始播放"开始"');
+        window.speechSynthesis.speak(start);
+      };
+
+      // 监听"开始"播放完成后调用回调
+      start.onend = () => {
+        console.log('▶️ "开始"语音播放完成');
+        onVoiceComplete();
+      };
+
+      // 如果语音播放失败，也要调用回调
+      start.onerror = () => {
+        console.log('❌ "开始"语音播放失败，强制开始游戏');
+        setTimeout(onVoiceComplete, 100);
+      };
+
+      // 并发播放321
+      window.speechSynthesis.speak(count3);
+      window.speechSynthesis.speak(count2);
+      window.speechSynthesis.speak(count1);
+
+      console.log('▶️ 321语音已并发播放');
+    } catch (error) {
+      console.log('❌ 321语音播放失败:', error);
+      // 出错也要开始游戏
+      setTimeout(onVoiceComplete, 500);
+    }
+  } else {
+    // 浏览器不支持语音，直接开始
+    console.log('❌ 浏览器不支持语音，直接开始游戏');
+    setTimeout(onVoiceComplete, 100);
+  }
+};
+
+// 播放倒计时数字
+const playCountdownNumber = (number: number) => {
+  if (typeof window !== 'undefined' && 'speechSynthesis' in window) {
+    try {
+      window.speechSynthesis.cancel();
+      const utterance = new SpeechSynthesisUtterance(number.toString());
+      utterance.rate = 1.0;
+      utterance.pitch = 1.0;
+      utterance.volume = 1.0;
+      utterance.lang = 'zh-CN';
+      window.speechSynthesis.speak(utterance);
+    } catch (error) {
+      console.log('❌ 倒计时语音播放失败:', error);
+    }
+  }
+};
 
 // 玩家状态接口
 interface PlayerState {
@@ -129,9 +209,6 @@ export default function Game({ gameMode, questionType, onBack }: GameProps) {
   const [racePosition1, setRacePosition1] = useState(0); // 玩家1赛跑位置 0-100
   const [racePosition2, setRacePosition2] = useState(0); // 玩家2赛跑位置 0-100
 
-  // 游戏是否已开始（用于显示开始按钮）
-  const [gameStarted, setGameStarted] = useState(false);
-
   // 学生名单（双人PK模式抽签用）- 从 localStorage 读取或使用默认值
   const [students, setStudents] = useState<string[]>(() => {
     if (typeof window !== 'undefined') {
@@ -188,6 +265,27 @@ export default function Game({ gameMode, questionType, onBack }: GameProps) {
       localStorage.setItem('game-player2-name', player2Name);
     }
   }, [player2Name]);
+
+  // 游戏是否已开始（用于显示开始按钮）
+  const [gameStarted, setGameStarted] = useState(false);
+
+  // 显示视觉提示"3 2 1"
+  const [showCountdown, setShowCountdown] = useState(false);
+
+  // 游戏开始回调函数（在"开始"语音播放完成后调用）
+  const startGameAfterVoice = () => {
+    console.log('🎮 "开始"语音播放完成，游戏开始');
+    setShowCountdown(false);
+    setGameStarted(true);
+  };
+
+  // 最后5秒语音倒计时（仅双人模式）
+  useEffect(() => {
+    if (gameMode === 'multi' && timeLeft <= 5 && timeLeft > 0 && !gameEnded) {
+      console.log(`⏰ 倒计时: ${timeLeft}`);
+      playCountdownNumber(timeLeft);
+    }
+  }, [gameMode, timeLeft, gameEnded]);
 
   // 添加学生
   const handleAddStudent = () => {
@@ -380,6 +478,7 @@ export default function Game({ gameMode, questionType, onBack }: GameProps) {
   const handleRestart = () => {
     // 重置游戏未开始状态
     setGameStarted(false);
+    setShowCountdown(false);
 
     setPlayerState({
       currentQuestionIndex: 0,
@@ -457,6 +556,20 @@ export default function Game({ gameMode, questionType, onBack }: GameProps) {
   if (!gameStarted) {
     return (
       <div className="min-h-screen bg-gradient-to-br from-blue-50 via-purple-50 to-pink-50 dark:from-gray-900 dark:via-purple-900 dark:to-blue-900 flex items-center justify-center p-4">
+        {/* 321 视觉提示 */}
+        {showCountdown && (
+          <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60">
+            <div className="text-center animate-pulse">
+              <h1 className="text-9xl font-black bg-gradient-to-r from-yellow-400 via-orange-500 to-red-500 bg-clip-text text-transparent drop-shadow-2xl mb-4">
+                3 2 1
+              </h1>
+              <h1 className="text-7xl font-bold text-white drop-shadow-2xl">
+                开始
+              </h1>
+            </div>
+          </div>
+        )}
+
         <div className="max-w-2xl w-full">
           <Card className="shadow-2xl">
             <CardHeader>
@@ -515,7 +628,14 @@ export default function Game({ gameMode, questionType, onBack }: GameProps) {
 
               <Button
                 onClick={() => {
-                  setGameStarted(true);
+                  // 播放321语音
+                  play321(() => {
+                    // 语音播放完成后，隐藏视觉提示并开始游戏
+                    startGameAfterVoice();
+                  });
+
+                  // 显示321视觉提示
+                  setShowCountdown(true);
                 }}
                 className="w-full text-lg py-6"
                 size="lg"
