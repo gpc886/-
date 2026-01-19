@@ -56,31 +56,117 @@ const playSoundEffect = (type: 'correct' | 'wrong') => {
   }
 };
 
-// 语音提示函数
+// 语音提示函数 - 使用 Web Audio API 生成音效
 const playReadyGo = () => {
+  console.log('🎤 尝试播放语音提示...');
+  console.log('📋 window.speechSynthesis 存在:', typeof window !== 'undefined' && 'speechSynthesis' in window);
+
+  // 方案1: 尝试使用 Web Speech API
   if (typeof window !== 'undefined' && 'speechSynthesis' in window) {
+    console.log('✅ 浏览器支持 speechSynthesis');
+
     try {
-      // 先说 Ready
-      const readyUtterance = new SpeechSynthesisUtterance('Ready');
-      readyUtterance.rate = 0.9;
-      readyUtterance.pitch = 1.1;
-      readyUtterance.volume = 0.9;
-      readyUtterance.lang = 'en-US';
+      // 取消之前的播放
+      window.speechSynthesis.cancel();
+      console.log('🔄 已取消之前的播放');
 
-      // 0.6秒后说 Go
-      setTimeout(() => {
-        const goUtterance = new SpeechSynthesisUtterance('Go!!!');
-        goUtterance.rate = 1.3;
-        goUtterance.pitch = 1.6;
-        goUtterance.volume = 1.0;
-        goUtterance.lang = 'en-US';
-        window.speechSynthesis.speak(goUtterance);
-      }, 600);
+      // 获取可用语音列表
+      const voices = window.speechSynthesis.getVoices();
+      console.log('📢 可用语音列表数量:', voices.length);
+      if (voices.length > 0) {
+        console.log('🎵 第一个语音:', voices[0].name, voices[0].lang);
+      }
 
-      window.speechSynthesis.speak(readyUtterance);
+      // 创建一个更简单的语音合成
+      const utterance = new SpeechSynthesisUtterance('Ready Go!');
+      utterance.rate = 1.2;
+      utterance.pitch = 1.2;
+      utterance.volume = 1.0;
+      utterance.lang = 'en-US';
+
+      // 事件监听
+      utterance.onstart = () => console.log('▶️ 开始播放语音');
+      utterance.onend = () => console.log('⏹️ 语音播放结束');
+      utterance.onerror = (event) => {
+        console.log('❌ 语音播放错误:', event.error, event);
+        console.log('🎵 切换到备用音效');
+        playReadyGoSoundEffect();
+      };
+
+      console.log('🎯 准备播放语音...');
+      window.speechSynthesis.speak(utterance);
+
     } catch (error) {
-      console.log('语音播放失败:', error);
+      console.log('❌ 语音播放异常:', error);
+      console.log('🎵 切换到备用音效');
+      playReadyGoSoundEffect();
     }
+  } else {
+    console.log('❌ 浏览器不支持 speechSynthesis API');
+    console.log('🎵 使用备用音效');
+    // 备用方案：使用音效提示
+    playReadyGoSoundEffect();
+  }
+};
+
+// 备用音效提示函数
+const playReadyGoSoundEffect = () => {
+  console.log('🎵 播放备用音效...');
+  try {
+    const audioContext = new (window.AudioContext || (window as any).webkitAudioContext)();
+    console.log('🎵 AudioContext 创建成功');
+
+    // 确保 AudioContext 已恢复（解决某些浏览器的自动播放限制）
+    if (audioContext.state === 'suspended') {
+      console.log('🎵 恢复 AudioContext...');
+      audioContext.resume();
+    }
+
+    // 播放"Ready"提示音（上升音调）
+    const playReady = () => {
+      console.log('🎵 播放 Ready 音效');
+      const oscillator = audioContext.createOscillator();
+      const gainNode = audioContext.createGain();
+
+      oscillator.connect(gainNode);
+      gainNode.connect(audioContext.destination);
+
+      oscillator.type = 'sine';
+      oscillator.frequency.setValueAtTime(400, audioContext.currentTime);
+      oscillator.frequency.setValueAtTime(600, audioContext.currentTime + 0.2);
+
+      gainNode.gain.setValueAtTime(0.5, audioContext.currentTime);
+      gainNode.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + 0.3);
+
+      oscillator.start(audioContext.currentTime);
+      oscillator.stop(audioContext.currentTime + 0.3);
+    };
+
+    // 播放"Go"提示音（高音）
+    const playGo = () => {
+      console.log('🎵 播放 Go 音效');
+      const oscillator = audioContext.createOscillator();
+      const gainNode = audioContext.createGain();
+
+      oscillator.connect(gainNode);
+      gainNode.connect(audioContext.destination);
+
+      oscillator.type = 'sine';
+      oscillator.frequency.setValueAtTime(800, audioContext.currentTime);
+      oscillator.frequency.setValueAtTime(1200, audioContext.currentTime + 0.1);
+      oscillator.frequency.setValueAtTime(1500, audioContext.currentTime + 0.2);
+
+      gainNode.gain.setValueAtTime(0.6, audioContext.currentTime);
+      gainNode.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + 0.4);
+
+      oscillator.start(audioContext.currentTime);
+      oscillator.stop(audioContext.currentTime + 0.4);
+    };
+
+    playReady();
+    setTimeout(playGo, 600);
+  } catch (error) {
+    console.log('❌ 音效播放失败:', error);
   }
 };
 
@@ -157,14 +243,26 @@ export default function Game({ gameMode, questionType, onBack }: GameProps) {
   const [racePosition1, setRacePosition1] = useState(0); // 玩家1赛跑位置 0-100
   const [racePosition2, setRacePosition2] = useState(0); // 玩家2赛跑位置 0-100
 
-  // 游戏开始时播放Ready Go语音
-  useEffect(() => {
-    // 延迟500ms播放，确保页面渲染完成
-    const timer = setTimeout(() => {
-      playReadyGo();
-    }, 500);
+  // 游戏是否已开始（用于显示开始按钮）
+  const [gameStarted, setGameStarted] = useState(false);
 
-    return () => clearTimeout(timer);
+  // 显示视觉提示"Ready Go"
+  const [showReadyGo, setShowReadyGo] = useState(false);
+
+  // 预初始化语音引擎（在组件挂载时）
+  useEffect(() => {
+    console.log('🎤 初始化语音引擎...');
+    if (typeof window !== 'undefined' && 'speechSynthesis' in window) {
+      // 尝试获取语音列表，这会触发语音引擎初始化
+      const voices = window.speechSynthesis.getVoices();
+      console.log('📢 语音列表:', voices.length);
+
+      // 监听语音加载完成事件
+      window.speechSynthesis.onvoiceschanged = () => {
+        const loadedVoices = window.speechSynthesis.getVoices();
+        console.log('📢 语音加载完成，数量:', loadedVoices.length);
+      };
+    }
   }, []);
 
   // 倒计时（仅双人模式）
@@ -297,8 +395,9 @@ export default function Game({ gameMode, questionType, onBack }: GameProps) {
   };
 
   const handleRestart = () => {
-    // 播放Ready Go语音
-    playReadyGo();
+    // 重置游戏未开始状态，让用户点击开始按钮时播放语音
+    setGameStarted(false);
+    setShowReadyGo(false);
 
     setPlayerState({
       currentQuestionIndex: 0,
@@ -368,6 +467,74 @@ export default function Game({ gameMode, questionType, onBack }: GameProps) {
         />
       );
     }
+  }
+
+  // 如果游戏还未开始，显示开始按钮
+  if (!gameStarted) {
+    return (
+      <div className="min-h-screen bg-gradient-to-br from-blue-50 via-purple-50 to-pink-50 dark:from-gray-900 dark:via-purple-900 dark:to-blue-900 flex items-center justify-center p-4">
+        {/* Ready Go 视觉提示 */}
+        {showReadyGo && (
+          <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60">
+            <div className="text-center animate-pulse">
+              <h1 className="text-8xl font-black text-white mb-4 drop-shadow-2xl">
+                READY
+              </h1>
+              <h1 className="text-9xl font-black bg-gradient-to-r from-yellow-400 via-red-500 to-pink-500 bg-clip-text text-transparent drop-shadow-2xl">
+                GO!!!
+              </h1>
+            </div>
+          </div>
+        )}
+
+        <div className="max-w-2xl w-full">
+          <Card className="shadow-2xl">
+            <CardHeader>
+              <CardTitle className="text-3xl text-center">
+                {gameMode === 'single' ? '单人模式' : '双人PK模式'}
+              </CardTitle>
+              <CardDescription className="text-center text-lg">
+                {getQuestionTypeName(questionType)}
+              </CardDescription>
+            </CardHeader>
+            <CardContent className="space-y-6">
+              {gameMode === 'multi' && (
+                <div className="p-4 bg-amber-50 dark:bg-amber-900/20 rounded-lg">
+                  <p className="text-sm text-gray-600 dark:text-gray-400 mb-1">⚠️ 注意</p>
+                  <p className="text-amber-700 dark:text-amber-300">
+                    双人PK模式限时40秒，答对题目可以让小动物加速！
+                  </p>
+                </div>
+              )}
+
+              <Button
+                onClick={() => {
+                  // 播放语音提示
+                  playReadyGo();
+
+                  // 显示视觉提示
+                  setShowReadyGo(true);
+
+                  // 1.5秒后隐藏视觉提示并开始游戏
+                  setTimeout(() => {
+                    setShowReadyGo(false);
+                    setGameStarted(true);
+                  }, 1500);
+                }}
+                className="w-full text-lg py-6"
+                size="lg"
+              >
+                开始挑战
+              </Button>
+
+              <Button onClick={onBack} variant="outline" className="w-full">
+                返回主菜单
+              </Button>
+            </CardContent>
+          </Card>
+        </div>
+      </div>
+    );
   }
 
   // 双人PK模式界面
