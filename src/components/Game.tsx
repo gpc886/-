@@ -20,6 +20,43 @@ interface AnswerRecord {
   isCorrect: boolean;
 }
 
+// 音效播放函数
+const playSoundEffect = (type: 'correct' | 'wrong') => {
+  try {
+    const audioContext = new (window.AudioContext || (window as any).webkitAudioContext)();
+    const oscillator = audioContext.createOscillator();
+    const gainNode = audioContext.createGain();
+
+    oscillator.connect(gainNode);
+    gainNode.connect(audioContext.destination);
+
+    if (type === 'correct') {
+      // 正确音效：愉悦的上升音调
+      oscillator.type = 'sine';
+      oscillator.frequency.setValueAtTime(523.25, audioContext.currentTime); // C5
+      oscillator.frequency.setValueAtTime(659.25, audioContext.currentTime + 0.1); // E5
+      oscillator.frequency.setValueAtTime(783.99, audioContext.currentTime + 0.2); // G5
+      oscillator.frequency.setValueAtTime(1046.50, audioContext.currentTime + 0.3); // C6
+      gainNode.gain.setValueAtTime(0.3, audioContext.currentTime);
+      gainNode.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + 0.4);
+      oscillator.start(audioContext.currentTime);
+      oscillator.stop(audioContext.currentTime + 0.4);
+    } else {
+      // 错误音效：低沉的下降音调
+      oscillator.type = 'sawtooth';
+      oscillator.frequency.setValueAtTime(200, audioContext.currentTime);
+      oscillator.frequency.exponentialRampToValueAtTime(50, audioContext.currentTime + 0.3);
+      gainNode.gain.setValueAtTime(0.2, audioContext.currentTime);
+      gainNode.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + 0.3);
+      oscillator.start(audioContext.currentTime);
+      oscillator.stop(audioContext.currentTime + 0.3);
+    }
+  } catch (error) {
+    console.log('音效播放失败:', error);
+  }
+};
+
+
 // 玩家状态接口
 interface PlayerState {
   currentQuestionIndex: number;
@@ -123,10 +160,14 @@ export default function Game({ gameMode, questionType, onBack }: GameProps) {
   // 单人模式处理函数
   const handleSingleAnswer = (answerIndex: number) => {
     if (playerState.isAnswered) return;
-    
+
     const currentQuestion = questionsData.questions[playerState.currentQuestionIndex];
-    const newScore = answerIndex === currentQuestion.answer ? playerState.score + 1 : playerState.score;
-    
+    const isCorrect = answerIndex === currentQuestion.answer;
+    const newScore = isCorrect ? playerState.score + 1 : playerState.score;
+
+    // 播放音效
+    playSoundEffect(isCorrect ? 'correct' : 'wrong');
+
     setPlayerState({
       ...playerState,
       selectedAnswer: answerIndex,
@@ -164,6 +205,9 @@ export default function Game({ gameMode, questionType, onBack }: GameProps) {
     const currentQuestion = playerQuestions[state.currentQuestionIndex];
     const isCorrect = answerIndex === currentQuestion.answer;
     const newScore = isCorrect ? state.score + 1 : state.score;
+
+    // 播放音效
+    playSoundEffect(isCorrect ? 'correct' : 'wrong');
 
     // 答对题目时，小动物额外前进
     if (isCorrect) {
