@@ -23,7 +23,30 @@ interface PlayerState {
 }
 
 export default function Game({ gameMode, questionType, onBack }: GameProps) {
-  const [questions] = useState(() => shuffleArray(getQuestionsByType(questionType, 10)));
+  // 生成题目并打乱
+  const generateQuestions = () => {
+    const baseQuestions = getQuestionsByType(questionType, 10);
+    const questions = shuffleArray([...baseQuestions]);
+    
+    // 为双人模式生成两个不同的打乱题目顺序
+    const player1Questions = shuffleArray([...baseQuestions]);
+    const player2Questions = shuffleArray([...baseQuestions]);
+    
+    // 确保两个玩家的题目顺序不同
+    let attempts = 0;
+    let finalPlayer2Questions = player2Questions;
+    while (
+      attempts < 100 &&
+      finalPlayer2Questions.every((q, i) => q.id === player1Questions[i]?.id)
+    ) {
+      finalPlayer2Questions = shuffleArray([...baseQuestions]);
+      attempts++;
+    }
+    
+    return { questions, player1Questions, player2Questions };
+  };
+  
+  const [questionsData] = useState(generateQuestions);
   const [timeLeft, setTimeLeft] = useState(gameMode === 'multi' ? 180 : 0); // 双人模式3分钟
   const [gameEnded, setGameEnded] = useState(false);
   const [showResult, setShowResult] = useState(false);
@@ -75,7 +98,7 @@ export default function Game({ gameMode, questionType, onBack }: GameProps) {
   const handleSingleAnswer = (answerIndex: number) => {
     if (playerState.isAnswered) return;
     
-    const currentQuestion = questions[playerState.currentQuestionIndex];
+    const currentQuestion = questionsData.questions[playerState.currentQuestionIndex];
     const newScore = answerIndex === currentQuestion.answer ? playerState.score + 1 : playerState.score;
     
     setPlayerState({
@@ -88,7 +111,7 @@ export default function Game({ gameMode, questionType, onBack }: GameProps) {
   };
 
   const handleSingleNext = () => {
-    if (playerState.currentQuestionIndex < questions.length - 1) {
+    if (playerState.currentQuestionIndex < questionsData.questions.length - 1) {
       setPlayerState({
         currentQuestionIndex: playerState.currentQuestionIndex + 1,
         selectedAnswer: null,
@@ -106,10 +129,11 @@ export default function Game({ gameMode, questionType, onBack }: GameProps) {
   const handleMultiAnswer = (player: 1 | 2, answerIndex: number) => {
     const state = player === 1 ? player1State : player2State;
     const setState = player === 1 ? setPlayer1State : setPlayer2State;
+    const playerQuestions = player === 1 ? questionsData.player1Questions : questionsData.player2Questions;
     
     if (state.isAnswered) return;
     
-    const currentQuestion = questions[state.currentQuestionIndex];
+    const currentQuestion = playerQuestions[state.currentQuestionIndex];
     const newScore = answerIndex === currentQuestion.answer ? state.score + 1 : state.score;
     
     setState({
@@ -125,7 +149,7 @@ export default function Game({ gameMode, questionType, onBack }: GameProps) {
     const state = player === 1 ? player1State : player2State;
     const setState = player === 1 ? setPlayer1State : setPlayer2State;
     
-    if (state.currentQuestionIndex < questions.length - 1) {
+    if (state.currentQuestionIndex < questionsData.player1Questions.length - 1) {
       setState({
         currentQuestionIndex: state.currentQuestionIndex + 1,
         selectedAnswer: null,
@@ -141,7 +165,7 @@ export default function Game({ gameMode, questionType, onBack }: GameProps) {
       
       // 检查是否两个玩家都完成了
       const otherState = player === 1 ? player2State : player1State;
-      if (otherState.currentQuestionIndex >= questions.length - 1) {
+      if (otherState.currentQuestionIndex >= questionsData.player1Questions.length - 1) {
         setGameEnded(true);
         setShowResult(true);
       }
@@ -181,27 +205,27 @@ export default function Game({ gameMode, questionType, onBack }: GameProps) {
   // 结果界面
   if (showResult) {
     if (gameMode === 'single') {
-      const totalScore = Math.round((playerState.score / questions.length) * 100);
+      const totalScore = Math.round((playerState.score / questionsData.questions.length) * 100);
       return (
         <ResultSingle
           totalScore={totalScore}
           correctCount={playerState.score}
-          totalCount={questions.length}
+          totalCount={questionsData.questions.length}
           questionType={questionType}
           onRestart={handleRestart}
           onBack={onBack}
         />
       );
     } else {
-      const player1Score = Math.round((player1State.score / questions.length) * 100);
-      const player2Score = Math.round((player2State.score / questions.length) * 100);
+      const player1Score = Math.round((player1State.score / questionsData.player1Questions.length) * 100);
+      const player2Score = Math.round((player2State.score / questionsData.player2Questions.length) * 100);
       return (
         <ResultMulti
           player1Score={player1Score}
           player2Score={player2Score}
           player1Correct={player1State.score}
           player2Correct={player2State.score}
-          totalCount={questions.length}
+          totalCount={questionsData.player1Questions.length}
           questionType={questionType}
           onRestart={handleRestart}
           onBack={onBack}
@@ -247,7 +271,7 @@ export default function Game({ gameMode, questionType, onBack }: GameProps) {
           <PlayerArea
             playerName="玩家 1"
             playerColor="blue"
-            questions={questions}
+            questions={questionsData.player1Questions}
             playerState={player1State}
             onAnswer={(answer) => handleMultiAnswer(1, answer)}
             onNext={() => handleMultiNext(1)}
@@ -265,7 +289,7 @@ export default function Game({ gameMode, questionType, onBack }: GameProps) {
           <PlayerArea
             playerName="玩家 2"
             playerColor="pink"
-            questions={questions}
+            questions={questionsData.player2Questions}
             playerState={player2State}
             onAnswer={(answer) => handleMultiAnswer(2, answer)}
             onNext={() => handleMultiNext(2)}
@@ -297,7 +321,7 @@ export default function Game({ gameMode, questionType, onBack }: GameProps) {
           <div className="flex items-center gap-2 px-4 py-2 bg-white dark:bg-gray-800 rounded-full shadow-md">
             <Trophy className="w-5 h-5 text-yellow-500" />
             <span className="font-semibold text-gray-700 dark:text-gray-300">
-              {Math.round((playerState.score / questions.length) * 100)}分
+              {Math.round((playerState.score / questionsData.questions.length) * 100)}分
             </span>
           </div>
         </div>
@@ -305,7 +329,7 @@ export default function Game({ gameMode, questionType, onBack }: GameProps) {
         <PlayerArea
           playerName="单人模式"
           playerColor="blue"
-          questions={questions}
+          questions={questionsData.questions}
           playerState={playerState}
           onAnswer={handleSingleAnswer}
           onNext={handleSingleNext}
