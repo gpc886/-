@@ -810,7 +810,8 @@ export default function Game({ gameMode, questionType, onBack }: GameProps) {
   useEffect(() => {
     let timer: NodeJS.Timeout | null = null;
 
-    if (gameMode === 'multi' && timeLeft > 0 && !gameEnded) {
+    // 只有在321倒计时完成后（showCountdown为false）才启动滴答音效
+    if (gameMode === 'multi' && timeLeft > 0 && !gameEnded && !showCountdown) {
       // 启动滴答音效
       if (!tickTimerRef.current) {
         const tickTimer = setInterval(() => {
@@ -853,7 +854,7 @@ export default function Game({ gameMode, questionType, onBack }: GameProps) {
         tickTimerRef.current = null;
       }
     };
-  }, [gameMode, timeLeft, gameEnded]);
+  }, [gameMode, timeLeft, gameEnded, showCountdown]);
 
   // 赛跑动画（仅双人模式）
   useEffect(() => {
