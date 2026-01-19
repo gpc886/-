@@ -628,14 +628,20 @@ export default function Game({ gameMode, questionType, onBack }: GameProps) {
 
               <Button
                 onClick={() => {
-                  // 播放321语音
-                  play321(() => {
-                    // 语音播放完成后，隐藏视觉提示并开始游戏
-                    startGameAfterVoice();
-                  });
+                  // 双人PK模式播放321语音和显示视觉提示
+                  if (gameMode === 'multi') {
+                    // 播放321语音
+                    play321(() => {
+                      // 语音播放完成后，隐藏视觉提示并开始游戏
+                      startGameAfterVoice();
+                    });
 
-                  // 显示321视觉提示
-                  setShowCountdown(true);
+                    // 显示321视觉提示
+                    setShowCountdown(true);
+                  } else {
+                    // 单人模式直接开始
+                    setGameStarted(true);
+                  }
                 }}
                 className="w-full text-lg py-6"
                 size="lg"
