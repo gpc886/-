@@ -9,7 +9,7 @@ export interface Question {
 
 export type QuestionType = 'wenyan' | 'idiom' | 'poetry';
 
-// 文言文字词题目（60道）
+// 文言文字词题目（120道）
 export const wenyanQuestions: Question[] = [
   {
     id: 'wenyan-1',
@@ -430,10 +430,430 @@ export const wenyanQuestions: Question[] = [
     options: ['信任', '信用', '守信', '相信'],
     answer: 2,
     explanation: '"信"意为守信、诚实。'
+  },
+  {
+    id: 'wenyan-61',
+    question: '《论语》中"有朋自远方来，不亦乐乎"中的"朋"指的是？',
+    options: ['朋友', '志同道合的人', '同学', '亲戚'],
+    answer: 1,
+    explanation: '"朋"指志同道合的人，这里指同学。'
+  },
+  {
+    id: 'wenyan-62',
+    question: '"温故而知新，可以为师矣"中"为"的意思是？',
+    options: ['为了', '成为', '作为', '是'],
+    answer: 1,
+    explanation: '"为"意为成为。'
+  },
+  {
+    id: 'wenyan-63',
+    question: '"学而时习之"中"习"的意思是？',
+    options: ['习惯', '复习', '练习', '学习'],
+    answer: 1,
+    explanation: '"习"意为复习、温习。'
+  },
+  {
+    id: 'wenyan-64',
+    question: '"学而不厌"中"厌"的意思是？',
+    options: ['讨厌', '厌倦', '满足', '厌恶'],
+    answer: 2,
+    explanation: '"厌"通"餍"，意为满足。'
+  },
+  {
+    id: 'wenyan-65',
+    question: '"默而识之"中"识"的意思是？',
+    options: ['知识', '识别', '记住', '认识'],
+    answer: 2,
+    explanation: '"识"意为记住，读作zhì。'
+  },
+  {
+    id: 'wenyan-66',
+    question: '"三十而立"中"立"的意思是？',
+    options: ['站立', '独立', '自立', '确立'],
+    answer: 2,
+    explanation: '"立"意为自立于社会。'
+  },
+  {
+    id: 'wenyan-67',
+    question: '"四十而不惑"中"惑"的意思是？',
+    options: ['迷惑', '困惑', '疑惑', '糊涂'],
+    answer: 1,
+    explanation: '"惑"意为困惑、迷惑。'
+  },
+  {
+    id: 'wenyan-68',
+    question: '"五十而知天命"中"天命"的意思是？',
+    options: ['上天', '命运', '自然规律', '天意'],
+    answer: 1,
+    explanation: '"天命"指命运、上天的旨意。'
+  },
+  {
+    id: 'wenyan-69',
+    question: '"六十而耳顺"中"耳顺"的意思是？',
+    options: ['听力好', '能听懂话', '能听进各种意见', '耳朵顺从'],
+    answer: 2,
+    explanation: '"耳顺"意为能听进各种不同的意见。'
+  },
+  {
+    id: 'wenyan-70',
+    question: '"七十而从心所欲，不逾矩"中"逾"的意思是？',
+    options: ['超过', '越过', '违背', '超过界限'],
+    answer: 2,
+    explanation: '"逾"意为违背、超过。'
+  },
+  {
+    id: 'wenyan-71',
+    question: '"己所不欲，勿施于人"中"施"的意思是？',
+    options: ['实施', '施加', '给予', '施舍'],
+    answer: 1,
+    explanation: '"施"意为施加。'
+  },
+  {
+    id: 'wenyan-72',
+    question: '"三人行，必有我师焉"中"三"的意思是？',
+    options: ['三个', '三五个', '多个', '许多'],
+    answer: 2,
+    explanation: '"三"表示虚数，意为多个、几个。'
+  },
+  {
+    id: 'wenyan-73',
+    question: '"择其善者而从之"中"从"的意思是？',
+    options: ['跟从', '学习', '遵从', '跟随'],
+    answer: 1,
+    explanation: '"从"意为学习、模仿。'
+  },
+  {
+    id: 'wenyan-74',
+    question: '"其不善者而改之"中"改"的意思是？',
+    options: ['改变', '改正', '修改', '更改'],
+    answer: 1,
+    explanation: '"改"意为改正自己的缺点。'
+  },
+  {
+    id: 'wenyan-75',
+    question: '"过则勿惮改"中"惮"的意思是？',
+    options: ['担心', '忌惮', '害怕', '顾虑'],
+    answer: 2,
+    explanation: '"惮"意为害怕、畏惧。'
+  },
+  {
+    id: 'wenyan-76',
+    question: '"见贤思齐焉"中"齐"的意思是？',
+    options: ['整齐', '平等', '看齐', '一致'],
+    answer: 2,
+    explanation: '"齐"意为看齐、向他学习。'
+  },
+  {
+    id: 'wenyan-77',
+    question: '"见不贤而内自省也"中"省"的意思是？',
+    options: ['省略', '节省', '反省', '省份'],
+    answer: 2,
+    explanation: '"省"意为反省、检讨。'
+  },
+  {
+    id: 'wenyan-78',
+    question: '"学而不思则罔"中"罔"的意思是？',
+    options: ['欺骗', '迷惘', '困苦', '危险'],
+    answer: 1,
+    explanation: '"罔"意为迷惘、迷惑。'
+  },
+  {
+    id: 'wenyan-79',
+    question: '"思而不学则殆"中"殆"的意思是？',
+    options: ['危险', '疑惑', '疲倦', '松懈'],
+    answer: 1,
+    explanation: '"殆"意为疑惑、精神疲倦。'
+  },
+  {
+    id: 'wenyan-80',
+    question: '"知之为知之，不知为不知"中"为"的意思是？',
+    options: ['认为', '是', '作为', '因为'],
+    answer: 1,
+    explanation: '"为"意为是。'
+  },
+  {
+    id: 'wenyan-81',
+    question: '"是知也"中"知"的意思是？',
+    options: ['知道', '智慧', '知识', '通"智"'],
+    answer: 3,
+    explanation: '"知"通"智"，意为智慧。'
+  },
+  {
+    id: 'wenyan-82',
+    question: '"人而无信，不知其可也"中"信"的意思是？',
+    options: ['信任', '信用', '守信', '诚实'],
+    answer: 2,
+    explanation: '"信"意为守信、诚信。'
+  },
+  {
+    id: 'wenyan-83',
+    question: '"其可也"中"可"的意思是？',
+    options: ['可以', '可能', '认可', '行得通'],
+    answer: 3,
+    explanation: '"可"意为行得通、可行。'
+  },
+  {
+    id: 'wenyan-84',
+    question: '"事父母几谏"中"几"的意思是？',
+    options: ['几次', '几乎', '轻微', '委婉'],
+    answer: 3,
+    explanation: '"几"意为委婉、轻微。'
+  },
+  {
+    id: 'wenyan-85',
+    question: '"见志不从"中"从"的意思是？',
+    options: ['跟从', '听从', '顺从', '跟随'],
+    answer: 1,
+    explanation: '"从"意为听从。'
+  },
+  {
+    id: 'wenyan-86',
+    question: '"又敬不违"中"违"的意思是？',
+    options: ['违背', '离开', '违反', '反抗'],
+    answer: 0,
+    explanation: '"违"意为违背、违抗。'
+  },
+  {
+    id: 'wenyan-87',
+    question: '"劳而不怨"中"怨"的意思是？',
+    options: ['抱怨', '怨恨', '埋怨', '怨言'],
+    answer: 1,
+    explanation: '"怨"意为怨恨。'
+  },
+  {
+    id: 'wenyan-88',
+    question: '"父母在，不远游"中"远"的意思是？',
+    options: ['远方', '长远', '远离', '距离远'],
+    answer: 2,
+    explanation: '"远"意为远离。'
+  },
+  {
+    id: 'wenyan-89',
+    question: '"游必有方"中"方"的意思是？',
+    options: ['方向', '地方', '正当', '方法'],
+    answer: 1,
+    explanation: '"方"意为地方、去处。'
+  },
+  {
+    id: 'wenyan-90',
+    question: '"父母之年，不可不知也"中第一个"知"的意思是？',
+    options: ['知道', '记住', '了解', '认识'],
+    answer: 1,
+    explanation: '"知"意为记住。'
+  },
+  {
+    id: 'wenyan-91',
+    question: '"一则以喜，一则以惧"中"惧"的意思是？',
+    options: ['恐惧', '担忧', '害怕', '畏惧'],
+    answer: 1,
+    explanation: '"惧"意为担忧、忧虑。'
+  },
+  {
+    id: 'wenyan-92',
+    question: '"古者言之不出"中"言"的意思是？',
+    options: ['语言', '说话', '话语', '言论'],
+    answer: 1,
+    explanation: '"言"意为说话、言语。'
+  },
+  {
+    id: 'wenyan-93',
+    question: '"耻躬之不逮也"中"躬"的意思是？',
+    options: ['身体', '亲自', '躬身', '自身'],
+    answer: 3,
+    explanation: '"躬"意为自身。'
+  },
+  {
+    id: 'wenyan-94',
+    question: '"耻躬之不逮也"中"逮"的意思是？',
+    options: ['到达', '赶上', '及得上', '达到'],
+    answer: 2,
+    explanation: '"逮"意为及得上、达到。'
+  },
+  {
+    id: 'wenyan-95',
+    question: '"君子欲讷于言而敏于行"中"讷"的意思是？',
+    options: ['说话慢', '说话谨慎', '不善言辞', '结巴'],
+    answer: 1,
+    explanation: '"讷"意为说话谨慎、迟缓。'
+  },
+  {
+    id: 'wenyan-96',
+    question: '"敏于行"中"敏"的意思是？',
+    options: ['敏捷', '聪明', '勤勉', '迅速'],
+    answer: 2,
+    explanation: '"敏"意为勤勉、敏捷。'
+  },
+  {
+    id: 'wenyan-97',
+    question: '"德不孤，必有邻"中"孤"的意思是？',
+    options: ['孤独', '孤单', '孤立', '寂寞'],
+    answer: 2,
+    explanation: '"孤"意为孤立。'
+  },
+  {
+    id: 'wenyan-98',
+    question: '"必有邻"中"邻"的意思是？',
+    options: ['邻居', '伙伴', '朋友', '支持者'],
+    answer: 1,
+    explanation: '"邻"意为伙伴、志同道合的人。'
+  },
+  {
+    id: 'wenyan-99',
+    question: '"朽木不可雕也"中"雕"的意思是？',
+    options: ['雕刻', '塑造', '雕琢', '加工'],
+    answer: 2,
+    explanation: '"雕"意为雕琢、雕刻。'
+  },
+  {
+    id: 'wenyan-100',
+    question: '"粪土之墙不可圬也"中"圬"的意思是？',
+    options: ['建筑', '涂抹', '粉刷', '修饰'],
+    answer: 1,
+    explanation: '"圬"意为涂抹、粉刷。'
+  },
+  {
+    id: 'wenyan-101',
+    question: '"始吾于人也"中"于"的意思是？',
+    options: ['对于', '在', '向', '对'],
+    answer: 0,
+    explanation: '"于"意为对于。'
+  },
+  {
+    id: 'wenyan-102',
+    question: '"听其言而信其行"中"信"的意思是？',
+    options: ['相信', '信任', '守信', '信用'],
+    answer: 0,
+    explanation: '"信"意为相信。'
+  },
+  {
+    id: 'wenyan-103',
+    question: '"今吾于人也"中"于"的意思是？',
+    options: ['对于', '在', '向', '对'],
+    answer: 0,
+    explanation: '"于"意为对于。'
+  },
+  {
+    id: 'wenyan-104',
+    question: '"听其言而观其行"中"观"的意思是？',
+    options: ['观看', '观察', '审视', '看'],
+    answer: 1,
+    explanation: '"观"意为观察。'
+  },
+  {
+    id: 'wenyan-105',
+    question: '"质胜文则野"中"文"的意思是？',
+    options: ['文章', '文化', '文采', '文明'],
+    answer: 2,
+    explanation: '"文"意为文采、礼乐修养。'
+  },
+  {
+    id: 'wenyan-106',
+    question: '"文胜质则史"中"史"的意思是？',
+    options: ['历史', '史官', '浮华', '文辞华丽'],
+    answer: 3,
+    explanation: '"史"意为浮华、文辞华丽。'
+  },
+  {
+    id: 'wenyan-107',
+    question: '"文质彬彬"中"彬彬"的意思是？',
+    options: ['文雅', '文质兼备的样子', '优雅', '斯文'],
+    answer: 1,
+    explanation: '"彬彬"意为文质兼备、配合适宜的样子。'
+  },
+  {
+    id: 'wenyan-108',
+    question: '"然后君子"中"然后"的意思是？',
+    options: ['这样之后', '然后', '之后', '最后'],
+    answer: 0,
+    explanation: '"然后"意为这样之后。'
+  },
+  {
+    id: 'wenyan-109',
+    question: '"知之者不如好之者"中"好"的意思是？',
+    options: ['爱好', '喜好', '喜爱', '喜欢'],
+    answer: 1,
+    explanation: '"好"意为爱好、喜好。'
+  },
+  {
+    id: 'wenyan-110',
+    question: '"好之者不如乐之者"中"乐"的意思是？',
+    options: ['音乐', '快乐', '以...为乐', '享乐'],
+    answer: 2,
+    explanation: '"乐"意为以...为乐。'
+  },
+  {
+    id: 'wenyan-111',
+    question: '"中人以上，可以语上也"中"语"的意思是？',
+    options: ['语言', '说话', '告诉', '谈论'],
+    answer: 2,
+    explanation: '"语"意为告诉、告诉...关于...的事。'
+  },
+  {
+    id: 'wenyan-112',
+    question: '"中人以下，不可以语上也"中两个"上"的意思是？',
+    options: ['上面', '上等，高深的道理', '向上', '上级'],
+    answer: 1,
+    explanation: '"上"指高深的学问或道理。'
+  },
+  {
+    id: 'wenyan-113',
+    question: '"知者乐水"中第一个"乐"的意思是？',
+    options: ['快乐', '喜爱', '音乐', '乐观'],
+    answer: 1,
+    explanation: '"乐"意为喜爱。'
+  },
+  {
+    id: 'wenyan-114',
+    question: '"仁者乐山"中"乐"的意思是？',
+    options: ['快乐', '喜爱', '音乐', '乐观'],
+    answer: 1,
+    explanation: '"乐"意为喜爱。'
+  },
+  {
+    id: 'wenyan-115',
+    question: '"知者动，仁者静"中"动"的意思是？',
+    options: ['运动', '行动', '活跃', '变动'],
+    answer: 2,
+    explanation: '"动"意为活跃、灵动。'
+  },
+  {
+    id: 'wenyan-116',
+    question: '"知者乐，仁者寿"中"寿"的意思是？',
+    options: ['长寿', '寿命', '健康', '年老'],
+    answer: 0,
+    explanation: '"寿"意为长寿。'
+  },
+  {
+    id: 'wenyan-117',
+    question: '"逝者如斯夫"中"逝"的意思是？',
+    options: ['消逝', '流逝', '去世', '消失'],
+    answer: 1,
+    explanation: '"逝"意为流逝。'
+  },
+  {
+    id: 'wenyan-118',
+    question: '"不舍昼夜"中"舍"的意思是？',
+    options: ['舍弃', '停止', '放弃', '离开'],
+    answer: 1,
+    explanation: '"舍"意为停止。'
+  },
+  {
+    id: 'wenyan-119',
+    question: '"譬如为山，未成一篑"中"篑"的意思是？',
+    options: ['筐', '篓子', '土筐', '容器'],
+    answer: 2,
+    explanation: '"篑"指装土的筐子。'
+  },
+  {
+    id: 'wenyan-120',
+    question: '"止，吾止也"中"止"的意思是？',
+    options: ['停止', '终止', '中止', '中止'],
+    answer: 0,
+    explanation: '"止"意为停止。'
   }
 ];
 
-// 成语典故题目（60道）
+// 成语典故题目（120道）
 export const idiomQuestions: Question[] = [
   {
     id: 'idiom-1',
@@ -854,10 +1274,430 @@ export const idiomQuestions: Question[] = [
     options: ['精华', '好上加好', '追求完美', '进步'],
     answer: 2,
     explanation: '"精益求精"形容追求完美，好上加好。'
+  },
+  {
+    id: 'idiom-61',
+    question: '"熟能生巧"这个成语的意思是？',
+    options: ['熟练了就巧妙', '反复练习就能掌握技巧', '熟练后自然巧妙', '熟能生巧技艺高'],
+    answer: 1,
+    explanation: '"熟能生巧"指反复练习就能掌握技巧，越做越熟练。'
+  },
+  {
+    id: 'idiom-62',
+    question: '"笨鸟先飞"这个成语比喻？',
+    options: ['鸟飞得早', '能力差的人先行动', '勤奋努力', '早做准备'],
+    answer: 1,
+    explanation: '"笨鸟先飞"比喻能力差的人怕落后，比别人先行动。'
+  },
+  {
+    id: 'idiom-63',
+    question: '"勤能补拙"这个成语的意思是？',
+    options: ['勤奋补拙劣', '勤奋可以弥补天资的不足', '勤劳能补差', '勤奋能成功'],
+    answer: 1,
+    explanation: '"勤能补拙"指勤奋可以弥补天资的不足。'
+  },
+  {
+    id: 'idiom-64',
+    question: '"铁杵成针"这个成语比喻？',
+    options: ['铁杵变针', '只要有毅力，再难的事也能成功', '磨铁杵', '针的由来'],
+    answer: 1,
+    explanation: '"铁杵成针"比喻只要有毅力，再难的事也能成功。'
+  },
+  {
+    id: 'idiom-65',
+    question: '"水滴石穿"这个成语说明的道理是？',
+    options: ['水很厉害', '坚持就能成功', '石头被穿', '水的力量'],
+    answer: 1,
+    explanation: '"水滴石穿"比喻只要坚持不懈，微小的力量也能成就大事。'
+  },
+  {
+    id: 'idiom-66',
+    question: '"积少成多"这个成语的意思是？',
+    options: ['积累变多', '一点点积累就能由少变多', '积少为多', '积累财富'],
+    answer: 1,
+    explanation: '"积少成多"指只要不断积累，就会从少变多。'
+  },
+  {
+    id: 'idiom-67',
+    question: '"聚沙成塔"这个成语比喻？',
+    options: ['沙子堆成塔', '积少成多，积小成大', '建塔', '收集沙子'],
+    answer: 1,
+    explanation: '"聚沙成塔"比喻聚少成多，积小成大。'
+  },
+  {
+    id: 'idiom-68',
+    question: '"集腋成裘"这个成语中的"腋"指的是？',
+    options: ['腋下', '狐狸腋下的皮毛', '皮毛', '动物'],
+    answer: 1,
+    explanation: '"腋"指狐狸腋下的皮毛。'
+  },
+  {
+    id: 'idiom-69',
+    question: '"九牛一毛"这个成语形容？',
+    options: ['九头牛', '微不足道', '牛毛', '数量多'],
+    answer: 1,
+    explanation: '"九牛一毛"比喻极大数量中极微小的数量，微不足道。'
+  },
+  {
+    id: 'idiom-70',
+    question: '"沧海一粟"这个成语比喻？',
+    options: ['大海中的米粒', '渺小', '数量少', '米粒'],
+    answer: 1,
+    explanation: '"沧海一粟"比喻非常渺小。'
+  },
+  {
+    id: 'idiom-71',
+    question: '"杯水车薪"这个成语的意思是？',
+    options: ['杯子水车', '力量太小，无济于事', '水车', '帮助'],
+    answer: 1,
+    explanation: '"杯水车薪"比喻力量太小，解决不了问题。'
+  },
+  {
+    id: 'idiom-72',
+    question: '"螳臂当车"这个成语讽刺的是？',
+    options: ['螳螂', '不自量力', '螳螂挡车', '勇敢'],
+    answer: 1,
+    explanation: '"螳臂当车"比喻做力量达不到的事情，必然失败。'
+  },
+  {
+    id: 'idiom-73',
+    question: '"蚍蜉撼树"这个成语比喻？',
+    options: ['蚂蚁撼树', '不自量力', '蚂蚁', '撼动'],
+    answer: 1,
+    explanation: '"蚍蜉撼树"比喻力量很小而妄想动摇强大的事物。'
+  },
+  {
+    id: 'idiom-74',
+    question: '"以卵击石"这个成语比喻？',
+    options: ['鸡蛋碰石头', '不自量力，自取灭亡', '石头', '击打'],
+    answer: 1,
+    explanation: '"以卵击石"比喻不自量力，自取灭亡。'
+  },
+  {
+    id: 'idiom-75',
+    question: '"班门弄斧"这个成语讽刺的是？',
+    options: ['弄斧', '在行家面前卖弄本领', '班门', '斧子'],
+    answer: 1,
+    explanation: '"班门弄斧"比喻在行家面前卖弄本领。'
+  },
+  {
+    id: 'idiom-76',
+    question: '"关公面前耍大刀"这个成语的意思是？',
+    options: ['耍大刀', '在行家面前卖弄', '关羽', '武术'],
+    answer: 1,
+    explanation: '"关公面前耍大刀"比喻在行家面前卖弄本领。'
+  },
+  {
+    id: 'idiom-77',
+    question: '"井底之蛙"这个成语比喻？',
+    options: ['青蛙', '见识短浅的人', '井水', '游泳'],
+    answer: 1,
+    explanation: '"井底之蛙"比喻见识短浅的人。'
+  },
+  {
+    id: 'idiom-78',
+    question: '"管中窥豹"这个成语的意思是？',
+    options: ['看豹子', '只看到一部分', '管子', '豹子'],
+    answer: 1,
+    explanation: '"管中窥豹"比喻只看到事物的一部分，不能全面了解。'
+  },
+  {
+    id: 'idiom-79',
+    question: '"坐井观天"这个成语比喻？',
+    options: ['看天', '眼界狭小', '井里', '天空'],
+    answer: 1,
+    explanation: '"坐井观天"比喻眼界狭小，见识有限。'
+  },
+  {
+    id: 'idiom-80',
+    question: '"鼠目寸光"这个成语形容的是？',
+    options: ['老鼠', '眼光短浅', '视力', '眼睛'],
+    answer: 1,
+    explanation: '"鼠目寸光"比喻眼光短浅，见识浅薄。'
+  },
+  {
+    id: 'idiom-81',
+    question: '"盲人摸象"这个成语说明的道理是？',
+    options: ['盲人摸象', '只了解局部，不了解整体', '大象', '触摸'],
+    answer: 1,
+    explanation: '"盲人摸象"比喻只了解局部，不了解整体。'
+  },
+  {
+    id: 'idiom-82',
+    question: '"一叶障目"这个成语比喻？',
+    options: ['叶子遮眼', '被局部现象迷惑，看不到全局', '障目', '眼睛'],
+    answer: 1,
+    explanation: '"一叶障目"比喻被局部的或暂时的现象所迷惑，看不到全局。'
+  },
+  {
+    id: 'idiom-83',
+    question: '"因小失大"这个成语的意思是？',
+    options: ['小的变大的', '为了小的利益而造成大的损失', '失去', '损失'],
+    answer: 1,
+    explanation: '"因小失大"指为了小的利益而造成大的损失。'
+  },
+  {
+    id: 'idiom-84',
+    question: '"得不偿失"这个成语形容的是？',
+    options: ['得失', '所得的抵不上所失的', '得失相当', '划算'],
+    answer: 1,
+    explanation: '"得不偿失"指所得的抵不上所失的。'
+  },
+  {
+    id: 'idiom-85',
+    question: '"捡了芝麻丢了西瓜"这个成语比喻？',
+    options: ['捡芝麻', '因小失大', '西瓜', '收获'],
+    answer: 1,
+    explanation: '"捡了芝麻丢了西瓜"比喻因小失大。'
+  },
+  {
+    id: 'idiom-86',
+    question: '"杀鸡取卵"这个成语比喻？',
+    options: ['杀鸡', '只图眼前利益，不顾长远利益', '取卵', '贪心'],
+    answer: 1,
+    explanation: '"杀鸡取卵"比喻只图眼前利益，不顾长远利益。'
+  },
+  {
+    id: 'idiom-87',
+    question: '"竭泽而渔"这个成语的意思是？',
+    options: ['捕鱼', '只图眼前利益，不顾后果', '渔网', '沼泽'],
+    answer: 1,
+    explanation: '"竭泽而渔"比喻只图眼前利益，不顾长远利益。'
+  },
+  {
+    id: 'idiom-88',
+    question: '"饮鸩止渴"这个成语比喻？',
+    options: ['喝毒酒', '用错误的办法解决眼前的困难', '止渴', '饮鸩'],
+    answer: 1,
+    explanation: '"饮鸩止渴"比喻用错误的办法解决眼前的困难，不顾后果。'
+  },
+  {
+    id: 'idiom-89',
+    question: '"抱薪救火"这个成语的意思是？',
+    options: ['救火', '用错误的方法，反而使问题更严重', '抱柴', '火灾'],
+    answer: 1,
+    explanation: '"抱薪救火"比喻用错误的方法，反而使问题更严重。'
+  },
+  {
+    id: 'idiom-90',
+    question: '"火上浇油"这个成语比喻？',
+    options: ['倒油', '使事情更加严重', '火烧', '添油'],
+    answer: 1,
+    explanation: '"火上浇油"比喻使人更加愤怒或使事态更加严重。'
+  },
+  {
+    id: 'idiom-91',
+    question: '"雪上加霜"这个成语形容的是？',
+    options: ['雪霜', '接连遭受灾难，苦上加苦', '冬天', '寒冷'],
+    answer: 1,
+    explanation: '"雪上加霜"比喻接连遭受灾难，苦上加苦。'
+  },
+  {
+    id: 'idiom-92',
+    question: '"落井下石"这个成语的意思是？',
+    options: ['扔石头', '乘人危难时加以陷害', '井', '落石'],
+    answer: 1,
+    explanation: '"落井下石"比喻乘人危难时加以陷害。'
+  },
+  {
+    id: 'idiom-93',
+    question: '"趁火打劫"这个成语比喻？',
+    options: ['火灾', '趁人之危，掠夺财物', '打劫', '抢劫'],
+    answer: 1,
+    explanation: '"趁火打劫"比喻趁人之危，掠夺财物。'
+  },
+  {
+    id: 'idiom-94',
+    question: '"浑水摸鱼"这个成语的意思是？',
+    options: ['摸鱼', '趁混乱时获取不正当利益', '浑水', '捕鱼'],
+    answer: 1,
+    explanation: '"浑水摸鱼"比喻趁混乱时获取不正当利益。'
+  },
+  {
+    id: 'idiom-95',
+    question: '"顺手牵羊"这个成语比喻？',
+    options: ['牵羊', '顺手拿走别人的东西', '偷窃', '顺手'],
+    answer: 1,
+    explanation: '"顺手牵羊"比喻顺手拿走别人的东西。'
+  },
+  {
+    id: 'idiom-96',
+    question: '"守株待兔"这个成语讽刺的是？',
+    options: ['兔子', '死守狭隘经验，不知变通', '树桩', '等待'],
+    answer: 1,
+    explanation: '"守株待兔"讽刺死守狭隘经验，不知变通的人。'
+  },
+  {
+    id: 'idiom-97',
+    question: '"刻舟求剑"这个成语讽刺的是？',
+    options: ['剑', '拘泥成法，不知变通', '船', '刻记号'],
+    answer: 1,
+    explanation: '"刻舟求剑"讽刺拘泥成法，不知变通的人。'
+  },
+  {
+    id: 'idiom-98',
+    question: '"按图索骥"这个成语的意思是？',
+    options: ['找马', '机械地照搬教条', '画图', '索骥'],
+    answer: 1,
+    explanation: '"按图索骥"比喻机械地照搬教条，不知变通。'
+  },
+  {
+    id: 'idiom-99',
+    question: '"照猫画虎"这个成语比喻？',
+    options: ['画画', '只是模仿，缺乏创造性', '猫虎', '临摹'],
+    answer: 1,
+    explanation: '"照猫画虎"比喻只是模仿，缺乏创造性。'
+  },
+  {
+    id: 'idiom-100',
+    question: '"鹦鹉学舌"这个成语讽刺的是？',
+    options: ['鹦鹉', '只会模仿，没有主见', '学舌', '鸟'],
+    answer: 1,
+    explanation: '"鹦鹉学舌"讽刺只会模仿，没有主见的人。'
+  },
+  {
+    id: 'idiom-101',
+    question: '"东施效颦"这个成语讽刺的是？',
+    options: ['丑女', '盲目模仿，适得其反', '西施', '效仿'],
+    answer: 1,
+    explanation: '"东施效颦"讽刺盲目模仿，适得其反。'
+  },
+  {
+    id: 'idiom-102',
+    question: '"邯郸学步"这个成语比喻？',
+    options: ['学走路', '模仿别人，反而失掉自己原有的技能', '邯郸', '步法'],
+    answer: 1,
+    explanation: '"邯郸学步"比喻模仿别人，反而失掉自己原有的技能。'
+  },
+  {
+    id: 'idiom-103',
+    question: '"叶公好龙"这个成语讽刺的是？',
+    options: ['喜欢龙', '口头上说喜欢，实际上并不真喜欢', '叶公', '爱好'],
+    answer: 1,
+    explanation: '"叶公好龙"讽刺口头上说喜欢，实际上并不真喜欢的人。'
+  },
+  {
+    id: 'idiom-104',
+    question: '"掩耳盗铃"这个成语讽刺的是？',
+    options: ['铃铛', '自己欺骗自己', '偷窃', '耳朵'],
+    answer: 1,
+    explanation: '"掩耳盗铃"讽刺自己欺骗自己的人。'
+  },
+  {
+    id: 'idiom-105',
+    question: '"自欺欺人"这个成语的意思是？',
+    options: ['欺骗', '欺骗自己，也欺骗别人', '欺人', '自欺'],
+    answer: 1,
+    explanation: '"自欺欺人"指欺骗自己，也欺骗别人。'
+  },
+  {
+    id: 'idiom-106',
+    question: '"弄虚作假"这个成语比喻？',
+    options: ['做假', '耍手段，搞欺骗', '虚假', '弄虚'],
+    answer: 1,
+    explanation: '"弄虚作假"指耍手段，搞欺骗。'
+  },
+  {
+    id: 'idiom-107',
+    question: '"招摇撞骗"这个成语的意思是？',
+    options: ['招摇', '假借名义，到处诈骗', '撞骗', '欺骗'],
+    answer: 1,
+    explanation: '"招摇撞骗"指假借名义，到处诈骗。'
+  },
+  {
+    id: 'idiom-108',
+    question: '"口是心非"这个成语形容的是？',
+    options: ['口不对心', '嘴里说的和心里想的相反', '是非', '矛盾'],
+    answer: 1,
+    explanation: '"口是心非"形容嘴里说的和心里想的相反。'
+  },
+  {
+    id: 'idiom-109',
+    question: '"阳奉阴违"这个成语的意思是？',
+    options: ['阴阳', '表面服从，暗中违背', '奉承', '违背'],
+    answer: 1,
+    explanation: '"阳奉阴违"指表面服从，暗中违背。'
+  },
+  {
+    id: 'idiom-110',
+    question: '"两面三刀"这个成语比喻？',
+    options: ['刀', '阴险狡猾，当面一套背后一套', '两面', '狡猾'],
+    answer: 1,
+    explanation: '"两面三刀"比喻阴险狡猾，当面一套背后一套。'
+  },
+  {
+    id: 'idiom-111',
+    question: '"表里不一"这个成语形容的是？',
+    options: ['内外不同', '表面和内心不一致', '里外', '一致'],
+    answer: 1,
+    explanation: '"表里不一"形容表面和内心不一致。'
+  },
+  {
+    id: 'idiom-112',
+    question: '"口蜜腹剑"这个成语比喻？',
+    options: ['蜜剑', '嘴甜心毒，阴险狡诈', '蜜蜂', '宝剑'],
+    answer: 1,
+    explanation: '"口蜜腹剑"比喻嘴甜心毒，阴险狡诈。'
+  },
+  {
+    id: 'idiom-113',
+    question: '"笑里藏刀"这个成语的意思是？',
+    options: ['藏刀', '外表和善，内心险恶', '笑容', '刀子'],
+    answer: 1,
+    explanation: '"笑里藏刀"形容外表和善，内心险恶。'
+  },
+  {
+    id: 'idiom-114',
+    question: '"绵里藏针"这个成语比喻？',
+    options: ['藏针', '外表柔弱，内心刚强', '棉花', '针'],
+    answer: 1,
+    explanation: '"绵里藏针"比喻外表柔弱，内心刚强。'
+  },
+  {
+    id: 'idiom-115',
+    question: '"刚柔相济"这个成语的意思是？',
+    options: ['刚柔', '刚强的和柔和的互相补充', '刚强', '柔和'],
+    answer: 1,
+    explanation: '"刚柔相济"指刚强的和柔和的互相补充。'
+  },
+  {
+    id: 'idiom-116',
+    question: '"恩威并施"这个成语比喻？',
+    options: ['恩威', '恩惠和威严同时使用', '施恩', '威严'],
+    answer: 1,
+    explanation: '"恩威并施"指恩惠和威严同时使用。'
+  },
+  {
+    id: 'idiom-117',
+    question: '"宽猛相济"这个成语的意思是？',
+    options: ['宽猛', '宽大和严厉互相补充', '宽容', '严厉'],
+    answer: 1,
+    explanation: '"宽猛相济"指宽大和严厉互相补充。'
+  },
+  {
+    id: 'idiom-118',
+    question: '"恩怨分明"这个成语形容的是？',
+    options: ['恩怨', '恩惠和怨仇分得清楚', '分明', '清楚'],
+    answer: 1,
+    explanation: '"恩怨分明"形容恩惠和怨仇分得清楚。'
+  },
+  {
+    id: 'idiom-119',
+    question: '"爱憎分明"这个成语的意思是？',
+    options: ['爱憎', '爱和恨的界限分明', '分明', '清楚'],
+    answer: 1,
+    explanation: '"爱憎分明"指爱和恨的界限分明。'
+  },
+  {
+    id: 'idiom-120',
+    question: '"是非分明"这个成语比喻？',
+    options: ['是非', '对错分得清楚', '分明', '清晰'],
+    answer: 1,
+    explanation: '"是非分明"指对错分得清楚。'
   }
 ];
 
-// 古诗词题目（60道）
+// 古诗词题目（120道）
 export const poetryQuestions: Question[] = [
   {
     id: 'poetry-1',
@@ -1278,6 +2118,426 @@ export const poetryQuestions: Question[] = [
     options: ['杜甫', '李白', '白居易', '王维'],
     answer: 1,
     explanation: '这是李白《蜀道难》中的名句。'
+  },
+  {
+    id: 'poetry-61',
+    question: '"春风又绿江南岸，明月何时照我还"的作者是？',
+    options: ['王安石', '苏轼', '欧阳修', '辛弃疾'],
+    answer: 0,
+    explanation: '这是王安石《泊船瓜洲》中的诗句。'
+  },
+  {
+    id: 'poetry-62',
+    question: '"不畏浮云遮望眼，自缘身在最高层"表达的是？',
+    options: ['站得高', '不被假象迷惑，要有远见', '不畏困难', '自信'],
+    answer: 1,
+    explanation: '表达了不被假象迷惑，要有远见的哲理。'
+  },
+  {
+    id: 'poetry-63',
+    question: '"横看成岭侧成峰，远近高低各不同"蕴含的哲理是？',
+    options: ['山的多姿', '从不同角度看问题，结果不同', '山水之美', '远近高低'],
+    answer: 1,
+    explanation: '说明从不同角度看问题，会得到不同的结论。'
+  },
+  {
+    id: 'poetry-64',
+    question: '"春色满园关不住，一枝红杏出墙来"的作者是？',
+    options: ['叶绍翁', '杨万里', '范成大', '陆游'],
+    answer: 0,
+    explanation: '这是叶绍翁《游园不值》中的诗句。'
+  },
+  {
+    id: 'poetry-65',
+    question: '"小荷才露尖尖角，早有蜻蜓立上头"描写的是？',
+    options: ['荷花', '初夏的景象', '蜻蜓', '池塘'],
+    answer: 1,
+    explanation: '描写初夏时节荷叶初长、蜻蜓停立的景象。'
+  },
+  {
+    id: 'poetry-66',
+    question: '"接天莲叶无穷碧，映日荷花别样红"的作者是？',
+    options: ['杨万里', '范成大', '陆游', '苏轼'],
+    answer: 0,
+    explanation: '这是杨万里《晓出净慈寺送林子方》中的诗句。'
+  },
+  {
+    id: 'poetry-67',
+    question: '"水光潋滟晴方好，山色空蒙雨亦奇"描写的是？',
+    options: ['西湖', '太湖', '洞庭湖', '鄱阳湖'],
+    answer: 0,
+    explanation: '这是苏轼《饮湖上初晴后雨》中的诗句，描写西湖。'
+  },
+  {
+    id: 'poetry-68',
+    question: '"欲把西湖比西子，淡妆浓抹总相宜"中的"西子"指的是？',
+    options: ['西施', '西子', '美人', '女子'],
+    answer: 0,
+    explanation: '"西子"指西施，古代四大美女之一。'
+  },
+  {
+    id: 'poetry-69',
+    question: '"不识庐山真面目，只缘身在此山中"的作者是？',
+    options: ['李白', '杜甫', '苏轼', '王维'],
+    answer: 2,
+    explanation: '这是苏轼《题西林壁》中的诗句。'
+  },
+  {
+    id: 'poetry-70',
+    question: '"竹外桃花三两枝，春江水暖鸭先知"描写的季节是？',
+    options: ['春季', '夏季', '秋季', '冬季'],
+    answer: 0,
+    explanation: '描写的是早春时节的景象。'
+  },
+  {
+    id: 'poetry-71',
+    question: '"几处早莺争暖树，谁家新燕啄春泥"的作者是？',
+    options: ['白居易', '杜甫', '李白', '王维'],
+    answer: 0,
+    explanation: '这是白居易《钱塘湖春行》中的诗句。'
+  },
+  {
+    id: 'poetry-72',
+    question: '"乱花渐欲迷人眼，浅草才能没马蹄"描写的是？',
+    options: ['春天', '夏天', '秋天', '冬天'],
+    answer: 0,
+    explanation: '描写早春时节花草初长的景象。'
+  },
+  {
+    id: 'poetry-73',
+    question: '"枯藤老树昏鸦，小桥流水人家"的作者是？',
+    options: ['马致远', '白朴', '关汉卿', '王实甫'],
+    answer: 0,
+    explanation: '这是马致远《天净沙·秋思》中的句子。'
+  },
+  {
+    id: 'poetry-74',
+    question: '"夕阳西下，断肠人在天涯"表达的情感是？',
+    options: ['喜悦', '悲伤', '思乡', '忧愁'],
+    answer: 2,
+    explanation: '表达了游子思乡的凄凉之情。'
+  },
+  {
+    id: 'poetry-75',
+    question: '"渭城朝雨浥轻尘，客舍青青柳色新"的作者是？',
+    options: ['王维', '李白', '杜甫', '白居易'],
+    answer: 0,
+    explanation: '这是王维《送元二使安西》中的诗句。'
+  },
+  {
+    id: 'poetry-76',
+    question: '"劝君更尽一杯酒"中"更"的意思是？',
+    options: ['更加', '再', '更改', '更换'],
+    answer: 1,
+    explanation: '"更"意为再。'
+  },
+  {
+    id: 'poetry-77',
+    question: '"孤帆远影碧空尽，唯见长江天际流"表达的送别之情是？',
+    options: ['不舍', '欢乐', '平静', '悲伤'],
+    answer: 0,
+    explanation: '表达了对友人的依依不舍之情。'
+  },
+  {
+    id: 'poetry-78',
+    question: '"桃花潭水深千尺"运用的修辞手法是？',
+    options: ['比喻', '夸张', '拟人', '对偶'],
+    answer: 1,
+    explanation: '运用夸张手法，表现友情之深。'
+  },
+  {
+    id: 'poetry-79',
+    question: '"海内存知己，天涯若比邻"表达的是？',
+    options: ['友情', '爱情', '亲情', '乡情'],
+    answer: 0,
+    explanation: '表达了深厚的友情，距离不是问题。'
+  },
+  {
+    id: 'poetry-80',
+    question: '"无为在歧路，儿女共沾巾"中的"儿女"指的是？',
+    options: ['子女', '年轻人', '普通人', '男女'],
+    answer: 2,
+    explanation: '"儿女"指普通人，这里指青年男女。'
+  },
+  {
+    id: 'poetry-81',
+    question: '"山重水复疑无路，柳暗花明又一村"表达的哲理是？',
+    options: ['山多水多', '困境中蕴含希望', '景色美丽', '路途曲折'],
+    answer: 1,
+    explanation: '表达了在困境中蕴含着希望的哲理。'
+  },
+  {
+    id: 'poetry-82',
+    question: '"萧鼓追随春社近，衣冠简朴古风存"的作者是？',
+    options: ['陆游', '范成大', '杨万里', '苏轼'],
+    answer: 0,
+    explanation: '这是陆游《游山西村》中的诗句。'
+  },
+  {
+    id: 'poetry-83',
+    question: '"纸上得来终觉浅，绝知此事要躬行"的意思是？',
+    options: ['读书有用', '从书本上得到的知识还要亲身实践', '实践重要', '知识浅显'],
+    answer: 1,
+    explanation: '强调实践的重要性，理论必须联系实际。'
+  },
+  {
+    id: 'poetry-84',
+    question: '"等闲识得东风面，万紫千红总是春"的作者是？',
+    options: ['朱熹', '程颢', '陆游', '范成大'],
+    answer: 0,
+    explanation: '这是朱熹《春日》中的诗句。'
+  },
+  {
+    id: 'poetry-85',
+    question: '"问渠那得清如许，为有源头活水来"中"渠"指的是？',
+    options: ['水渠', '池塘', '河流', '沟渠'],
+    answer: 1,
+    explanation: '"渠"指池塘。'
+  },
+  {
+    id: 'poetry-86',
+    question: '"为有源头活水来"蕴含的哲理是？',
+    options: ['水要流动', '不断学习新知识，才能保持活力', '源头很重要', '活水好'],
+    answer: 1,
+    explanation: '说明要不断学习新知识，才能保持思想的活力。'
+  },
+  {
+    id: 'poetry-87',
+    question: '"人生自古谁无死，留取丹心照汗青"中"汗青"指的是？',
+    options: ['汗', '青史', '史册', '历史'],
+    answer: 2,
+    explanation: '"汗青"指史册。古人用竹简书写，先用火烤干竹青，叫汗青。'
+  },
+  {
+    id: 'poetry-88',
+    question: '"辛苦遭逢起一经"中"一经"指的是？',
+    options: ['一经书', '经书', '经典', '一经考试'],
+    answer: 1,
+    explanation: '"一经"指儒家经典。'
+  },
+  {
+    id: 'poetry-89',
+    question: '"干戈寥落四周星"中"干戈"指的是？',
+    options: ['武器', '战争', '兵器', '干戈'],
+    answer: 1,
+    explanation: '"干戈"指战争。'
+  },
+  {
+    id: 'poetry-90',
+    question: '"山河破碎风飘絮，身世浮沉雨打萍"运用了什么修辞手法？',
+    options: ['比喻', '拟人', '夸张', '对偶'],
+    answer: 0,
+    explanation: '运用比喻，将国家命运比作风中柳絮，个人命运比作雨打浮萍。'
+  },
+  {
+    id: 'poetry-91',
+    question: '"惶恐滩头说惶恐，零丁洋里叹零丁"中的"惶恐"和"零丁"分别指？',
+    options: ['地名和心情', '心情和地名', '都是地名', '都是心情'],
+    answer: 1,
+    explanation: '"惶恐"是地名（惶恐滩），"零丁"是地名（零丁洋），也双关孤独无依的心情。'
+  },
+  {
+    id: 'poetry-92',
+    question: '"粉身碎骨浑不怕，要留清白在人间"中"浑"的意思是？',
+    options: ['浑浊', '全', '浑身', '都'],
+    answer: 1,
+    explanation: '"浑"意为全、都。'
+  },
+  {
+    id: 'poetry-93',
+    question: '"千锤万凿出深山"中"千锤万凿"形容的是？',
+    options: ['开采艰难', '开采次数多', '锤炼', '打凿'],
+    answer: 0,
+    explanation: '形容开采石灰石的艰难过程。'
+  },
+  {
+    id: 'poetry-94',
+    question: '"烈火焚烧若等闲"中"若等闲"的意思是？',
+    options: ['好像很闲', '看得平常', '很悠闲', '若无其事'],
+    answer: 1,
+    explanation: '"若等闲"意为看得平常，不当回事。'
+  },
+  {
+    id: 'poetry-95',
+    question: '"咬定青山不放松"的作者是？',
+    options: ['郑燮', '李白', '杜甫', '苏轼'],
+    answer: 0,
+    explanation: '这是郑燮（郑板桥）《竹石》中的诗句。'
+  },
+  {
+    id: 'poetry-96',
+    question: '"立根原在破岩中"中"原"的意思是？',
+    options: ['原来', '原来就', '本', '根本'],
+    answer: 1,
+    explanation: '"原"意为本来。'
+  },
+  {
+    id: 'poetry-97',
+    question: '"千磨万击还坚劲"中"坚劲"的意思是？',
+    options: ['坚定强劲', '坚强', '强劲', '刚强'],
+    answer: 0,
+    explanation: '"坚劲"意为坚定强劲。'
+  },
+  {
+    id: 'poetry-98',
+    question: '"任尔东西南北风"中"任"的意思是？',
+    options: ['任务', '任凭', '让', '任命'],
+    answer: 1,
+    explanation: '"任"意为任凭、无论。'
+  },
+  {
+    id: 'poetry-99',
+    question: '"落红不是无情物，化作春泥更护花"中"落红"指的是？',
+    options: ['红花', '落花', '红色', '花朵'],
+    answer: 1,
+    explanation: '"落红"指落花。'
+  },
+  {
+    id: 'poetry-100',
+    question: '"浩荡离愁白日斜"中"浩荡"形容的是？',
+    options: ['广阔', '无边无际', '深沉', '巨大'],
+    answer: 1,
+    explanation: '"浩荡"形容离愁之深广无边。'
+  },
+  {
+    id: 'poetry-101',
+    question: '"吟鞭东指即天涯"中"吟鞭"的意思是？',
+    options: ['吟诗的鞭子', '诗人的马鞭', '吟唱', '鞭子'],
+    answer: 1,
+    explanation: '"吟鞭"指诗人的马鞭。'
+  },
+  {
+    id: 'poetry-102',
+    question: '"我劝天公重抖擞"中"抖擞"的意思是？',
+    options: ['振作', '振奋', '抖动', '精神'],
+    answer: 0,
+    explanation: '"抖擞"意为振作、振奋。'
+  },
+  {
+    id: 'poetry-103',
+    question: '"不拘一格降人才"中"不拘一格"的意思是？',
+    options: ['不拘泥于一种格式', '不限规格', '不拘束', '自由'],
+    answer: 0,
+    explanation: '"不拘一格"意为不拘泥于一种格式，多种多样。'
+  },
+  {
+    id: 'poetry-104',
+    question: '"九州生气恃风雷"中"恃"的意思是？',
+    options: ['依靠', '凭借', '等待', '依赖'],
+    answer: 0,
+    explanation: '"恃"意为依靠、依赖。'
+  },
+  {
+    id: 'poetry-105',
+    question: '"万马齐喑究可哀"中"喑"的意思是？',
+    options: ['暗', '哑', '沉默', '无声'],
+    answer: 1,
+    explanation: '"喑"意为哑、沉默。'
+  },
+  {
+    id: 'poetry-106',
+    question: '"青海长云暗雪山"的作者是？',
+    options: ['王昌龄', '王之涣', '李白', '杜甫'],
+    answer: 0,
+    explanation: '这是王昌龄《从军行》中的诗句。'
+  },
+  {
+    id: 'poetry-107',
+    question: '"黄沙百战穿金甲，不破楼兰终不还"表达的情感是？',
+    options: ['悲壮', '豪迈坚定', '忧伤', '思念'],
+    answer: 1,
+    explanation: '表达了将士们豪迈坚定的报国情怀。'
+  },
+  {
+    id: 'poetry-108',
+    question: '"黄河远上白云间，一片孤城万仞山"的作者是？',
+    options: ['王之涣', '王昌龄', '李白', '杜甫'],
+    answer: 0,
+    explanation: '这是王之涣《凉州词》中的诗句。'
+  },
+  {
+    id: 'poetry-109',
+    question: '"羌笛何须怨杨柳，春风不度玉门关"中"杨柳"指的是？',
+    options: ['柳树', '折杨柳曲', '杨柳枝', '柳絮'],
+    answer: 1,
+    explanation: '"杨柳"指《折杨柳》曲，古代送别曲。'
+  },
+  {
+    id: 'poetry-110',
+    question: '"葡萄美酒夜光杯"的下一句是？',
+    options: ['欲饮琵琶马上催', '醉卧沙场君莫笑', '古来征战几人回', '秦时明月汉时关'],
+    answer: 0,
+    explanation: '这是王翰《凉州词》中的诗句。'
+  },
+  {
+    id: 'poetry-111',
+    question: '"醉卧沙场君莫笑，古来征战几人回"表达的是？',
+    options: ['豪迈豁达', '悲伤凄凉', '思乡之情', '壮志难酬'],
+    answer: 0,
+    explanation: '表达了将士们豪迈豁达、视死如归的情怀。'
+  },
+  {
+    id: 'poetry-112',
+    question: '"秦时明月汉时关"的作者是？',
+    options: ['王昌龄', '王之涣', '李白', '杜甫'],
+    answer: 0,
+    explanation: '这是王昌龄《出塞》中的诗句。'
+  },
+  {
+    id: 'poetry-113',
+    question: '"但使龙城飞将在，不教胡马度阴山"中"飞将"指的是？',
+    options: ['李广', '卫青', '霍去病', '韩信'],
+    answer: 0,
+    explanation: '"飞将"指西汉名将李广。'
+  },
+  {
+    id: 'poetry-114',
+    question: '"黑云压城城欲摧"的作者是？',
+    options: ['李贺', '李白', '杜甫', '王昌龄'],
+    answer: 0,
+    explanation: '这是李贺《雁门太守行》中的诗句。'
+  },
+  {
+    id: 'poetry-115',
+    question: '"甲光向日金鳞开"中"甲光"指的是？',
+    options: ['甲壳的光', '铠甲迎着太阳闪出的光', '光芒', '阳光'],
+    answer: 1,
+    explanation: '"甲光"指铠甲迎着太阳闪出的光。'
+  },
+  {
+    id: 'poetry-116',
+    question: '"角声满天秋色里"中"角"指的是？',
+    options: ['角落', '号角', '角兽', '角度'],
+    answer: 1,
+    explanation: '"角"指号角。'
+  },
+  {
+    id: 'poetry-117',
+    question: '"塞上燕脂凝夜紫"中"燕脂"指的是？',
+    options: ['胭脂', '胭脂色', '红色的土壤', '血迹'],
+    answer: 1,
+    explanation: '"燕脂"同"胭脂"，指胭脂色，形容边塞夜色。'
+  },
+  {
+    id: 'poetry-118',
+    question: '"报君黄金台上意，提携玉龙为君死"中"玉龙"指的是？',
+    options: ['玉做的龙', '宝剑', '龙', '玉石'],
+    answer: 1,
+    explanation: '"玉龙"指宝剑。'
+  },
+  {
+    id: 'poetry-119',
+    question: '"十年生死两茫茫"的作者是？',
+    options: ['苏轼', '李白', '杜甫', '李商隐'],
+    answer: 0,
+    explanation: '这是苏轼《江城子·乙卯正月二十日夜记梦》中的句子。'
+  },
+  {
+    id: 'poetry-120',
+    question: '"不思量，自难忘"表达的是？',
+    options: ['忘记', '思念深切，难以忘怀', '记不住', '不想'],
+    answer: 1,
+    explanation: '表达了对亡妻的深切思念，难以忘怀。'
   }
 ];
 
