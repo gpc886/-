@@ -442,7 +442,7 @@ export default function Game({ gameMode, questionType, onBack }: GameProps) {
       // 更新篮球位置
       setBallPosition({ x: currentX, y: currentY });
 
-      // 检测碰撞
+      // 检测碰撞（只在篮筐高度附近检测）
       const hitResult = checkCollision(currentX, currentY);
 
       if (hitResult !== null) {
@@ -451,10 +451,19 @@ export default function Game({ gameMode, questionType, onBack }: GameProps) {
         return;
       }
 
-      // 检测是否超出屏幕
-      if (currentY > 90 || currentX < 0 || currentX > 100) {
-        // 未命中，判定为错误
-        handleLadderResult('wrong');
+      // 检测是否落地（超过篮筐高度）
+      if (currentY > 85) {
+        // 落地但没有命中任何篮筐，重置篮球
+        if (animationId) {
+          cancelAnimationFrame(animationId);
+          setAnimationId(null);
+        }
+
+        // 延迟后重置篮球，允许看到落地效果
+        setTimeout(() => {
+          resetBall();
+        }, 500);
+
         return;
       }
 
@@ -469,10 +478,10 @@ export default function Game({ gameMode, questionType, onBack }: GameProps) {
 
   // 检测碰撞
   const checkCollision = (x: number, y: number): 'correct' | 'wrong' | null => {
-    // 左篮筐（正确）：x: 10-25, y: 25-40
-    const leftHoop = { xMin: 10, xMax: 25, yMin: 25, yMax: 40 };
-    // 右篮筐（错误）：x: 75-90, y: 25-40
-    const rightHoop = { xMin: 75, xMax: 90, yMin: 25, yMax: 40 };
+    // 左篮筐（正确）：x: 10-25, y: 42-52（垂直居中）
+    const leftHoop = { xMin: 10, xMax: 25, yMin: 42, yMax: 52 };
+    // 右篮筐（错误）：x: 75-90, y: 42-52（垂直居中）
+    const rightHoop = { xMin: 75, xMax: 90, yMin: 42, yMax: 52 };
 
     // 检测是否命中左篮筐
     if (x >= leftHoop.xMin && x <= leftHoop.xMax && y >= leftHoop.yMin && y <= leftHoop.yMax) {
@@ -902,6 +911,7 @@ export default function Game({ gameMode, questionType, onBack }: GameProps) {
                     <li>• 左篮筐代表正确，右篮筐代表错误</li>
                     <li>• 拖拽蓝色轨迹线调整方向，点击屏幕可快速定位</li>
                     <li>• 发射力度固定，只需调整投篮方向</li>
+                    <li>• 未投进篮筐会自动重置，可重新投掷</li>
                     <li>• 越到高层题目难度越大，加油！</li>
                   </ul>
                 </div>
@@ -1268,6 +1278,7 @@ export default function Game({ gameMode, questionType, onBack }: GameProps) {
                     <div className="text-center text-sm text-gray-600 dark:text-gray-400">
                       <p>💡 拖拽蓝色轨迹线或轨迹终点调整方向</p>
                       <p>🎯 向左上方瞄准正确答案，向右上方瞄准错误答案</p>
+                      <p>⚠️ 投篮力度固定，未投进篮筐会重新投掷</p>
                     </div>
 
                     {/* 发射按钮 */}
