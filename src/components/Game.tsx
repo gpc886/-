@@ -835,6 +835,12 @@ export default function Game({ gameMode, questionType, onBack }: GameProps) {
           return prev - 1;
         });
       }, 1000);
+    } else if (gameMode === 'multi' && gameEnded) {
+      // 游戏结束时清理滴答音效
+      if (tickTimerRef.current) {
+        clearInterval(tickTimerRef.current);
+        tickTimerRef.current = null;
+      }
     }
 
     // 清理滴答音效定时器
@@ -951,15 +957,22 @@ export default function Game({ gameMode, questionType, onBack }: GameProps) {
         showExplanation: false,
         answerRecords: [...state.answerRecords, newAnswerRecord],
       });
-
-      // 检查是否两个玩家都完成了
-      const currentOtherState = player === 1 ? player2State : player1State;
-      if (isLastQuestion && currentOtherState.currentQuestionIndex >= playerQuestions.length) {
-        setGameEnded(true);
-        setShowResult(true);
-      }
     }, 1000); // 1秒后跳转
   };
+
+  // 检查双人模式是否两个玩家都完成了
+  useEffect(() => {
+    if (gameMode !== 'multi' || gameEnded) return;
+
+    const totalQuestions = questionsData.player1Questions.length;
+    const player1Finished = player1State.currentQuestionIndex >= totalQuestions;
+    const player2Finished = player2State.currentQuestionIndex >= totalQuestions;
+
+    if (player1Finished && player2Finished) {
+      setGameEnded(true);
+      setShowResult(true);
+    }
+  }, [gameMode, gameEnded, player1State.currentQuestionIndex, player2State.currentQuestionIndex, questionsData.player1Questions.length]);
 
   const handleRestart = () => {
     // 清理滴答音效定时器
