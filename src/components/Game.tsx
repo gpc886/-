@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Progress } from '@/components/ui/progress';
@@ -120,6 +120,34 @@ const play321 = (onVoiceComplete: () => void) => {
   }
 };
 
+// 播放钟表滴答音效
+const playTickSound = () => {
+  try {
+    const audioContext = new (window.AudioContext || (window as any).webkitAudioContext)();
+
+    if (audioContext.state === 'suspended') {
+      audioContext.resume();
+    }
+
+    const oscillator = audioContext.createOscillator();
+    const gainNode = audioContext.createGain();
+
+    oscillator.connect(gainNode);
+    gainNode.connect(audioContext.destination);
+
+    oscillator.type = 'square';
+    oscillator.frequency.setValueAtTime(800, audioContext.currentTime);
+
+    gainNode.gain.setValueAtTime(0.3, audioContext.currentTime);
+    gainNode.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + 0.05);
+
+    oscillator.start(audioContext.currentTime);
+    oscillator.stop(audioContext.currentTime + 0.05);
+  } catch (error) {
+    console.log('❌ 滴答音效播放失败:', error);
+  }
+};
+
 
 // 玩家状态接口
 interface PlayerState {
@@ -199,6 +227,9 @@ export default function Game({ gameMode, questionType, onBack }: GameProps) {
   // 显示视觉提示"3 2 1"
   const [showCountdown, setShowCountdown] = useState(false);
 
+  // 滴答音效定时器ref
+  const tickTimerRef = useRef<NodeJS.Timeout | null>(null);
+
   // 游戏开始回调函数（在"开始"语音播放完成后调用）
   const startGameAfterVoice = () => {
     console.log('🎮 "开始"语音播放完成，游戏开始');
@@ -234,6 +265,15 @@ export default function Game({ gameMode, questionType, onBack }: GameProps) {
   // 倒计时（仅双人模式）
   useEffect(() => {
     if (gameMode === 'multi' && timeLeft > 0 && !gameEnded) {
+      // 启动滴答音效
+      if (!tickTimerRef.current) {
+        const tickTimer = setInterval(() => {
+          playTickSound();
+        }, 1000); // 每秒播放一次
+        tickTimerRef.current = tickTimer;
+      }
+
+      // 倒计时
       const timer = setInterval(() => {
         setTimeLeft((prev) => {
           if (prev <= 1) {
@@ -246,6 +286,14 @@ export default function Game({ gameMode, questionType, onBack }: GameProps) {
       }, 1000);
       return () => clearInterval(timer);
     }
+
+    // 清理滴答音效定时器
+    return () => {
+      if (tickTimerRef.current) {
+        clearInterval(tickTimerRef.current);
+        tickTimerRef.current = null;
+      }
+    };
   }, [gameMode, timeLeft, gameEnded]);
 
   // 赛跑动画（仅双人模式）
@@ -361,6 +409,12 @@ export default function Game({ gameMode, questionType, onBack }: GameProps) {
   };
 
   const handleRestart = () => {
+    // 清理滴答音效定时器
+    if (tickTimerRef.current) {
+      clearInterval(tickTimerRef.current);
+      tickTimerRef.current = null;
+    }
+
     // 重置游戏未开始状态，让用户点击开始按钮时播放语音
     setGameStarted(false);
     setShowCountdown(false);
