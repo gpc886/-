@@ -309,13 +309,12 @@ export default function Game({ gameMode, questionType, onBack }: GameProps) {
   const [ballPosition, setBallPosition] = useState({ x: 50, y: 80 }); // 篮球位置（百分比）
   const [isBallThrown, setIsBallThrown] = useState(false); // 篮球是否已发射
   const [trajectoryOffset, setTrajectoryOffset] = useState({ x: 0, y: -30 }); // 虚拟抛物线偏移量（百分比）
-  const [throwPower, setThrowPower] = useState(5.4); // 发射力度（范围1.8-14.4，缩小10%）
+  const [throwPower, setThrowPower] = useState(6.0); // 发射力度（范围2.0-16.0）
   const [ladderShowResult, setLadderShowResult] = useState(false); // 显示结果
   const [ladderResult, setLadderResult] = useState<'correct' | 'wrong' | null>(null); // 天梯赛结果
   const [animationId, setAnimationId] = useState<number | null>(null); // 动画ID
   const [isDragging, setIsDragging] = useState(false); // 是否正在拖拽轨迹
   const [ballRotation, setBallRotation] = useState(0); // 篮球旋转角度
-  const [hoopScored, setHoopScored] = useState<'left' | 'right' | null>(null); // 已投中的篮筐
   const gameAreaRef = useRef<HTMLDivElement | null>(null); // 游戏区域引用
 
   // 初始化天梯赛题目
@@ -359,7 +358,7 @@ export default function Game({ gameMode, questionType, onBack }: GameProps) {
       // 根据拖拽距离计算力度（距离越远，力度越大）
       // 最小距离约15%，最大距离约270%
       const normalizedDistance = Math.max(15, Math.min(270, distance));
-      const newPower = 1.8 + ((normalizedDistance - 15) / 255) * 12.6; // 转换到1.8-14.4（缩小10%）
+      const newPower = 2.0 + ((normalizedDistance - 15) / 255) * 14; // 转换到2.0-16.0
 
       // 使用批处理更新，减少重新渲染次数
       setTrajectoryOffset({ x: limitedOffsetX, y: limitedOffsetY });
@@ -415,7 +414,7 @@ export default function Game({ gameMode, questionType, onBack }: GameProps) {
       // 根据拖拽距离计算力度（距离越远，力度越大）
       // 最小距离约15%，最大距离约270%
       const normalizedDistance = Math.max(15, Math.min(270, distance));
-      const newPower = 1.8 + ((normalizedDistance - 15) / 255) * 12.6; // 转换到1.8-14.4（缩小10%）
+      const newPower = 2.0 + ((normalizedDistance - 15) / 255) * 14; // 转换到2.0-16.0
 
       // 使用批处理更新，减少重新渲染次数
       setTrajectoryOffset({ x: limitedOffsetX, y: limitedOffsetY });
@@ -440,9 +439,8 @@ export default function Game({ gameMode, questionType, onBack }: GameProps) {
     setBallPosition({ x: 50, y: 80 });
     setIsBallThrown(false);
     setTrajectoryOffset({ x: 0, y: -30 });
-    setThrowPower(10.0); // 重置力度到默认值（提高至10.0以更容易到达篮筐）
+    setThrowPower(6.0); // 重置力度到默认值
     setBallRotation(0); // 重置旋转角度
-    setHoopScored(null); // 重置投中状态
   };
 
   // ========== 天梯赛模式函数 ==========
@@ -452,7 +450,6 @@ export default function Game({ gameMode, questionType, onBack }: GameProps) {
     if (isBallThrown || gameMode !== 'ladder') return;
 
     setIsBallThrown(true);
-    setHoopScored(null); // 重置投中状态
 
     // 播放投篮球音效
     playSoundEffect('correct');
@@ -460,10 +457,6 @@ export default function Game({ gameMode, questionType, onBack }: GameProps) {
     // 计算初始速度（根据轨迹偏移量计算方向，使用可变力度）
     const targetX = ballPosition.x + trajectoryOffset.x;
     const targetY = ballPosition.y + trajectoryOffset.y;
-
-    console.log(`🎯 发射篮球 - 初始位置: (${ballPosition.x}, ${ballPosition.y})`);
-    console.log(`🎯 目标点: (${targetX.toFixed(1)}, ${targetY.toFixed(1)})`);
-    console.log(`🎯 发射力度: ${throwPower.toFixed(1)}`);
 
     // 计算从篮球位置到目标点的方向
     const dx = targetX - ballPosition.x;
@@ -476,26 +469,20 @@ export default function Game({ gameMode, questionType, onBack }: GameProps) {
     const velocityX = (dx / distance) * throwPower;
     const velocityY = (dy / distance) * throwPower;
 
-    console.log(`🎯 初始速度: vx=${velocityX.toFixed(2)}, vy=${velocityY.toFixed(2)}`);
-
     // 动画参数
     let currentX = ballPosition.x;
     let currentY = ballPosition.y;
     let currentVx = velocityX;
     let currentVy = velocityY;
     let rotation = ballRotation; // 篮球旋转角度
-    const gravity = 0.13; // 重力加速度（下落更慢约13%）
+    const gravity = 0.15; // 重力加速度
     const dt = 1.0; // 时间步长
     const ballRadius = 3; // 篮球半径（百分比）
-    let prevY = currentY; // 记录上一帧的Y位置用于检测穿过篮筐
-    let framesAfterScore = 0; // 投中后的帧数计数器
-    let localHoopScored: 'left' | 'right' | null = null; // 本地变量跟踪投中状态
 
     // 开始动画
     const animate = () => {
       // 保存上一帧位置用于计算旋转
       const prevX = currentX;
-      prevY = currentY; // 记录上一帧Y位置
 
       // 更新位置
       currentX += currentVx * dt;
@@ -514,22 +501,13 @@ export default function Game({ gameMode, questionType, onBack }: GameProps) {
       setBallPosition({ x: currentX, y: currentY });
       setBallRotation(rotation);
 
-      // 如果已经投中，继续下落一段时间后再触发结果
-      if (localHoopScored) {
-        framesAfterScore++;
-        if (framesAfterScore > 30) { // 继续约0.5秒后显示结果
-          handleLadderResult(localHoopScored);
-          return;
-        }
-      } else {
-        // 检测碰撞
-        const hitResult = checkCollision(currentX, currentY, prevY);
+      // 检测碰撞（只在篮筐高度附近检测）
+      const hitResult = checkCollision(currentX, currentY);
 
-        if (hitResult !== null) {
-          // 命中篮筐，设置状态但继续动画让玩家看到篮球穿过篮筐的效果
-          setHoopScored(hitResult);
-          localHoopScored = hitResult;
-        }
+      if (hitResult !== null) {
+        // 命中篮筐
+        handleLadderResult(hitResult);
+        return;
       }
 
       // 检测是否落地（超过篮筐高度）
@@ -558,37 +536,20 @@ export default function Game({ gameMode, questionType, onBack }: GameProps) {
   };
 
   // 检测碰撞 - 返回玩家选择的篮筐
-  const checkCollision = (x: number, y: number, prevY: number): 'left' | 'right' | null => {
-    // 篮筐位置说明：
-    // - 左右篮筐容器：x: 0-20% 和 80-100%，style={{ top: '40%' }}
-    // - 篮筐相对于容器：top-16（64px）= 12.8%
-    // - 篮筐实际位置：40% + 12.8% = 52.8%
-    // - 篮筐高度：h-4（16px）= 3.2%
-    // - 篮筐实际范围：y: 52.8-56%
-    // - 篮球从y=80发射，需要向上抛出到约y=52-56的高度
-    // - 判定范围扩大至 y: 50-58 以提高命中率
+  const checkCollision = (x: number, y: number): 'left' | 'right' | null => {
+    // 左篮筐（玩家认为正确）：x: 10-25, y: 42-52（垂直居中）
+    const leftHoop = { xMin: 10, xMax: 25, yMin: 42, yMax: 52 };
+    // 右篮筐（玩家认为错误）：x: 75-90, y: 42-52（垂直居中）
+    const rightHoop = { xMin: 75, xMax: 90, yMin: 42, yMax: 52 };
 
-    console.log(`🔍 检测碰撞 - 当前位置: x=${x.toFixed(1)}%, y=${y.toFixed(1)}%`);
-
-    // 检测左篮筐（正确）：左侧20%区域，y: 50-58
-    if (x >= 0 && x <= 20) {
-      if (y >= 50 && y <= 58) {
-        console.log(`✅ 命中左篮筐（正确） - 位置: x=${x.toFixed(1)}%, y=${y.toFixed(1)}%`);
-        return 'left';
-      }
+    // 检测是否命中左篮筐
+    if (x >= leftHoop.xMin && x <= leftHoop.xMax && y >= leftHoop.yMin && y <= leftHoop.yMax) {
+      return 'left';
     }
 
-    // 检测右篮筐（错误）：右侧20%区域，y: 50-58
-    if (x >= 80 && x <= 100) {
-      if (y >= 50 && y <= 58) {
-        console.log(`✅ 命中右篮筐（错误） - 位置: x=${x.toFixed(1)}%, y=${y.toFixed(1)}%`);
-        return 'right';
-      }
-    }
-
-    // 在篮筐高度范围内但未命中任何篮筐
-    if (y >= 50 && y <= 58) {
-      console.log(`❌ 未命中 - 位置: x=${x.toFixed(1)}%, y=${y.toFixed(1)}%, 不在任何篮筐区域`);
+    // 检测是否命中右篮筐
+    if (x >= rightHoop.xMin && x <= rightHoop.xMax && y >= rightHoop.yMin && y <= rightHoop.yMax) {
+      return 'right';
     }
 
     return null;
@@ -660,7 +621,7 @@ export default function Game({ gameMode, questionType, onBack }: GameProps) {
 
     const vx = (dx / distance) * throwPower;
     let vy = (dy / distance) * throwPower;
-    const gravity = 0.13; // 重力加速度（下落更慢约13%）
+    const gravity = 0.15;
     const dt = 1.0;
 
     // 预测30个点，根据力度调整点数（力度越大，轨迹越长）
@@ -1303,7 +1264,7 @@ export default function Game({ gameMode, questionType, onBack }: GameProps) {
 
             // 根据距离计算力度
             const normalizedDistance = Math.max(15, Math.min(270, distance));
-            const newPower = 1.8 + ((normalizedDistance - 15) / 255) * 12.6; // 范围1.8-14.4（缩小10%）
+            const newPower = 2.0 + ((normalizedDistance - 15) / 255) * 14;
 
             setTrajectoryOffset({ x: newOffsetX, y: newOffsetY });
             setThrowPower(newPower);
@@ -1330,17 +1291,17 @@ export default function Game({ gameMode, questionType, onBack }: GameProps) {
 
             // 根据距离计算力度
             const normalizedDistance = Math.max(15, Math.min(270, distance));
-            const newPower = 1.8 + ((normalizedDistance - 15) / 255) * 12.6; // 范围1.8-14.4（缩小10%）
+            const newPower = 2.0 + ((normalizedDistance - 15) / 255) * 14;
 
             setTrajectoryOffset({ x: newOffsetX, y: newOffsetY });
             setThrowPower(newPower);
           }}
         >
           {/* 左篮筐（正确） */}
-          <div className="absolute left-0 w-[20%]" style={{ top: '40%' }}>
-            <div className="relative w-full">
+          <div className="absolute left-0 top-0 w-[20%] h-full flex items-center justify-center">
+            <div className="relative">
               {/* 篮板 */}
-              <div className="absolute left-1/2 -translate-x-1/2 w-36 h-24 bg-gradient-to-br from-gray-100 to-gray-200 dark:from-gray-700 dark:to-gray-800 rounded border-2 border-gray-300 dark:border-gray-600 shadow-xl overflow-hidden">
+              <div className="absolute bottom-16 left-1/2 -translate-x-1/2 w-36 h-24 bg-gradient-to-br from-gray-100 to-gray-200 dark:from-gray-700 dark:to-gray-800 rounded border-2 border-gray-300 dark:border-gray-600 shadow-xl overflow-hidden">
                 {/* 篮板内框 */}
                 <div className="absolute inset-4 border-2 border-green-500/50 rounded"></div>
                 {/* 玻璃反光效果 */}
@@ -1348,7 +1309,7 @@ export default function Game({ gameMode, questionType, onBack }: GameProps) {
               </div>
 
               {/* 篮筐主体 */}
-              <div className="absolute left-1/2 -translate-x-1/2 top-16 w-28 h-4 relative">
+              <div className="absolute bottom-8 left-1/2 -translate-x-1/2 w-28 h-4 relative">
                 {/* 篮筐环 - 金属质感 */}
                 <div className="absolute inset-0 border-[5px] border-green-600 rounded-full shadow-2xl"
                      style={{
@@ -1393,10 +1354,10 @@ export default function Game({ gameMode, questionType, onBack }: GameProps) {
           </div>
 
           {/* 右篮筐（错误） */}
-          <div className="absolute right-0 w-[20%]" style={{ top: '40%' }}>
-            <div className="relative w-full">
+          <div className="absolute right-0 top-0 w-[20%] h-full flex items-center justify-center">
+            <div className="relative">
               {/* 篮板 */}
-              <div className="absolute left-1/2 -translate-x-1/2 w-36 h-24 bg-gradient-to-br from-gray-100 to-gray-200 dark:from-gray-700 dark:to-gray-800 rounded border-2 border-gray-300 dark:border-gray-600 shadow-xl overflow-hidden">
+              <div className="absolute bottom-16 left-1/2 -translate-x-1/2 w-36 h-24 bg-gradient-to-br from-gray-100 to-gray-200 dark:from-gray-700 dark:to-gray-800 rounded border-2 border-gray-300 dark:border-gray-600 shadow-xl overflow-hidden">
                 {/* 篮板内框 */}
                 <div className="absolute inset-4 border-2 border-red-500/50 rounded"></div>
                 {/* 玻璃反光效果 */}
@@ -1404,7 +1365,7 @@ export default function Game({ gameMode, questionType, onBack }: GameProps) {
               </div>
 
               {/* 篮筐主体 */}
-              <div className="absolute left-1/2 -translate-x-1/2 top-16 w-28 h-4 relative">
+              <div className="absolute bottom-8 left-1/2 -translate-x-1/2 w-28 h-4 relative">
                 {/* 篮筐环 - 金属质感 */}
                 <div className="absolute inset-0 border-[5px] border-red-600 rounded-full shadow-2xl"
                      style={{
@@ -1504,7 +1465,7 @@ export default function Game({ gameMode, questionType, onBack }: GameProps) {
                   ?.map(p => `${p.x},${p.y}`)
                   .join(' ')}
                 fill="none"
-                stroke={throwPower < 5.4 ? 'rgba(59, 130, 246, 0.7)' : throwPower < 9 ? 'rgba(249, 115, 22, 0.7)' : 'rgba(239, 68, 68, 0.7)'}
+                stroke={throwPower < 6 ? 'rgba(59, 130, 246, 0.7)' : throwPower < 10 ? 'rgba(249, 115, 22, 0.7)' : 'rgba(239, 68, 68, 0.7)'}
                 strokeWidth="0.8"
                 strokeDasharray="2,1"
               />
@@ -1515,7 +1476,7 @@ export default function Game({ gameMode, questionType, onBack }: GameProps) {
                     cx={drawTrajectory()![drawTrajectory()!.length - 1].x}
                     cy={drawTrajectory()![drawTrajectory()!.length - 1].y}
                     r="1.5"
-                    fill={throwPower < 5.4 ? 'rgba(59, 130, 246, 0.9)' : throwPower < 9 ? 'rgba(249, 115, 22, 0.9)' : 'rgba(239, 68, 68, 0.9)'}
+                    fill={throwPower < 6 ? 'rgba(59, 130, 246, 0.9)' : throwPower < 10 ? 'rgba(249, 115, 22, 0.9)' : 'rgba(239, 68, 68, 0.9)'}
                     className="cursor-move"
                     onMouseDown={(e) => {
                       e.preventDefault();
@@ -1525,7 +1486,7 @@ export default function Game({ gameMode, questionType, onBack }: GameProps) {
                   {/* 力度指示箭头 */}
                   {(() => {
                     const lastPoint = drawTrajectory()![drawTrajectory()!.length - 1];
-                    const arrowLength = (throwPower / 14.4) * 6; // 根据力度计算箭头长度（缩小10%）
+                    const arrowLength = (throwPower / 16) * 6; // 根据力度计算箭头长度
                     const angle = Math.atan2(
                       lastPoint.y - ballPosition.y,
                       lastPoint.x - ballPosition.x
@@ -1538,7 +1499,7 @@ export default function Game({ gameMode, questionType, onBack }: GameProps) {
                         y1={lastPoint.y}
                         x2={arrowX}
                         y2={arrowY}
-                        stroke={throwPower < 5.4 ? '#3b82f6' : throwPower < 9 ? '#f97316' : '#ef4444'}
+                        stroke={throwPower < 6 ? '#3b82f6' : throwPower < 10 ? '#f97316' : '#ef4444'}
                         strokeWidth="0.8"
                         markerEnd="url(#arrowhead)"
                       />
@@ -1556,7 +1517,7 @@ export default function Game({ gameMode, questionType, onBack }: GameProps) {
                     >
                       <polygon
                         points="0 0, 10 3, 0 6"
-                        fill={throwPower < 5.4 ? '#3b82f6' : throwPower < 9 ? '#f97316' : '#ef4444'}
+                        fill={throwPower < 6 ? '#3b82f6' : throwPower < 10 ? '#f97316' : '#ef4444'}
                       />
                     </marker>
                   </defs>
