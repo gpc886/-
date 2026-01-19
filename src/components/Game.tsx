@@ -113,8 +113,8 @@ export default function Game({ gameMode, questionType, onBack }: GameProps) {
   useEffect(() => {
     if (gameMode === 'multi' && !gameEnded) {
       const animationFrame = setInterval(() => {
-        setRacePosition1((prev) => Math.min(prev + 0.15, 100)); // 自动前进
-        setRacePosition2((prev) => Math.min(prev + 0.15, 100)); // 自动前进
+        setRacePosition1((prev) => Math.min(prev + 0.05, 100)); // 自动前进
+        setRacePosition2((prev) => Math.min(prev + 0.05, 100)); // 自动前进
       }, 100); // 每100ms更新一次
       return () => clearInterval(animationFrame);
     }
