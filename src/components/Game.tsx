@@ -181,24 +181,37 @@ export default function Game({ gameMode, questionType, onBack }: GameProps) {
       isCorrect,
     };
 
-    // 自动跳转到下一题
-    const nextQuestionIndex = state.currentQuestionIndex + 1;
-    const isLastQuestion = nextQuestionIndex >= playerQuestions.length;
-
+    // 先显示对错反馈
     setState({
-      currentQuestionIndex: nextQuestionIndex,
-      selectedAnswer: null,
-      isAnswered: false,
+      currentQuestionIndex: state.currentQuestionIndex,
+      selectedAnswer: answerIndex,
+      isAnswered: true,
       score: newScore,
-      showExplanation: false,
+      showExplanation: true,
       answerRecords: [...state.answerRecords, newAnswerRecord],
     });
 
-    // 检查是否两个玩家都完成了
-    if (isLastQuestion && otherState.currentQuestionIndex >= playerQuestions.length) {
-      setGameEnded(true);
-      setShowResult(true);
-    }
+    // 延迟1秒后跳到下一题
+    setTimeout(() => {
+      const nextQuestionIndex = state.currentQuestionIndex + 1;
+      const isLastQuestion = nextQuestionIndex >= playerQuestions.length;
+
+      setState({
+        currentQuestionIndex: nextQuestionIndex,
+        selectedAnswer: null,
+        isAnswered: false,
+        score: newScore,
+        showExplanation: false,
+        answerRecords: [...state.answerRecords, newAnswerRecord],
+      });
+
+      // 检查是否两个玩家都完成了
+      const currentOtherState = player === 1 ? player2State : player1State;
+      if (isLastQuestion && currentOtherState.currentQuestionIndex >= playerQuestions.length) {
+        setGameEnded(true);
+        setShowResult(true);
+      }
+    }, 1000); // 1秒后跳转
   };
 
   const handleRestart = () => {
