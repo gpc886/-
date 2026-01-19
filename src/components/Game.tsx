@@ -5,7 +5,7 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Progress } from '@/components/ui/progress';
 import { getQuestionsByType, Question, QuestionType, shuffleArray } from '@/lib/questions';
-import { ArrowLeft, CheckCircle, XCircle, Clock, Trophy, RotateCcw, Crown } from 'lucide-react';
+import { ArrowLeft, CheckCircle, XCircle, Clock, Trophy, RotateCcw, Crown, Shuffle, Plus, Trash2, Users } from 'lucide-react';
 
 interface GameProps {
   gameMode: 'single' | 'multi';
@@ -227,6 +227,19 @@ export default function Game({ gameMode, questionType, onBack }: GameProps) {
   // 显示视觉提示"3 2 1"
   const [showCountdown, setShowCountdown] = useState(false);
 
+  // 学生名单（双人PK模式抽签用）
+  const [students, setStudents] = useState<string[]>(['聪聪', '明明', '小明', '小红', '小华']);
+  const [newStudentName, setNewStudentName] = useState('');
+
+  // 抽签界面状态
+  const [showDraw, setShowDraw] = useState(false);
+  const [drawnPlayers, setDrawnPlayers] = useState<{ player1: string; player2: string } | null>(null);
+  const [isDrawing, setIsDrawing] = useState(false);
+
+  // 玩家名字（用于显示）
+  const [player1Name, setPlayer1Name] = useState('聪聪');
+  const [player2Name, setPlayer2Name] = useState('明明');
+
   // 滴答音效定时器ref
   const tickTimerRef = useRef<NodeJS.Timeout | null>(null);
 
@@ -259,6 +272,58 @@ export default function Game({ gameMode, questionType, onBack }: GameProps) {
       } catch (error) {
         console.log('❌ 倒计时语音播放失败:', error);
       }
+    }
+  };
+
+  // 添加学生
+  const handleAddStudent = () => {
+    if (newStudentName.trim() && !students.includes(newStudentName.trim())) {
+      setStudents([...students, newStudentName.trim()]);
+      setNewStudentName('');
+    }
+  };
+
+  // 删除学生
+  const handleDeleteStudent = (name: string) => {
+    setStudents(students.filter(s => s !== name));
+  };
+
+  // 随机抽签
+  const handleDrawPlayers = () => {
+    if (students.length < 2) {
+      alert('学生名单至少需要2人才能抽签！');
+      return;
+    }
+
+    setIsDrawing(true);
+
+    // 动画效果，快速切换名字
+    let count = 0;
+    const interval = setInterval(() => {
+      const shuffled = shuffleArray([...students]);
+      if (shuffled.length >= 2) {
+        setDrawnPlayers({
+          player1: shuffled[0],
+          player2: shuffled[1]
+        });
+      }
+      count++;
+
+      // 15次动画后停止
+      if (count >= 15) {
+        clearInterval(interval);
+        setIsDrawing(false);
+      }
+    }, 100);
+  };
+
+  // 确认抽签结果
+  const handleConfirmDraw = () => {
+    if (drawnPlayers) {
+      setPlayer1Name(drawnPlayers.player1);
+      setPlayer2Name(drawnPlayers.player2);
+      setShowDraw(false);
+      setDrawnPlayers(null);
     }
   };
 
@@ -489,6 +554,8 @@ export default function Game({ gameMode, questionType, onBack }: GameProps) {
           questionType={questionType}
           onRestart={handleRestart}
           onBack={onBack}
+          player1Name={player1Name}
+          player2Name={player2Name}
         />
       );
     }
@@ -532,6 +599,42 @@ export default function Game({ gameMode, questionType, onBack }: GameProps) {
                 </div>
               )}
 
+              {/* 双人模式显示抽签按钮和当前玩家 */}
+              {gameMode === 'multi' && (
+                <div className="space-y-4">
+                  <div className="p-4 bg-blue-50 dark:bg-blue-900/20 rounded-lg">
+                    <p className="text-sm text-gray-600 dark:text-gray-400 mb-2">
+                      <Users className="w-4 h-4 inline mr-1" />
+                      当前对战选手
+                    </p>
+                    <div className="flex items-center justify-center gap-4">
+                      <div className="text-center">
+                        <div className="w-12 h-12 bg-blue-100 dark:bg-blue-900 rounded-full flex items-center justify-center mb-1">
+                          <span className="text-blue-600 dark:text-blue-400 font-bold">{player1Name[0]}</span>
+                        </div>
+                        <p className="text-sm font-semibold text-blue-600 dark:text-blue-400">{player1Name}</p>
+                      </div>
+                      <span className="text-2xl font-bold text-gray-400">VS</span>
+                      <div className="text-center">
+                        <div className="w-12 h-12 bg-pink-100 dark:bg-pink-900 rounded-full flex items-center justify-center mb-1">
+                          <span className="text-pink-600 dark:text-pink-400 font-bold">{player2Name[0]}</span>
+                        </div>
+                        <p className="text-sm font-semibold text-pink-600 dark:text-pink-400">{player2Name}</p>
+                      </div>
+                    </div>
+                  </div>
+
+                  <Button
+                    onClick={() => setShowDraw(true)}
+                    variant="outline"
+                    className="w-full"
+                  >
+                    <Shuffle className="w-4 h-4 mr-2" />
+                    随机抽签
+                  </Button>
+                </div>
+              )}
+
               <Button
                 onClick={() => {
                   // 播放321语音
@@ -555,6 +658,132 @@ export default function Game({ gameMode, questionType, onBack }: GameProps) {
             </CardContent>
           </Card>
         </div>
+
+        {/* 抽签界面 */}
+        {showDraw && (
+          <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 p-4">
+            <Card className="max-w-4xl w-full max-h-[90vh] overflow-y-auto">
+              <CardHeader>
+                <CardTitle className="text-2xl text-center flex items-center justify-center gap-2">
+                  <Shuffle className="w-6 h-6 text-purple-600" />
+                  随机抽签
+                </CardTitle>
+                <CardDescription className="text-center">
+                  管理班级学生名单，随机抽取两名对战选手
+                </CardDescription>
+              </CardHeader>
+              <CardContent className="space-y-6">
+                {/* 学生名单管理 */}
+                <div className="space-y-4">
+                  <div>
+                    <h3 className="text-lg font-semibold mb-3">学生名单 ({students.length}人)</h3>
+                    <div className="flex gap-2 mb-3">
+                      <input
+                        type="text"
+                        value={newStudentName}
+                        onChange={(e) => setNewStudentName(e.target.value)}
+                        onKeyPress={(e) => e.key === 'Enter' && handleAddStudent()}
+                        placeholder="输入学生姓名"
+                        className="flex-1 px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-gray-800 dark:text-white"
+                        maxLength={10}
+                      />
+                      <Button onClick={handleAddStudent} size="sm">
+                        <Plus className="w-4 h-4 mr-1" />
+                        添加
+                      </Button>
+                    </div>
+
+                    {/* 学生列表 */}
+                    <div className="flex flex-wrap gap-2 max-h-40 overflow-y-auto">
+                      {students.map((student) => (
+                        <div
+                          key={student}
+                          className="flex items-center gap-1 px-3 py-1.5 bg-blue-100 dark:bg-blue-900/30 text-blue-700 dark:text-blue-300 rounded-full text-sm"
+                        >
+                          <span>{student}</span>
+                          <button
+                            onClick={() => handleDeleteStudent(student)}
+                            className="hover:text-red-500 transition-colors"
+                          >
+                            <Trash2 className="w-3 h-3" />
+                          </button>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+
+                  {/* 抽签按钮 */}
+                  {students.length >= 2 ? (
+                    <Button
+                      onClick={handleDrawPlayers}
+                      disabled={isDrawing}
+                      className="w-full"
+                      size="lg"
+                    >
+                      <Shuffle className={`w-5 h-5 mr-2 ${isDrawing ? 'animate-spin' : ''}`} />
+                      {isDrawing ? '正在抽签...' : '开始抽签'}
+                    </Button>
+                  ) : (
+                    <Button disabled className="w-full">
+                      至少需要2名学生才能抽签
+                    </Button>
+                  )}
+                </div>
+
+                {/* 抽签结果 */}
+                {drawnPlayers && (
+                  <div className="p-6 bg-gradient-to-r from-purple-50 to-pink-50 dark:from-purple-900/20 dark:to-pink-900/20 rounded-xl border-2 border-purple-200 dark:border-purple-700">
+                    <h3 className="text-xl font-bold text-center mb-4">抽签结果</h3>
+                    <div className="flex items-center justify-center gap-8">
+                      <div className="text-center">
+                        <div className="w-20 h-20 bg-gradient-to-br from-blue-400 to-blue-600 rounded-full flex items-center justify-center mb-2 shadow-lg">
+                          <span className="text-3xl font-bold text-white">{drawnPlayers.player1[0]}</span>
+                        </div>
+                        <p className="text-xl font-bold text-blue-600 dark:text-blue-400">{drawnPlayers.player1}</p>
+                      </div>
+
+                      <div className="text-4xl font-bold text-gray-400">VS</div>
+
+                      <div className="text-center">
+                        <div className="w-20 h-20 bg-gradient-to-br from-pink-400 to-pink-600 rounded-full flex items-center justify-center mb-2 shadow-lg">
+                          <span className="text-3xl font-bold text-white">{drawnPlayers.player2[0]}</span>
+                        </div>
+                        <p className="text-xl font-bold text-pink-600 dark:text-pink-400">{drawnPlayers.player2}</p>
+                      </div>
+                    </div>
+
+                    {!isDrawing && (
+                      <div className="flex gap-4 mt-6">
+                        <Button onClick={handleConfirmDraw} className="flex-1">
+                          确认使用
+                        </Button>
+                        <Button
+                          onClick={() => setDrawnPlayers(null)}
+                          variant="outline"
+                          className="flex-1"
+                        >
+                          重新抽取
+                        </Button>
+                      </div>
+                    )}
+                  </div>
+                )}
+
+                {/* 关闭按钮 */}
+                <Button
+                  onClick={() => {
+                    setShowDraw(false);
+                    setDrawnPlayers(null);
+                  }}
+                  variant="outline"
+                  className="w-full"
+                >
+                  关闭
+                </Button>
+              </CardContent>
+            </Card>
+          </div>
+        )}
       </div>
     );
   }
@@ -595,8 +824,8 @@ export default function Game({ gameMode, questionType, onBack }: GameProps) {
           <RaceTrack
             position1={racePosition1}
             position2={racePosition2}
-            player1Name="聪聪"
-            player2Name="明明"
+            player1Name={player1Name}
+            player2Name={player2Name}
           />
         </div>
 
@@ -604,7 +833,7 @@ export default function Game({ gameMode, questionType, onBack }: GameProps) {
         <div className="max-w-7xl mx-auto grid md:grid-cols-2 gap-6">
           {/* 玩家1区域 */}
           <PlayerArea
-            playerName="聪聪"
+            playerName={player1Name}
             playerColor="blue"
             questions={questionsData.player1Questions}
             playerState={player1State}
@@ -623,7 +852,7 @@ export default function Game({ gameMode, questionType, onBack }: GameProps) {
 
           {/* 玩家2区域 */}
           <PlayerArea
-            playerName="明明"
+            playerName={player2Name}
             playerColor="pink"
             questions={questionsData.player2Questions}
             playerState={player2State}
@@ -919,6 +1148,8 @@ function ResultMulti({
   questionType,
   onRestart,
   onBack,
+  player1Name,
+  player2Name,
 }: {
   player1Score: number;
   player2Score: number;
@@ -930,6 +1161,8 @@ function ResultMulti({
   questionType: QuestionType;
   onRestart: () => void;
   onBack: () => void;
+  player1Name: string;
+  player2Name: string;
 }) {
   const [showDetailedAnalysis, setShowDetailedAnalysis] = useState(false);
   const winner = player1Score > player2Score ? 1 : player2Score > player1Score ? 2 : 0;
@@ -952,12 +1185,12 @@ function ResultMulti({
             {winner !== 0 && (
               <div className="text-center p-6 bg-gradient-to-r from-yellow-100 to-amber-100 dark:from-yellow-900/30 dark:to-amber-900/30 rounded-xl">
                 <p className="text-2xl font-bold text-yellow-700 dark:text-yellow-300 mb-2">
-                  🎉 恭喜 {winner === 1 ? '聪聪' : '明明'} 获胜！
+                  🎉 恭喜 {winner === 1 ? player1Name : player2Name} 获胜！
                 </p>
                 <p className="text-gray-600 dark:text-gray-400">
                   {winner === 1
-                    ? `聪聪以 ${player1Score} 分击败 明明 (${player2Score} 分)`
-                    : `明明以 ${player2Score} 分击败 聪聪 (${player1Score} 分)`}
+                    ? `${player1Name}以 ${player1Score} 分击败 ${player2Name} (${player2Score} 分)`
+                    : `${player2Name}以 ${player2Score} 分击败 ${player1Name} (${player1Score} 分)`}
                 </p>
               </div>
             )}
@@ -980,7 +1213,7 @@ function ResultMulti({
                 <div className="text-center">
                   <p className="text-xl font-bold text-blue-600 dark:text-blue-400 mb-2 flex items-center justify-center gap-2">
                     {winner === 1 && <Crown className="w-6 h-6 text-yellow-500" />}
-                    聪聪
+                    {player1Name}
                   </p>
                   <p className="text-5xl font-bold mb-2">{player1Score}</p>
                   <p className="text-gray-600 dark:text-gray-400 text-sm">总得分 / 100分</p>
@@ -1003,7 +1236,7 @@ function ResultMulti({
                 <div className="text-center">
                   <p className="text-xl font-bold text-pink-600 dark:text-pink-400 mb-2 flex items-center justify-center gap-2">
                     {winner === 2 && <Crown className="w-6 h-6 text-yellow-500" />}
-                    明明
+                    {player2Name}
                   </p>
                   <p className="text-5xl font-bold mb-2">{player2Score}</p>
                   <p className="text-gray-600 dark:text-gray-400 text-sm">总得分 / 100分</p>
@@ -1040,7 +1273,7 @@ function ResultMulti({
                   <div className="space-y-3">
                     <h4 className="font-bold text-blue-600 dark:text-blue-400 flex items-center gap-2">
                       <Crown className="w-5 h-5" />
-                      聪聪的答题记录
+                      {player1Name}的答题记录
                     </h4>
                     {player1AnswerRecords.map((record, index) => {
                       const question = record.question;
@@ -1065,7 +1298,7 @@ function ResultMulti({
                             {/* 玩家1的回答 */}
                             <div className={`p-3 rounded-lg ${record.isCorrect ? 'bg-green-50 dark:bg-green-900/20' : 'bg-red-50 dark:bg-red-900/20'}`}>
                               <p className={`text-sm font-semibold mb-1 ${record.isCorrect ? 'text-green-700 dark:text-green-300' : 'text-red-700 dark:text-red-300'}`}>
-                                {record.isCorrect ? '✓' : '✗'} 聪聪回答：{record.userAnswer !== null ? question.options[record.userAnswer] : '未作答'}
+                                {record.isCorrect ? '✓' : '✗'} {player1Name}回答：{record.userAnswer !== null ? question.options[record.userAnswer] : '未作答'}
                               </p>
                             </div>
 
@@ -1086,7 +1319,7 @@ function ResultMulti({
                   <div className="space-y-3">
                     <h4 className="font-bold text-pink-600 dark:text-pink-400 flex items-center gap-2">
                       <Crown className="w-5 h-5" />
-                      明明的答题记录
+                      {player2Name}的答题记录
                     </h4>
                     {player2AnswerRecords.map((record, index) => {
                       const question = record.question;
@@ -1111,7 +1344,7 @@ function ResultMulti({
                             {/* 玩家2的回答 */}
                             <div className={`p-3 rounded-lg ${record.isCorrect ? 'bg-green-50 dark:bg-green-900/20' : 'bg-red-50 dark:bg-red-900/20'}`}>
                               <p className={`text-sm font-semibold mb-1 ${record.isCorrect ? 'text-green-700 dark:text-green-300' : 'text-red-700 dark:text-red-300'}`}>
-                                {record.isCorrect ? '✓' : '✗'} 明明回答：{record.userAnswer !== null ? question.options[record.userAnswer] : '未作答'}
+                                {record.isCorrect ? '✓' : '✗'} {player2Name}回答：{record.userAnswer !== null ? question.options[record.userAnswer] : '未作答'}
                               </p>
                             </div>
 
