@@ -406,13 +406,16 @@ export default function Game({ gameMode, questionType, onBack }: GameProps) {
     // 播放投篮球音效
     playSoundEffect('correct');
 
+    // 从篮球上方开始（与轨迹预览一致）
+    const startY = ballPosition.y - 6;
+
     // 计算初始速度（根据轨迹偏移量计算方向，固定力度）
     const targetX = ballPosition.x + trajectoryOffset.x;
-    const targetY = ballPosition.y + trajectoryOffset.y;
+    const targetY = startY + trajectoryOffset.y;
 
-    // 计算从篮球到目标点的方向
+    // 计算从篮球上方到目标点的方向
     const dx = targetX - ballPosition.x;
-    const dy = targetY - ballPosition.y;
+    const dy = targetY - startY;
 
     // 计算距离
     const distance = Math.sqrt(dx * dx + dy * dy);
@@ -424,7 +427,7 @@ export default function Game({ gameMode, questionType, onBack }: GameProps) {
 
     // 动画参数
     let currentX = ballPosition.x;
-    let currentY = ballPosition.y;
+    let currentY = ballPosition.y; // 从篮球位置开始
     let currentVx = velocityX;
     let currentVy = velocityY;
     const gravity = 0.15; // 重力加速度
@@ -535,16 +538,19 @@ export default function Game({ gameMode, questionType, onBack }: GameProps) {
     if (isBallThrown) return null;
 
     const points: { x: number; y: number }[] = [];
-    let x = ballPosition.x;
-    let y = ballPosition.y;
 
-    // 计算目标点（基于偏移量）
+    // 从篮球上方开始（篮球高度约6%）
+    const startY = ballPosition.y - 6;
+    let x = ballPosition.x;
+    let y = startY;
+
+    // 计算目标点（基于偏移量，调整Y轴起点）
     const targetX = ballPosition.x + trajectoryOffset.x;
-    const targetY = ballPosition.y + trajectoryOffset.y;
+    const targetY = startY + trajectoryOffset.y;
 
     // 计算方向向量（固定力度）
     const dx = targetX - ballPosition.x;
-    const dy = targetY - ballPosition.y;
+    const dy = targetY - startY;
     const distance = Math.sqrt(dx * dx + dy * dy);
 
     const fixedPower = 3.0;
