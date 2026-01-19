@@ -1248,22 +1248,22 @@ export default function Game({ gameMode, questionType, onBack }: GameProps) {
 
           {/* 抛物线预览 */}
           {!isBallThrown && (
-            <svg className="absolute inset-0 w-full h-full" style={{ zIndex: 5 }}>
+            <svg className="absolute inset-0 w-full h-full" viewBox="0 0 100 100" preserveAspectRatio="none" style={{ zIndex: 5 }}>
               <polyline
                 points={drawTrajectory()
-                  ?.map(p => `${p.x * 8},${p.y * 4}`)
+                  ?.map(p => `${p.x},${p.y}`)
                   .join(' ')}
                 fill="none"
                 stroke="rgba(59, 130, 246, 0.7)"
-                strokeWidth="4"
-                strokeDasharray="8,4"
+                strokeWidth="0.8"
+                strokeDasharray="2,1"
               />
               {/* 轨迹终点指示点 */}
               {drawTrajectory() && drawTrajectory()!.length > 0 && (
                 <circle
-                  cx={drawTrajectory()![drawTrajectory()!.length - 1].x * 8}
-                  cy={drawTrajectory()![drawTrajectory()!.length - 1].y * 4}
-                  r="8"
+                  cx={drawTrajectory()![drawTrajectory()!.length - 1].x}
+                  cy={drawTrajectory()![drawTrajectory()!.length - 1].y}
+                  r="1.5"
                   fill="rgba(59, 130, 246, 0.9)"
                   className="cursor-move"
                   onMouseDown={(e) => {
