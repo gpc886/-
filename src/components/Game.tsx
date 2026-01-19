@@ -4,11 +4,11 @@ import { useState, useEffect, useRef } from 'react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Progress } from '@/components/ui/progress';
-import { getQuestionsByType, Question, QuestionType, shuffleArray } from '@/lib/questions';
+import { getQuestionsByType, Question, QuestionType, shuffleArray, JudgeQuestion, getJudgeQuestionByLevel } from '@/lib/questions';
 import { ArrowLeft, CheckCircle, XCircle, Clock, Trophy, RotateCcw, Crown, Shuffle, Plus, Trash2, Users } from 'lucide-react';
 
 interface GameProps {
-  gameMode: 'single' | 'multi';
+  gameMode: 'single' | 'multi' | 'ladder';
   questionType: QuestionType;
   onBack: () => void;
 }
@@ -301,6 +301,179 @@ export default function Game({ gameMode, questionType, onBack }: GameProps) {
 
   // 滴答音效定时器ref
   const tickTimerRef = useRef<NodeJS.Timeout | null>(null);
+
+  // ========== 天梯赛模式状态 ==========
+  const [ladderLevel, setLadderLevel] = useState(1); // 当前层数
+  const [ladderMaxLevel, setLadderMaxLevel] = useState(1); // 最高达到的层数
+  const [currentJudgeQuestion, setCurrentJudgeQuestion] = useState<JudgeQuestion | null>(null);
+  const [ballPosition, setBallPosition] = useState({ x: 50, y: 80 }); // 篮球位置（百分比）
+  const [isBallThrown, setIsBallThrown] = useState(false); // 篮球是否已发射
+  const [trajectoryAngle, setTrajectoryAngle] = useState(-45); // 抛物线角度（度）
+  const [trajectoryPower, setTrajectoryPower] = useState(60); // 抛物线力度
+  const [ladderShowResult, setLadderShowResult] = useState(false); // 显示结果
+  const [ladderResult, setLadderResult] = useState<'correct' | 'wrong' | null>(null); // 天梯赛结果
+  const [animationId, setAnimationId] = useState<number | null>(null); // 动画ID
+
+  // 初始化天梯赛题目
+  useEffect(() => {
+    if (gameMode === 'ladder') {
+      const question = getJudgeQuestionByLevel(ladderLevel);
+      setCurrentJudgeQuestion(question);
+      resetBall();
+    }
+  }, [gameMode, ladderLevel]);
+
+  // 重置篮球位置
+  const resetBall = () => {
+    setBallPosition({ x: 50, y: 80 });
+    setIsBallThrown(false);
+    setTrajectoryAngle(-45);
+    setTrajectoryPower(60);
+  };
+
+  // ========== 天梯赛模式函数 ==========
+  
+  // 发射篮球
+  const throwBall = () => {
+    if (isBallThrown || gameMode !== 'ladder') return;
+
+    setIsBallThrown(true);
+    
+    // 播放投篮球音效
+    playSoundEffect('correct');
+
+    // 计算初始速度（将角度和力度转换为速度向量）
+    const angleRad = (trajectoryAngle * Math.PI) / 180;
+    const power = trajectoryPower / 100;
+    const velocityX = Math.cos(angleRad) * power * 5;
+    const velocityY = Math.sin(angleRad) * power * 5;
+
+    // 动画参数
+    let currentX = ballPosition.x;
+    let currentY = ballPosition.y;
+    let currentVx = velocityX;
+    let currentVy = velocityY;
+    const gravity = 0.3; // 重力加速度
+    const dt = 0.5; // 时间步长
+
+    // 开始动画
+    const animate = () => {
+      // 更新位置
+      currentX += currentVx * dt;
+      currentY += currentVy * dt;
+      
+      // 应用重力
+      currentVy += gravity * dt;
+
+      // 更新篮球位置
+      setBallPosition({ x: currentX, y: currentY });
+
+      // 检测碰撞
+      const hitResult = checkCollision(currentX, currentY);
+      
+      if (hitResult !== null) {
+        // 命中篮筐
+        handleLadderResult(hitResult);
+        return;
+      }
+
+      // 检测是否超出屏幕
+      if (currentY > 90 || currentX < 0 || currentX > 100) {
+        // 未命中，判定为错误
+        handleLadderResult('wrong');
+        return;
+      }
+
+      // 继续动画
+      const id = requestAnimationFrame(animate);
+      setAnimationId(id);
+    };
+
+    const id = requestAnimationFrame(animate);
+    setAnimationId(id);
+  };
+
+  // 检测碰撞
+  const checkCollision = (x: number, y: number): 'correct' | 'wrong' | null => {
+    // 左篮筐（正确）：x: 10-25, y: 25-40
+    const leftHoop = { xMin: 10, xMax: 25, yMin: 25, yMax: 40 };
+    // 右篮筐（错误）：x: 75-90, y: 25-40
+    const rightHoop = { xMin: 75, xMax: 90, yMin: 25, yMax: 40 };
+
+    // 检测是否命中左篮筐
+    if (x >= leftHoop.xMin && x <= leftHoop.xMax && y >= leftHoop.yMin && y <= leftHoop.yMax) {
+      return 'correct';
+    }
+
+    // 检测是否命中右篮筐
+    if (x >= rightHoop.xMin && x <= rightHoop.xMax && y >= rightHoop.yMin && y <= rightHoop.yMax) {
+      return 'wrong';
+    }
+
+    return null;
+  };
+
+  // 处理天梯赛结果
+  const handleLadderResult = (result: 'correct' | 'wrong') => {
+    setLadderResult(result);
+    setLadderShowResult(true);
+
+    // 播放结果音效
+    playSoundEffect(result);
+
+    // 停止动画
+    if (animationId) {
+      cancelAnimationFrame(animationId);
+      setAnimationId(null);
+    }
+
+    // 1秒后处理层级变化
+    setTimeout(() => {
+      if (result === 'correct') {
+        // 答对，进入下一层
+        setLadderMaxLevel(prev => Math.max(prev, ladderLevel + 1));
+        setLadderLevel(ladderLevel + 1);
+      } else {
+        // 答错，退回前一层（最低第一层）
+        setLadderLevel(prev => Math.max(prev - 1, 1));
+      }
+
+      // 显示新题目
+      const newQuestion = getJudgeQuestionByLevel(result === 'correct' ? ladderLevel + 1 : Math.max(ladderLevel - 1, 1));
+      setCurrentJudgeQuestion(newQuestion);
+      resetBall();
+      setLadderShowResult(false);
+      setLadderResult(null);
+    }, 2000);
+  };
+
+  // 绘制抛物线
+  const drawTrajectory = () => {
+    if (isBallThrown) return null;
+
+    const points: { x: number; y: number }[] = [];
+    let x = ballPosition.x;
+    let y = ballPosition.y;
+    const angleRad = (trajectoryAngle * Math.PI) / 180;
+    const power = trajectoryPower / 100;
+    const vx = Math.cos(angleRad) * power * 5;
+    let vy = Math.sin(angleRad) * power * 5;
+    const gravity = 0.3;
+    const dt = 0.5;
+
+    // 预测20个点
+    for (let i = 0; i < 20; i++) {
+      x += vx * dt;
+      y += vy * dt;
+      vy += gravity * dt;
+      points.push({ x, y });
+
+      // 提前停止如果超出屏幕
+      if (y > 90 || x < 0 || x > 100) break;
+    }
+
+    return points;
+  };
 
   // 最后5秒语音倒计时（仅双人模式）
   useEffect(() => {
@@ -638,6 +811,18 @@ export default function Game({ gameMode, questionType, onBack }: GameProps) {
                 </div>
               )}
 
+              {gameMode === 'ladder' && (
+                <div className="p-4 bg-emerald-50 dark:bg-emerald-900/20 rounded-lg">
+                  <p className="text-sm text-gray-600 dark:text-gray-400 mb-1">🎯 天梯赛说明</p>
+                  <ul className="text-emerald-700 dark:text-emerald-300 space-y-1 text-sm">
+                    <li>• 答对进入下一层，答错退回前一层（最低第1层）</li>
+                    <li>• 左篮筐代表正确，右篮筐代表错误</li>
+                    <li>• 调整抛物线角度和力度，发射篮球</li>
+                    <li>• 越到高层题目难度越大，加油！</li>
+                  </ul>
+                </div>
+              )}
+
               {/* 双人模式显示抽签按钮和当前玩家 */}
               {gameMode === 'multi' && (
                 <div className="space-y-4">
@@ -829,6 +1014,200 @@ export default function Game({ gameMode, questionType, onBack }: GameProps) {
             </Card>
           </div>
         )}
+      </div>
+    );
+  }
+
+  // 天梯赛模式界面
+  if (gameMode === 'ladder') {
+    return (
+      <div className="min-h-screen bg-gradient-to-br from-green-50 via-emerald-50 to-teal-50 dark:from-gray-900 dark:via-emerald-900 dark:to-teal-900 p-4 relative overflow-hidden">
+        {/* 顶部信息栏 */}
+        <div className="max-w-7xl mx-auto mb-4 z-10 relative">
+          <div className="flex items-center justify-between">
+            <Button onClick={onBack} variant="outline" size="sm">
+              <ArrowLeft className="w-4 h-4 mr-2" />
+              返回
+            </Button>
+            <div className="flex items-center gap-4">
+              <div className="flex items-center gap-2 px-4 py-2 bg-white dark:bg-gray-800 rounded-lg shadow">
+                <Trophy className="w-5 h-5 text-yellow-600" />
+                <span className="font-bold">第 {ladderLevel} 层</span>
+              </div>
+              <div className="flex items-center gap-2 px-4 py-2 bg-white dark:bg-gray-800 rounded-lg shadow">
+                <Crown className="w-5 h-5 text-purple-600" />
+                <span className="text-sm">最高: {ladderMaxLevel} 层</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        {/* 题目显示区 */}
+        <div className="max-w-4xl mx-auto mb-6 z-10 relative">
+          <Card className="shadow-xl border-2 border-green-200 dark:border-green-700">
+            <CardHeader>
+              <CardTitle className="text-xl text-center text-green-700 dark:text-green-300">
+                请判断以下说法的正确性
+              </CardTitle>
+            </CardHeader>
+            <CardContent>
+              <p className="text-2xl font-bold text-center py-6">
+                {currentJudgeQuestion?.question}
+              </p>
+              <div className="flex justify-center gap-8 mt-4">
+                <div className="flex items-center gap-2 text-green-600 dark:text-green-400">
+                  <CheckCircle className="w-6 h-6" />
+                  <span className="font-bold">正确 → 投左篮筐</span>
+                </div>
+                <div className="flex items-center gap-2 text-red-600 dark:text-red-400">
+                  <XCircle className="w-6 h-6" />
+                  <span className="font-bold">错误 → 投右篮筐</span>
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+        </div>
+
+        {/* 游戏区域 */}
+        <div className="max-w-6xl mx-auto relative h-[500px] z-10">
+          {/* 左篮筐（正确） */}
+          <div className="absolute left-0 top-0 w-[20%] h-full flex items-center justify-center">
+            <div className="relative">
+              {/* 篮筐 */}
+              <div className="w-32 h-8 border-4 border-green-500 rounded-b-full bg-green-100 dark:bg-green-900/30 shadow-lg">
+                <div className="absolute bottom-0 left-1/2 -translate-x-1/2 w-1 h-20 bg-gray-400 dark:bg-gray-600"></div>
+              </div>
+              <div className="absolute -top-16 left-1/2 -translate-x-1/2 text-center">
+                <CheckCircle className="w-12 h-12 text-green-600 dark:text-green-400 mx-auto mb-2" />
+                <span className="font-bold text-green-700 dark:text-green-300">正确</span>
+              </div>
+            </div>
+          </div>
+
+          {/* 右篮筐（错误） */}
+          <div className="absolute right-0 top-0 w-[20%] h-full flex items-center justify-center">
+            <div className="relative">
+              {/* 篮筐 */}
+              <div className="w-32 h-8 border-4 border-red-500 rounded-b-full bg-red-100 dark:bg-red-900/30 shadow-lg">
+                <div className="absolute bottom-0 left-1/2 -translate-x-1/2 w-1 h-20 bg-gray-400 dark:bg-gray-600"></div>
+              </div>
+              <div className="absolute -top-16 left-1/2 -translate-x-1/2 text-center">
+                <XCircle className="w-12 h-12 text-red-600 dark:text-red-400 mx-auto mb-2" />
+                <span className="font-bold text-red-700 dark:text-red-300">错误</span>
+              </div>
+            </div>
+          </div>
+
+          {/* 篮球 */}
+          <div
+            className="absolute w-12 h-12 rounded-full bg-orange-500 border-4 border-orange-700 shadow-2xl transition-all duration-100 ease-linear"
+            style={{
+              left: `${ballPosition.x}%`,
+              top: `${ballPosition.y}%`,
+              transform: 'translate(-50%, -50%)',
+            }}
+          >
+            {/* 篮球纹理 */}
+            <div className="absolute inset-0 flex items-center justify-center">
+              <div className="w-full h-0.5 bg-orange-700 rotate-90"></div>
+              <div className="absolute w-full h-0.5 bg-orange-700"></div>
+            </div>
+          </div>
+
+          {/* 抛物线预览 */}
+          {!isBallThrown && (
+            <svg className="absolute inset-0 w-full h-full pointer-events-none" style={{ zIndex: 5 }}>
+              <polyline
+                points={drawTrajectory()
+                  ?.map(p => `${p.x * 8},${p.y * 4}`)
+                  .join(' ')}
+                fill="none"
+                stroke="rgba(59, 130, 246, 0.5)"
+                strokeWidth="3"
+                strokeDasharray="5,5"
+              />
+            </svg>
+          )}
+
+          {/* 控制面板 */}
+          {!isBallThrown && !ladderShowResult && (
+            <div className="absolute bottom-0 left-1/2 -translate-x-1/2 w-full max-w-md z-20">
+              <Card className="shadow-xl">
+                <CardContent className="pt-6">
+                  <div className="space-y-4">
+                    {/* 角度控制 */}
+                    <div>
+                      <label className="text-sm font-medium mb-2 block">
+                        抛射角度: {trajectoryAngle}°
+                      </label>
+                      <input
+                        type="range"
+                        min="-90"
+                        max="-10"
+                        value={trajectoryAngle}
+                        onChange={(e) => setTrajectoryAngle(Number(e.target.value))}
+                        className="w-full"
+                      />
+                    </div>
+
+                    {/* 力度控制 */}
+                    <div>
+                      <label className="text-sm font-medium mb-2 block">
+                        投篮力度: {trajectoryPower}%
+                      </label>
+                      <input
+                        type="range"
+                        min="30"
+                        max="100"
+                        value={trajectoryPower}
+                        onChange={(e) => setTrajectoryPower(Number(e.target.value))}
+                        className="w-full"
+                      />
+                    </div>
+
+                    {/* 发射按钮 */}
+                    <Button
+                      onClick={throwBall}
+                      className="w-full bg-gradient-to-r from-orange-500 to-red-500 hover:from-orange-600 hover:to-red-600 text-white font-bold py-6 text-lg"
+                      size="lg"
+                    >
+                      🏀 发射篮球
+                    </Button>
+                  </div>
+                </CardContent>
+              </Card>
+            </div>
+          )}
+
+          {/* 结果提示 */}
+          {ladderShowResult && (
+            <div className="absolute inset-0 flex items-center justify-center z-30 bg-black/50 rounded-lg">
+              <Card className="shadow-2xl transform scale-110 animate-bounce">
+                <CardContent className="p-8 text-center">
+                  {ladderResult === 'correct' ? (
+                    <>
+                      <CheckCircle className="w-20 h-20 text-green-500 mx-auto mb-4" />
+                      <h2 className="text-3xl font-bold text-green-600 mb-2">回答正确！</h2>
+                      <p className="text-lg text-gray-600 mb-2">进入第 {ladderLevel + 1} 层</p>
+                      {currentJudgeQuestion && (
+                        <p className="text-sm text-gray-500 mt-4">{currentJudgeQuestion.explanation}</p>
+                      )}
+                    </>
+                  ) : (
+                    <>
+                      <XCircle className="w-20 h-20 text-red-500 mx-auto mb-4" />
+                      <h2 className="text-3xl font-bold text-red-600 mb-2">回答错误！</h2>
+                      <p className="text-lg text-gray-600 mb-2">退回第 {Math.max(ladderLevel - 1, 1)} 层</p>
+                      {currentJudgeQuestion && (
+                        <p className="text-sm text-gray-500 mt-4">{currentJudgeQuestion.explanation}</p>
+                      )}
+                    </>
+                  )}
+                </CardContent>
+              </Card>
+            </div>
+          )}
+        </div>
       </div>
     );
   }

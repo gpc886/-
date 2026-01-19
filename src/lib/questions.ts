@@ -7,7 +7,16 @@ export interface Question {
   explanation: string; // 答案解析
 }
 
-export type QuestionType = 'wenyan' | 'idiom' | 'poetry';
+// 判断题类型定义（用于天梯赛模式）
+export interface JudgeQuestion {
+  id: string;
+  question: string;
+  answer: boolean; // true=正确, false=错误
+  explanation: string; // 答案解析
+  difficulty: number; // 难度等级 1-10
+}
+
+export type QuestionType = 'wenyan' | 'idiom' | 'poetry' | 'judge';
 
 // 文言文字词题目（120道）
 export const wenyanQuestions: Question[] = [
@@ -2564,3 +2573,393 @@ export function shuffleArray<T>(array: T[]): T[] {
   }
   return newArray;
 }
+
+// ========== 判断题库（天梯赛模式） ==========
+
+// 判断题数据（按难度1-10分级）
+export const judgeQuestions: JudgeQuestion[] = [
+  // 难度1：基础常识
+  {
+    id: 'judge-1-1',
+    question: '《论语》是记录孔子言行的书。',
+    answer: true,
+    explanation: '正确。《论语》是儒家经典之一，记录了孔子及其弟子的言行。',
+    difficulty: 1
+  },
+  {
+    id: 'judge-1-2',
+    question: '李白被称为"诗仙"。',
+    answer: true,
+    explanation: '正确。李白被称为"诗仙"，杜甫被称为"诗圣"。',
+    difficulty: 1
+  },
+  {
+    id: 'judge-1-3',
+    question: '《红楼梦》的作者是施耐庵。',
+    answer: false,
+    explanation: '错误。《红楼梦》的作者是曹雪芹，施耐庵是《水浒传》的作者。',
+    difficulty: 1
+  },
+  {
+    id: 'judge-1-4',
+    question: '"床前明月光"是杜甫的诗句。',
+    answer: false,
+    explanation: '错误。这是李白的《静夜思》中的诗句。',
+    difficulty: 1
+  },
+  {
+    id: 'judge-1-5',
+    question: '中国四大名著包括《西游记》。',
+    answer: true,
+    explanation: '正确。中国四大名著是《红楼梦》《西游记》《水浒传》《三国演义》。',
+    difficulty: 1
+  },
+  // 难度2：文言文基础
+  {
+    id: 'judge-2-1',
+    question: '"学而时习之"中的"说"通"悦"，意思是高兴。',
+    answer: true,
+    explanation: '正确。"说"通"悦"，意思是高兴、喜悦。',
+    difficulty: 2
+  },
+  {
+    id: 'judge-2-2',
+    question: '"温故而知新"中的"故"指的是"所以"。',
+    answer: false,
+    explanation: '错误。"故"指的是"旧的知识"，已经学过的内容。',
+    difficulty: 2
+  },
+  {
+    id: 'judge-2-3',
+    question: '"三人行，必有我师焉"中的"三"表示实指三个人。',
+    answer: false,
+    explanation: '错误。"三"在这里是虚数，表示"几个"或"多个人"。',
+    difficulty: 2
+  },
+  {
+    id: 'judge-2-4',
+    question: '"吾日三省吾身"中的"省"意思是反省。',
+    answer: true,
+    explanation: '正确。"省"意为反省、检查自己。',
+    difficulty: 2
+  },
+  {
+    id: 'judge-2-5',
+    question: '"逝者如斯夫，不舍昼夜"描写的是时间流逝。',
+    answer: true,
+    explanation: '正确。这句话是孔子感叹时间像流水一样流逝，日夜不停。',
+    difficulty: 2
+  },
+  // 难度3：成语知识
+  {
+    id: 'judge-3-1',
+    question: '"守株待兔"这个成语出自《韩非子》。',
+    answer: true,
+    explanation: '正确。这个寓言故事出自《韩非子·五蠹》。',
+    difficulty: 3
+  },
+  {
+    id: 'judge-3-2',
+    question: '"刻舟求剑"的故事告诉我们看问题要全面。',
+    answer: false,
+    explanation: '错误。这个故事告诉我们事物是发展变化的，不能静止地看问题。',
+    difficulty: 3
+  },
+  {
+    id: 'judge-3-3',
+    question: '"画蛇添足"的意思是多此一举，反而坏事。',
+    answer: true,
+    explanation: '正确。这个成语比喻做了多余的事，反而把事情搞糟了。',
+    difficulty: 3
+  },
+  {
+    id: 'judge-3-4',
+    question: '"掩耳盗铃"是赞扬一个人聪明机智。',
+    answer: false,
+    explanation: '错误。这个成语讽刺自欺欺人的人。',
+    difficulty: 3
+  },
+  {
+    id: 'judge-3-5',
+    question: '"望梅止渴"的主人公是曹操。',
+    answer: true,
+    explanation: '正确。这个故事讲的是曹操用计策激励士兵继续前进。',
+    difficulty: 3
+  },
+  // 难度4：古诗词
+  {
+    id: 'judge-4-1',
+    question: '"春眠不觉晓，处处闻啼鸟"出自孟浩然的《春晓》。',
+    answer: true,
+    explanation: '正确。这是孟浩然的代表作之一。',
+    difficulty: 4
+  },
+  {
+    id: 'judge-4-2',
+    question: '"两个黄鹂鸣翠柳，一行白鹭上青天"是王维的诗句。',
+    answer: false,
+    explanation: '错误。这是杜甫的《绝句》中的诗句。',
+    difficulty: 4
+  },
+  {
+    id: 'judge-4-3',
+    question: '"举头望明月，低头思故乡"表达了思乡之情。',
+    answer: true,
+    explanation: '正确。这首诗表达了诗人对故乡的思念之情。',
+    difficulty: 4
+  },
+  {
+    id: 'judge-4-4',
+    question: '苏轼的《水调歌头·明月几时有》是一首词。',
+    answer: true,
+    explanation: '正确。这是苏轼的著名词作，表达了对亲人的思念。',
+    difficulty: 4
+  },
+  {
+    id: 'judge-4-5',
+    question: '"大漠孤烟直，长河落日圆"描写的是江南景色。',
+    answer: false,
+    explanation: '错误。这两句描写的是塞外壮丽的景色。',
+    difficulty: 4
+  },
+  // 难度5
+  {
+    id: 'judge-5-1',
+    question: '"学而不思则罔，思而不学则殆"出自《孟子》。',
+    answer: false,
+    explanation: '错误。这句话出自《论语·为政》。',
+    difficulty: 5
+  },
+  {
+    id: 'judge-5-2',
+    question: '陶渊明被称为"田园诗人"。',
+    answer: true,
+    explanation: '正确。陶渊明是东晋诗人，开创了田园诗派。',
+    difficulty: 5
+  },
+  {
+    id: 'judge-5-3',
+    question: '"落霞与孤鹜齐飞，秋水共长天一色"出自《滕王阁序》。',
+    answer: true,
+    explanation: '正确。这是王勃《滕王阁序》中的名句。',
+    difficulty: 5
+  },
+  {
+    id: 'judge-5-4',
+    question: '"先天下之忧而忧，后天下之乐而乐"是诸葛亮的名言。',
+    answer: false,
+    explanation: '错误。这是范仲淹在《岳阳楼记》中表达的名句。',
+    difficulty: 5
+  },
+  {
+    id: 'judge-5-5',
+    question: '白居易的《长恨歌》描写的是唐玄宗和杨贵妃的爱情故事。',
+    answer: true,
+    explanation: '正确。这首长诗叙述了唐玄宗和杨贵妃的爱情悲剧。',
+    difficulty: 5
+  },
+  // 难度6
+  {
+    id: 'judge-6-1',
+    question: '"破釜沉舟"的主人公是项羽。',
+    answer: true,
+    explanation: '正确。巨鹿之战中，项羽命令士兵砸锅沉船，表示不胜利不回头的决心。',
+    difficulty: 6
+  },
+  {
+    id: 'judge-6-2',
+    question: '"三顾茅庐"讲的是刘备请诸葛亮出山的故事。',
+    answer: true,
+    explanation: '正确。刘备三顾茅庐请诸葛亮出山辅佐，体现了礼贤下士的精神。',
+    difficulty: 6
+  },
+  {
+    id: 'judge-6-3',
+    question: '"负荆请罪"的主动方是廉颇。',
+    answer: true,
+    explanation: '正确。廉颇背着荆条向蔺相如请罪，表示自己的歉意。',
+    difficulty: 6
+  },
+  {
+    id: 'judge-6-4',
+    question: '"指鹿为马"讲的是赵高指鹿为马的故事。',
+    answer: true,
+    explanation: '正确。赵高故意指鹿为马，测试群臣是否顺从。',
+    difficulty: 6
+  },
+  {
+    id: 'judge-6-5',
+    question: '"纸上谈兵"指的是赵括的故事。',
+    answer: true,
+    explanation: '正确。赵括只会纸上谈兵，实际指挥能力很差，导致长平之战惨败。',
+    difficulty: 6
+  },
+  // 难度7
+  {
+    id: 'judge-7-1',
+    question: '《诗经》是中国最早的诗歌总集。',
+    answer: true,
+    explanation: '正确。《诗经》是中国最早的诗歌总集，收录了西周到春秋时期的305首诗。',
+    difficulty: 7
+  },
+  {
+    id: 'judge-7-2',
+    question: '"关关雎鸠，在河之洲"出自《楚辞》。',
+    answer: false,
+    explanation: '错误。这出自《诗经·周南·关雎》。',
+    difficulty: 7
+  },
+  {
+    id: 'judge-7-3',
+    question: '李清照是南宋女词人。',
+    answer: true,
+    explanation: '正确。李清照是宋代著名女词人，婉约词派代表人物。',
+    difficulty: 7
+  },
+  {
+    id: 'judge-7-4',
+    question: '辛弃疾的词风以婉约著称。',
+    answer: false,
+    explanation: '错误。辛弃疾是豪放派词人代表，词风豪放激昂。',
+    difficulty: 7
+  },
+  {
+    id: 'judge-7-5',
+    question: '"疏影横斜水清浅，暗香浮动月黄昏"描写的是荷花。',
+    answer: false,
+    explanation: '错误。这两句描写的是梅花，出自林逋的《山园小梅》。',
+    difficulty: 7
+  },
+  // 难度8
+  {
+    id: 'judge-8-1',
+    question: '韩愈是"唐宋八大家"之首。',
+    answer: true,
+    explanation: '正确。韩愈被尊为"唐宋八大家"之首，倡导古文运动。',
+    difficulty: 8
+  },
+  {
+    id: 'judge-8-2',
+    question: '"业精于勤，荒于嬉"出自韩愈的《师说》。',
+    answer: false,
+    explanation: '错误。这出自韩愈的《进学解》。',
+    difficulty: 8
+  },
+  {
+    id: 'judge-8-3',
+    question: '柳宗元的《小石潭记》是一篇游记散文。',
+    answer: true,
+    explanation: '正确。这是柳宗元的代表作之一，描写了小石潭的幽美景色。',
+    difficulty: 8
+  },
+  {
+    id: 'judge-8-4',
+    question: '欧阳修的《醉翁亭记》是他在杭州任职时写的。',
+    answer: false,
+    explanation: '错误。这是欧阳修在滁州任职时写的。',
+    difficulty: 8
+  },
+  {
+    id: 'judge-8-5',
+    question: '苏轼的《赤壁赋》描写的是赤壁之战的场景。',
+    answer: false,
+    explanation: '错误。《赤壁赋》是苏轼游览黄州赤壁时所作，主要抒发人生感慨。',
+    difficulty: 8
+  },
+  // 难度9
+  {
+    id: 'judge-9-1',
+    question: '"人生自古谁无死，留取丹心照汗青"是文天祥的诗句。',
+    answer: true,
+    explanation: '正确。这是文天祥《过零丁洋》中的名句，表达了视死如归的爱国情怀。',
+    difficulty: 9
+  },
+  {
+    id: 'judge-9-2',
+    question: '"粉身碎骨浑不怕，要留清白在人间"赞美的是梅花。',
+    answer: false,
+    explanation: '错误。于谦的《石灰吟》赞美的是石灰，借物喻人，表达清白做人的志向。',
+    difficulty: 9
+  },
+  {
+    id: 'judge-9-3',
+    question: '"千山鸟飞绝，万径人踪灭"描写的是春天的景象。',
+    answer: false,
+    explanation: '错误。这是柳宗元《江雪》中的诗句，描写的是冬天的景象。',
+    difficulty: 9
+  },
+  {
+    id: 'judge-9-4',
+    question: '李商隐与杜牧并称为"小李杜"。',
+    answer: true,
+    explanation: '正确。李商隐和杜牧是晚唐诗坛的两颗明珠，合称"小李杜"。',
+    difficulty: 9
+  },
+  {
+    id: 'judge-9-5',
+    question: '"但愿人长久，千里共婵娟"中的"婵娟"指美女。',
+    answer: false,
+    explanation: '错误。"婵娟"在这里指月亮。',
+    difficulty: 9
+  },
+  // 难度10：高难度
+  {
+    id: 'judge-10-1',
+    question: '《史记》是中国第一部纪传体通史。',
+    answer: true,
+    explanation: '正确。《史记》由司马迁撰写，是中国第一部纪传体通史。',
+    difficulty: 10
+  },
+  {
+    id: 'judge-10-2',
+    question: '"六国破灭，非兵不利，战不善"出自苏洵的《六国论》。',
+    answer: true,
+    explanation: '正确。这是苏洵《六国论》开篇的名句，分析六国灭亡的原因。',
+    difficulty: 10
+  },
+  {
+    id: 'judge-10-3',
+    question: '"醉里挑灯看剑，梦回吹角连营"是辛弃疾的词。',
+    answer: true,
+    explanation: '正确。这是辛弃疾《破阵子·为陈同甫赋壮词以寄之》中的句子。',
+    difficulty: 10
+  },
+  {
+    id: 'judge-10-4',
+    question: '归有光是明代"唐宋派"的代表作家。',
+    answer: true,
+    explanation: '正确。归有光是明代散文家，"唐宋派"代表人物，代表作有《项脊轩志》。',
+    difficulty: 10
+  },
+  {
+    id: 'judge-10-5',
+    question: '"二十四桥明月夜，玉人何处教吹箫"描写的是扬州的景色。',
+    answer: true,
+    explanation: '正确。这是杜牧《寄扬州韩绰判官》中的名句，描写扬州夜色。',
+    difficulty: 10
+  }
+];
+
+// 根据当前层数获取判断题
+export function getJudgeQuestionByLevel(level: number): JudgeQuestion {
+  // 确保难度在1-10之间
+  const difficulty = Math.min(Math.max(level, 1), 10);
+  
+  // 获取对应难度的题目
+  const questions = judgeQuestions.filter(q => q.difficulty === difficulty);
+  
+  // 如果没有对应难度的题目，使用最低难度
+  if (questions.length === 0) {
+    const allQuestions = [...judgeQuestions];
+    return shuffleArray(allQuestions)[0];
+  }
+  
+  // 随机返回一道题
+  return shuffleArray(questions)[0];
+}
+
+// 获取判断题总数
+export function getJudgeQuestionCount(): number {
+  return judgeQuestions.length;
+}
+

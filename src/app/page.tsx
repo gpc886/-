@@ -3,11 +3,11 @@
 import { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { BookOpen, Users, Clock, Trophy, PenTool, Scroll } from 'lucide-react';
+import { BookOpen, Users, Clock, Trophy, PenTool, Scroll, Target } from 'lucide-react';
 import Game from '@/components/Game';
 import type { QuestionType } from '@/lib/questions';
 
-type GameMode = 'single' | 'multi' | null;
+type GameMode = 'single' | 'multi' | 'ladder' | null;
 
 export default function Home() {
   const [gameMode, setGameMode] = useState<GameMode>(null);
@@ -27,8 +27,16 @@ export default function Home() {
   };
 
   // 游戏界面
-  if (startGame && gameMode && questionType) {
-    return <Game gameMode={gameMode} questionType={questionType} onBack={handleBackToMenu} />;
+  if (startGame && gameMode) {
+    // 天梯赛模式不需要题型
+    if (gameMode === 'ladder') {
+      return <Game gameMode={gameMode} questionType="wenyan" onBack={handleBackToMenu} />;
+    }
+    // 其他模式需要题型
+    if (questionType) {
+      return <Game gameMode={gameMode} questionType={questionType} onBack={handleBackToMenu} />;
+    }
+    return null;
   }
 
   // 游戏确认界面
@@ -40,7 +48,7 @@ export default function Home() {
             <CardHeader>
               <CardTitle className="text-3xl text-center">准备开始挑战</CardTitle>
               <CardDescription className="text-center text-lg">
-                {gameMode === 'single' ? '单人模式' : '双人PK模式'} - {getQuestionTypeName(questionType)}
+                {gameMode === 'single' ? '单人模式' : gameMode === 'multi' ? '双人PK模式' : '天梯赛模式'} - {getQuestionTypeName(questionType)}
               </CardDescription>
             </CardHeader>
             <CardContent className="space-y-6">
@@ -48,7 +56,7 @@ export default function Home() {
                 <div className="p-4 bg-blue-50 dark:bg-blue-900/20 rounded-lg">
                   <p className="text-sm text-gray-600 dark:text-gray-400 mb-1">游戏模式</p>
                   <p className="text-xl font-bold text-blue-600 dark:text-blue-400">
-                    {gameMode === 'single' ? '单人模式' : '双人PK模式'}
+                    {gameMode === 'single' ? '单人模式' : gameMode === 'multi' ? '双人PK模式' : '天梯赛模式'}
                   </p>
                 </div>
                 <div className="p-4 bg-purple-50 dark:bg-purple-900/20 rounded-lg">
@@ -64,6 +72,15 @@ export default function Home() {
                   <p className="text-sm text-gray-600 dark:text-gray-400 mb-1">⚠️ 注意</p>
                   <p className="text-amber-700 dark:text-amber-300">
                     双人PK模式有时间限制，请在规定时间内完成答题，分数高者获胜！
+                  </p>
+                </div>
+              )}
+
+              {gameMode === 'ladder' && (
+                <div className="p-4 bg-emerald-50 dark:bg-emerald-900/20 rounded-lg">
+                  <p className="text-sm text-gray-600 dark:text-gray-400 mb-1">🎯 天梯赛说明</p>
+                  <p className="text-emerald-700 dark:text-emerald-300">
+                    答对进入下一层，答错退回前一层（最低第1层）。通过投篮选择答案，左篮筐代表正确，右篮筐代表错误！
                   </p>
                 </div>
               )}
@@ -91,7 +108,7 @@ export default function Home() {
   if (!gameMode) {
     return (
       <div className="min-h-screen bg-gradient-to-br from-blue-50 via-purple-50 to-pink-50 dark:from-gray-900 dark:via-purple-900 dark:to-blue-900 flex items-center justify-center p-4">
-        <div className="max-w-4xl w-full">
+        <div className="max-w-5xl w-full">
           {/* 标题 */}
           <div className="text-center mb-12">
             <h1 className="text-5xl font-bold bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent mb-4">
@@ -103,7 +120,7 @@ export default function Home() {
           </div>
 
           {/* 模式选择卡片 */}
-          <div className="grid md:grid-cols-2 gap-6">
+          <div className="grid md:grid-cols-3 gap-6">
             {/* 单人模式 */}
             <Card
               className="cursor-pointer hover:shadow-2xl transition-all duration-300 hover:scale-105 border-2 border-transparent hover:border-blue-400"
@@ -115,8 +132,8 @@ export default function Home() {
                     <BookOpen className="w-8 h-8 text-blue-600 dark:text-blue-400" />
                   </div>
                   <div>
-                    <CardTitle className="text-2xl">单人模式</CardTitle>
-                    <CardDescription>独自挑战，测试自己的语文水平</CardDescription>
+                    <CardTitle className="text-xl">单人模式</CardTitle>
+                    <CardDescription className="text-sm">独自挑战，测试语文水平</CardDescription>
                   </div>
                 </div>
               </CardHeader>
@@ -128,11 +145,11 @@ export default function Home() {
                   </div>
                   <div className="flex items-center gap-2">
                     <Clock className="w-4 h-4 text-blue-500" />
-                    <span>无时间限制，深思熟虑作答</span>
+                    <span>无时间限制</span>
                   </div>
                   <div className="flex items-center gap-2">
                     <Scroll className="w-4 h-4 text-green-500" />
-                    <span>三种题型自由选择</span>
+                    <span>三种题型可选</span>
                   </div>
                 </div>
               </CardContent>
@@ -149,8 +166,8 @@ export default function Home() {
                     <Users className="w-8 h-8 text-purple-600 dark:text-purple-400" />
                   </div>
                   <div>
-                    <CardTitle className="text-2xl">双人PK模式</CardTitle>
-                    <CardDescription>与好友对战，争夺语文学霸称号</CardDescription>
+                    <CardTitle className="text-xl">双人PK模式</CardTitle>
+                    <CardDescription className="text-sm">与好友对战，争夺学霸</CardDescription>
                   </div>
                 </div>
               </CardHeader>
@@ -162,11 +179,49 @@ export default function Home() {
                   </div>
                   <div className="flex items-center gap-2">
                     <Clock className="w-4 h-4 text-red-500" />
-                    <span>限时挑战，考验速度与准确率</span>
+                    <span>限时40秒</span>
                   </div>
                   <div className="flex items-center gap-2">
                     <Users className="w-4 h-4 text-purple-500" />
-                    <span>实时对战，激情对决</span>
+                    <span>实时对战</span>
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
+
+            {/* 天梯赛模式 */}
+            <Card
+              className="cursor-pointer hover:shadow-2xl transition-all duration-300 hover:scale-105 border-2 border-transparent hover:border-emerald-400"
+              onClick={() => {
+                setGameMode('ladder');
+                // 天梯赛模式直接开始，不需要选择题型
+                handleStartGame();
+              }}
+            >
+              <CardHeader>
+                <div className="flex items-center gap-4">
+                  <div className="p-3 bg-emerald-100 dark:bg-emerald-900 rounded-full">
+                    <Target className="w-8 h-8 text-emerald-600 dark:text-emerald-400" />
+                  </div>
+                  <div>
+                    <CardTitle className="text-xl">天梯赛模式</CardTitle>
+                    <CardDescription className="text-sm">投篮答题，挑战高层</CardDescription>
+                  </div>
+                </div>
+              </CardHeader>
+              <CardContent>
+                <div className="space-y-2 text-sm text-gray-600 dark:text-gray-400">
+                  <div className="flex items-center gap-2">
+                    <Trophy className="w-4 h-4 text-yellow-500" />
+                    <span>无限层数挑战</span>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <Target className="w-4 h-4 text-emerald-500" />
+                    <span>投篮选择答案</span>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <Clock className="w-4 h-4 text-blue-500" />
+                    <span>难度递增</span>
                   </div>
                 </div>
               </CardContent>
