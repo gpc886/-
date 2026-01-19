@@ -440,7 +440,7 @@ export default function Game({ gameMode, questionType, onBack }: GameProps) {
     setBallPosition({ x: 50, y: 80 });
     setIsBallThrown(false);
     setTrajectoryOffset({ x: 0, y: -30 });
-    setThrowPower(5.4); // 重置力度到默认值（缩小10%）
+    setThrowPower(10.0); // 重置力度到默认值（提高至10.0以更容易到达篮筐）
     setBallRotation(0); // 重置旋转角度
     setHoopScored(null); // 重置投中状态
   };
@@ -461,6 +461,10 @@ export default function Game({ gameMode, questionType, onBack }: GameProps) {
     const targetX = ballPosition.x + trajectoryOffset.x;
     const targetY = ballPosition.y + trajectoryOffset.y;
 
+    console.log(`🎯 发射篮球 - 初始位置: (${ballPosition.x}, ${ballPosition.y})`);
+    console.log(`🎯 目标点: (${targetX.toFixed(1)}, ${targetY.toFixed(1)})`);
+    console.log(`🎯 发射力度: ${throwPower.toFixed(1)}`);
+
     // 计算从篮球位置到目标点的方向
     const dx = targetX - ballPosition.x;
     const dy = targetY - ballPosition.y;
@@ -471,6 +475,8 @@ export default function Game({ gameMode, questionType, onBack }: GameProps) {
     // 使用当前力度，按方向标准化
     const velocityX = (dx / distance) * throwPower;
     const velocityY = (dy / distance) * throwPower;
+
+    console.log(`🎯 初始速度: vx=${velocityX.toFixed(2)}, vy=${velocityY.toFixed(2)}`);
 
     // 动画参数
     let currentX = ballPosition.x;
@@ -554,30 +560,34 @@ export default function Game({ gameMode, questionType, onBack }: GameProps) {
   // 检测碰撞 - 返回玩家选择的篮筐
   const checkCollision = (x: number, y: number, prevY: number): 'left' | 'right' | null => {
     // 篮筐位置说明：
-    // - 左篮筐容器：x: 0-20%，使用flex垂直居中，篮筐在中间位置
-    // - 右篮筐容器：x: 80-100%，使用flex垂直居中，篮筐在中间位置
-    // - 篮球从y=80发射，需要向上抛出到约y=45-55的高度
+    // - 左右篮筐容器：x: 0-20% 和 80-100%，style={{ top: '40%' }}
+    // - 篮筐相对于容器：top-16（64px）= 12.8%
+    // - 篮筐实际位置：40% + 12.8% = 52.8%
+    // - 篮筐高度：h-4（16px）= 3.2%
+    // - 篮筐实际范围：y: 52.8-56%
+    // - 篮球从y=80发射，需要向上抛出到约y=52-56的高度
+    // - 判定范围扩大至 y: 50-58 以提高命中率
 
-    // 检测左篮筐（正确）：左侧20%区域，垂直居中位置
+    console.log(`🔍 检测碰撞 - 当前位置: x=${x.toFixed(1)}%, y=${y.toFixed(1)}%`);
+
+    // 检测左篮筐（正确）：左侧20%区域，y: 50-58
     if (x >= 0 && x <= 20) {
-      // 只要进入左侧区域且在篮筐高度范围内（y: 40-60）
-      if (y >= 40 && y <= 60) {
-        console.log(`✅ 命中左篮筐 - 位置: x=${x.toFixed(1)}%, y=${y.toFixed(1)}%`);
+      if (y >= 50 && y <= 58) {
+        console.log(`✅ 命中左篮筐（正确） - 位置: x=${x.toFixed(1)}%, y=${y.toFixed(1)}%`);
         return 'left';
       }
     }
 
-    // 检测右篮筐（错误）：右侧20%区域，垂直居中位置
+    // 检测右篮筐（错误）：右侧20%区域，y: 50-58
     if (x >= 80 && x <= 100) {
-      // 只要进入右侧区域且在篮筐高度范围内（y: 40-60）
-      if (y >= 40 && y <= 60) {
-        console.log(`✅ 命中右篮筐 - 位置: x=${x.toFixed(1)}%, y=${y.toFixed(1)}%`);
+      if (y >= 50 && y <= 58) {
+        console.log(`✅ 命中右篮筐（错误） - 位置: x=${x.toFixed(1)}%, y=${y.toFixed(1)}%`);
         return 'right';
       }
     }
 
-    // 未命中
-    if (y >= 40 && y <= 60) {
+    // 在篮筐高度范围内但未命中任何篮筐
+    if (y >= 50 && y <= 58) {
       console.log(`❌ 未命中 - 位置: x=${x.toFixed(1)}%, y=${y.toFixed(1)}%, 不在任何篮筐区域`);
     }
 
@@ -1293,7 +1303,7 @@ export default function Game({ gameMode, questionType, onBack }: GameProps) {
 
             // 根据距离计算力度
             const normalizedDistance = Math.max(15, Math.min(270, distance));
-            const newPower = 2.0 + ((normalizedDistance - 15) / 255) * 14;
+            const newPower = 1.8 + ((normalizedDistance - 15) / 255) * 12.6; // 范围1.8-14.4（缩小10%）
 
             setTrajectoryOffset({ x: newOffsetX, y: newOffsetY });
             setThrowPower(newPower);
@@ -1320,17 +1330,17 @@ export default function Game({ gameMode, questionType, onBack }: GameProps) {
 
             // 根据距离计算力度
             const normalizedDistance = Math.max(15, Math.min(270, distance));
-            const newPower = 2.0 + ((normalizedDistance - 15) / 255) * 14;
+            const newPower = 1.8 + ((normalizedDistance - 15) / 255) * 12.6; // 范围1.8-14.4（缩小10%）
 
             setTrajectoryOffset({ x: newOffsetX, y: newOffsetY });
             setThrowPower(newPower);
           }}
         >
           {/* 左篮筐（正确） */}
-          <div className="absolute left-0 top-0 w-[20%] h-full flex items-center justify-center">
-            <div className="relative">
+          <div className="absolute left-0 w-[20%]" style={{ top: '40%' }}>
+            <div className="relative w-full">
               {/* 篮板 */}
-              <div className="absolute bottom-16 left-1/2 -translate-x-1/2 w-36 h-24 bg-gradient-to-br from-gray-100 to-gray-200 dark:from-gray-700 dark:to-gray-800 rounded border-2 border-gray-300 dark:border-gray-600 shadow-xl overflow-hidden">
+              <div className="absolute left-1/2 -translate-x-1/2 w-36 h-24 bg-gradient-to-br from-gray-100 to-gray-200 dark:from-gray-700 dark:to-gray-800 rounded border-2 border-gray-300 dark:border-gray-600 shadow-xl overflow-hidden">
                 {/* 篮板内框 */}
                 <div className="absolute inset-4 border-2 border-green-500/50 rounded"></div>
                 {/* 玻璃反光效果 */}
@@ -1338,7 +1348,7 @@ export default function Game({ gameMode, questionType, onBack }: GameProps) {
               </div>
 
               {/* 篮筐主体 */}
-              <div className="absolute bottom-8 left-1/2 -translate-x-1/2 w-28 h-4 relative">
+              <div className="absolute left-1/2 -translate-x-1/2 top-16 w-28 h-4 relative">
                 {/* 篮筐环 - 金属质感 */}
                 <div className="absolute inset-0 border-[5px] border-green-600 rounded-full shadow-2xl"
                      style={{
@@ -1383,10 +1393,10 @@ export default function Game({ gameMode, questionType, onBack }: GameProps) {
           </div>
 
           {/* 右篮筐（错误） */}
-          <div className="absolute right-0 top-0 w-[20%] h-full flex items-center justify-center">
-            <div className="relative">
+          <div className="absolute right-0 w-[20%]" style={{ top: '40%' }}>
+            <div className="relative w-full">
               {/* 篮板 */}
-              <div className="absolute bottom-16 left-1/2 -translate-x-1/2 w-36 h-24 bg-gradient-to-br from-gray-100 to-gray-200 dark:from-gray-700 dark:to-gray-800 rounded border-2 border-gray-300 dark:border-gray-600 shadow-xl overflow-hidden">
+              <div className="absolute left-1/2 -translate-x-1/2 w-36 h-24 bg-gradient-to-br from-gray-100 to-gray-200 dark:from-gray-700 dark:to-gray-800 rounded border-2 border-gray-300 dark:border-gray-600 shadow-xl overflow-hidden">
                 {/* 篮板内框 */}
                 <div className="absolute inset-4 border-2 border-red-500/50 rounded"></div>
                 {/* 玻璃反光效果 */}
@@ -1394,7 +1404,7 @@ export default function Game({ gameMode, questionType, onBack }: GameProps) {
               </div>
 
               {/* 篮筐主体 */}
-              <div className="absolute bottom-8 left-1/2 -translate-x-1/2 w-28 h-4 relative">
+              <div className="absolute left-1/2 -translate-x-1/2 top-16 w-28 h-4 relative">
                 {/* 篮筐环 - 金属质感 */}
                 <div className="absolute inset-0 border-[5px] border-red-600 rounded-full shadow-2xl"
                      style={{
