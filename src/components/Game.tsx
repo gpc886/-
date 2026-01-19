@@ -358,14 +358,10 @@ export default function Game({ gameMode, questionType, onBack }: GameProps) {
       }, 1000);
     }
 
-    // 统一的清理函数
+    // 只清理本地定时器，不清理 ref 定时器
     return () => {
       if (timer) {
         clearInterval(timer);
-      }
-      if (tickTimerRef.current) {
-        clearInterval(tickTimerRef.current);
-        tickTimerRef.current = null;
       }
     };
   }, [gameMode, timeLeft, gameEnded]);
