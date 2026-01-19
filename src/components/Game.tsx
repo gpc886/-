@@ -308,11 +308,11 @@ export default function Game({ gameMode, questionType, onBack }: GameProps) {
   const [currentJudgeQuestion, setCurrentJudgeQuestion] = useState<JudgeQuestion | null>(null);
   const [ballPosition, setBallPosition] = useState({ x: 50, y: 80 }); // 篮球位置（百分比）
   const [isBallThrown, setIsBallThrown] = useState(false); // 篮球是否已发射
-  const [trajectoryAngle, setTrajectoryAngle] = useState(-45); // 抛物线角度（度）
-  const [trajectoryPower, setTrajectoryPower] = useState(60); // 抛物线力度
+  const [trajectoryOffset, setTrajectoryOffset] = useState({ x: 0, y: -30 }); // 虚拟抛物线偏移量（百分比）
   const [ladderShowResult, setLadderShowResult] = useState(false); // 显示结果
   const [ladderResult, setLadderResult] = useState<'correct' | 'wrong' | null>(null); // 天梯赛结果
   const [animationId, setAnimationId] = useState<number | null>(null); // 动画ID
+  const [isDragging, setIsDragging] = useState(false); // 是否正在拖拽轨迹
 
   // 初始化天梯赛题目
   useEffect(() => {
@@ -323,12 +323,76 @@ export default function Game({ gameMode, questionType, onBack }: GameProps) {
     }
   }, [gameMode, ladderLevel]);
 
+  // 处理轨迹拖拽
+  useEffect(() => {
+    if (!isDragging || gameMode !== 'ladder') return;
+
+    const handleMouseMove = (e: MouseEvent) => {
+      const container = document.querySelector('[data-game-area="true"]');
+      if (!container) return;
+
+      const rect = container.getBoundingClientRect();
+      const x = ((e.clientX - rect.left) / rect.width) * 100;
+      const y = ((e.clientY - rect.top) / rect.height) * 100;
+
+      // 限制偏移范围
+      const newOffsetX = Math.max(-40, Math.min(40, x - ballPosition.x));
+      const newOffsetY = Math.max(-50, Math.min(-10, y - ballPosition.y));
+
+      setTrajectoryOffset({ x: newOffsetX, y: newOffsetY });
+    };
+
+    const handleMouseUp = () => {
+      setIsDragging(false);
+    };
+
+    document.addEventListener('mousemove', handleMouseMove);
+    document.addEventListener('mouseup', handleMouseUp);
+
+    return () => {
+      document.removeEventListener('mousemove', handleMouseMove);
+      document.removeEventListener('mouseup', handleMouseUp);
+    };
+  }, [isDragging, ballPosition.x, ballPosition.y, gameMode]);
+
+  // 处理触摸拖拽（移动端）
+  useEffect(() => {
+    if (!isDragging || gameMode !== 'ladder') return;
+
+    const handleTouchMove = (e: TouchEvent) => {
+      const touch = e.touches[0];
+      const container = document.querySelector('[data-game-area="true"]');
+      if (!container) return;
+
+      const rect = container.getBoundingClientRect();
+      const x = ((touch.clientX - rect.left) / rect.width) * 100;
+      const y = ((touch.clientY - rect.top) / rect.height) * 100;
+
+      // 限制偏移范围
+      const newOffsetX = Math.max(-40, Math.min(40, x - ballPosition.x));
+      const newOffsetY = Math.max(-50, Math.min(-10, y - ballPosition.y));
+
+      setTrajectoryOffset({ x: newOffsetX, y: newOffsetY });
+    };
+
+    const handleTouchEnd = () => {
+      setIsDragging(false);
+    };
+
+    document.addEventListener('touchmove', handleTouchMove, { passive: false });
+    document.addEventListener('touchend', handleTouchEnd);
+
+    return () => {
+      document.removeEventListener('touchmove', handleTouchMove);
+      document.removeEventListener('touchend', handleTouchEnd);
+    };
+  }, [isDragging, ballPosition.x, ballPosition.y, gameMode]);
+
   // 重置篮球位置
   const resetBall = () => {
     setBallPosition({ x: 50, y: 80 });
     setIsBallThrown(false);
-    setTrajectoryAngle(-45);
-    setTrajectoryPower(60);
+    setTrajectoryOffset({ x: 0, y: -30 });
   };
 
   // ========== 天梯赛模式函数 ==========
@@ -338,30 +402,40 @@ export default function Game({ gameMode, questionType, onBack }: GameProps) {
     if (isBallThrown || gameMode !== 'ladder') return;
 
     setIsBallThrown(true);
-    
+
     // 播放投篮球音效
     playSoundEffect('correct');
 
-    // 计算初始速度（将角度和力度转换为速度向量）
-    const angleRad = (trajectoryAngle * Math.PI) / 180;
-    const power = trajectoryPower / 100;
-    const velocityX = Math.cos(angleRad) * power * 5;
-    const velocityY = Math.sin(angleRad) * power * 5;
+    // 计算初始速度（根据轨迹偏移量计算方向，固定力度）
+    const targetX = ballPosition.x + trajectoryOffset.x;
+    const targetY = ballPosition.y + trajectoryOffset.y;
+
+    // 计算从篮球到目标点的方向
+    const dx = targetX - ballPosition.x;
+    const dy = targetY - ballPosition.y;
+
+    // 计算距离
+    const distance = Math.sqrt(dx * dx + dy * dy);
+
+    // 固定力度，按方向标准化
+    const fixedPower = 3.0; // 固定力度值
+    const velocityX = (dx / distance) * fixedPower;
+    const velocityY = (dy / distance) * fixedPower;
 
     // 动画参数
     let currentX = ballPosition.x;
     let currentY = ballPosition.y;
     let currentVx = velocityX;
     let currentVy = velocityY;
-    const gravity = 0.3; // 重力加速度
-    const dt = 0.5; // 时间步长
+    const gravity = 0.15; // 重力加速度
+    const dt = 1.0; // 时间步长
 
     // 开始动画
     const animate = () => {
       // 更新位置
       currentX += currentVx * dt;
       currentY += currentVy * dt;
-      
+
       // 应用重力
       currentVy += gravity * dt;
 
@@ -370,7 +444,7 @@ export default function Game({ gameMode, questionType, onBack }: GameProps) {
 
       // 检测碰撞
       const hitResult = checkCollision(currentX, currentY);
-      
+
       if (hitResult !== null) {
         // 命中篮筐
         handleLadderResult(hitResult);
@@ -454,15 +528,24 @@ export default function Game({ gameMode, questionType, onBack }: GameProps) {
     const points: { x: number; y: number }[] = [];
     let x = ballPosition.x;
     let y = ballPosition.y;
-    const angleRad = (trajectoryAngle * Math.PI) / 180;
-    const power = trajectoryPower / 100;
-    const vx = Math.cos(angleRad) * power * 5;
-    let vy = Math.sin(angleRad) * power * 5;
-    const gravity = 0.3;
-    const dt = 0.5;
 
-    // 预测20个点
-    for (let i = 0; i < 20; i++) {
+    // 计算目标点（基于偏移量）
+    const targetX = ballPosition.x + trajectoryOffset.x;
+    const targetY = ballPosition.y + trajectoryOffset.y;
+
+    // 计算方向向量（固定力度）
+    const dx = targetX - ballPosition.x;
+    const dy = targetY - ballPosition.y;
+    const distance = Math.sqrt(dx * dx + dy * dy);
+
+    const fixedPower = 3.0;
+    const vx = (dx / distance) * fixedPower;
+    let vy = (dy / distance) * fixedPower;
+    const gravity = 0.15;
+    const dt = 1.0;
+
+    // 预测30个点
+    for (let i = 0; i < 30; i++) {
       x += vx * dt;
       y += vy * dt;
       vy += gravity * dt;
@@ -817,7 +900,8 @@ export default function Game({ gameMode, questionType, onBack }: GameProps) {
                   <ul className="text-emerald-700 dark:text-emerald-300 space-y-1 text-sm">
                     <li>• 答对进入下一层，答错退回前一层（最低第1层）</li>
                     <li>• 左篮筐代表正确，右篮筐代表错误</li>
-                    <li>• 调整抛物线角度和力度，发射篮球</li>
+                    <li>• 拖拽蓝色轨迹线调整方向，点击屏幕可快速定位</li>
+                    <li>• 发射力度固定，只需调整投篮方向</li>
                     <li>• 越到高层题目难度越大，加油！</li>
                   </ul>
                 </div>
@@ -1069,7 +1153,39 @@ export default function Game({ gameMode, questionType, onBack }: GameProps) {
         </div>
 
         {/* 游戏区域 */}
-        <div className="max-w-6xl mx-auto relative h-[500px] z-10">
+        <div
+          className="max-w-6xl mx-auto relative h-[500px] z-10"
+          data-game-area="true"
+          onClick={(e) => {
+            if (isBallThrown || ladderShowResult) return;
+
+            const container = e.currentTarget;
+            const rect = container.getBoundingClientRect();
+            const x = ((e.clientX - rect.left) / rect.width) * 100;
+            const y = ((e.clientY - rect.top) / rect.height) * 100;
+
+            // 限制偏移范围
+            const newOffsetX = Math.max(-40, Math.min(40, x - ballPosition.x));
+            const newOffsetY = Math.max(-50, Math.min(-10, y - ballPosition.y));
+
+            setTrajectoryOffset({ x: newOffsetX, y: newOffsetY });
+          }}
+          onTouchStart={(e) => {
+            if (isBallThrown || ladderShowResult) return;
+
+            const touch = e.touches[0];
+            const container = e.currentTarget;
+            const rect = container.getBoundingClientRect();
+            const x = ((touch.clientX - rect.left) / rect.width) * 100;
+            const y = ((touch.clientY - rect.top) / rect.height) * 100;
+
+            // 限制偏移范围
+            const newOffsetX = Math.max(-40, Math.min(40, x - ballPosition.x));
+            const newOffsetY = Math.max(-50, Math.min(-10, y - ballPosition.y));
+
+            setTrajectoryOffset({ x: newOffsetX, y: newOffsetY });
+          }}
+        >
           {/* 左篮筐（正确） */}
           <div className="absolute left-0 top-0 w-[20%] h-full flex items-center justify-center">
             <div className="relative">
@@ -1116,16 +1232,30 @@ export default function Game({ gameMode, questionType, onBack }: GameProps) {
 
           {/* 抛物线预览 */}
           {!isBallThrown && (
-            <svg className="absolute inset-0 w-full h-full pointer-events-none" style={{ zIndex: 5 }}>
+            <svg className="absolute inset-0 w-full h-full" style={{ zIndex: 5 }}>
               <polyline
                 points={drawTrajectory()
                   ?.map(p => `${p.x * 8},${p.y * 4}`)
                   .join(' ')}
                 fill="none"
-                stroke="rgba(59, 130, 246, 0.5)"
-                strokeWidth="3"
-                strokeDasharray="5,5"
+                stroke="rgba(59, 130, 246, 0.7)"
+                strokeWidth="4"
+                strokeDasharray="8,4"
               />
+              {/* 轨迹终点指示点 */}
+              {drawTrajectory() && drawTrajectory()!.length > 0 && (
+                <circle
+                  cx={drawTrajectory()![drawTrajectory()!.length - 1].x * 8}
+                  cy={drawTrajectory()![drawTrajectory()!.length - 1].y * 4}
+                  r="8"
+                  fill="rgba(59, 130, 246, 0.9)"
+                  className="cursor-move"
+                  onMouseDown={(e) => {
+                    e.preventDefault();
+                    setIsDragging(true);
+                  }}
+                />
+              )}
             </svg>
           )}
 
@@ -1135,34 +1265,9 @@ export default function Game({ gameMode, questionType, onBack }: GameProps) {
               <Card className="shadow-xl">
                 <CardContent className="pt-6">
                   <div className="space-y-4">
-                    {/* 角度控制 */}
-                    <div>
-                      <label className="text-sm font-medium mb-2 block">
-                        抛射角度: {trajectoryAngle}°
-                      </label>
-                      <input
-                        type="range"
-                        min="-90"
-                        max="-10"
-                        value={trajectoryAngle}
-                        onChange={(e) => setTrajectoryAngle(Number(e.target.value))}
-                        className="w-full"
-                      />
-                    </div>
-
-                    {/* 力度控制 */}
-                    <div>
-                      <label className="text-sm font-medium mb-2 block">
-                        投篮力度: {trajectoryPower}%
-                      </label>
-                      <input
-                        type="range"
-                        min="30"
-                        max="100"
-                        value={trajectoryPower}
-                        onChange={(e) => setTrajectoryPower(Number(e.target.value))}
-                        className="w-full"
-                      />
+                    <div className="text-center text-sm text-gray-600 dark:text-gray-400">
+                      <p>💡 拖拽蓝色轨迹线或轨迹终点调整方向</p>
+                      <p>🎯 向左上方瞄准正确答案，向右上方瞄准错误答案</p>
                     </div>
 
                     {/* 发射按钮 */}
