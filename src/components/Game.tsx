@@ -4,12 +4,13 @@ import { useState, useEffect, useRef } from 'react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Progress } from '@/components/ui/progress';
-import { getQuestionsByType, Question, QuestionType, shuffleArray } from '@/lib/questions';
+import { getQuestionsByType, Question, QuestionType, shuffleArray, Difficulty } from '@/lib/questions';
 import { ArrowLeft, CheckCircle, XCircle, Clock, Trophy, RotateCcw, Crown, Shuffle, Plus, Trash2, Users } from 'lucide-react';
 
 interface GameProps {
   gameMode: 'single' | 'multi';
   questionType: QuestionType;
+  difficulty?: Difficulty;
   onBack: () => void;
 }
 
@@ -167,16 +168,31 @@ interface PlayerState {
   answerRecords: AnswerRecord[];
 }
 
-export default function Game({ gameMode, questionType, onBack }: GameProps) {
+export default function Game({ gameMode, questionType, difficulty = 'medium', onBack }: GameProps) {
+  // 根据难度确定题目数量
+  const getQuestionCount = () => {
+    switch (difficulty) {
+      case 'easy':
+        return 5;
+      case 'medium':
+        return 10;
+      case 'hard':
+        return 15;
+      default:
+        return 10;
+    }
+  };
+
   // 生成题目并打乱
   const generateQuestions = () => {
-    const baseQuestions = getQuestionsByType(questionType, 10);
+    const questionCount = getQuestionCount();
+    const baseQuestions = getQuestionsByType(questionType, questionCount);
     const questions = shuffleArray([...baseQuestions]);
-    
+
     // 为双人模式生成两个不同的打乱题目顺序
     const player1Questions = shuffleArray([...baseQuestions]);
     const player2Questions = shuffleArray([...baseQuestions]);
-    
+
     // 确保两个玩家的题目顺序不同
     let attempts = 0;
     let finalPlayer2Questions = player2Questions;
@@ -187,7 +203,7 @@ export default function Game({ gameMode, questionType, onBack }: GameProps) {
       finalPlayer2Questions = shuffleArray([...baseQuestions]);
       attempts++;
     }
-    
+
     return { questions, player1Questions, player2Questions };
   };
   
@@ -637,6 +653,17 @@ export default function Game({ gameMode, questionType, onBack }: GameProps) {
                   </p>
                 </div>
               )}
+
+              {/* 难度信息 */}
+              <div className="p-4 bg-gradient-to-r from-green-50 via-yellow-50 to-red-50 dark:from-green-900/20 dark:via-yellow-900/20 dark:to-red-900/20 rounded-lg">
+                <p className="text-sm text-gray-600 dark:text-gray-400 mb-1">
+                  <Trophy className="w-4 h-4 inline mr-1" />
+                  难度选择
+                </p>
+                <p className={`font-bold text-lg ${difficulty === 'easy' ? 'text-green-600 dark:text-green-400' : difficulty === 'medium' ? 'text-yellow-600 dark:text-yellow-400' : 'text-red-600 dark:text-red-400'}`}>
+                  {difficulty === 'easy' ? '简单' : difficulty === 'medium' ? '中等' : '困难'} - {getQuestionCount()}道题
+                </p>
+              </div>
 
               {/* 双人模式显示抽签按钮和当前玩家 */}
               {gameMode === 'multi' && (

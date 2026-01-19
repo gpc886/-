@@ -5,13 +5,14 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { BookOpen, Users, Clock, Trophy, PenTool, Scroll } from 'lucide-react';
 import Game from '@/components/Game';
-import type { QuestionType } from '@/lib/questions';
+import type { QuestionType, Difficulty } from '@/lib/questions';
 
 type GameMode = 'single' | 'multi' | null;
 
 export default function Home() {
   const [gameMode, setGameMode] = useState<GameMode>(null);
   const [questionType, setQuestionType] = useState<QuestionType | null>(null);
+  const [difficulty, setDifficulty] = useState<Difficulty>('medium');
   const [startGame, setStartGame] = useState(false);
 
   // 返回主菜单
@@ -28,7 +29,7 @@ export default function Home() {
 
   // 游戏界面
   if (startGame && gameMode && questionType) {
-    return <Game gameMode={gameMode} questionType={questionType} onBack={handleBackToMenu} />;
+    return <Game gameMode={gameMode} questionType={questionType} difficulty={difficulty} onBack={handleBackToMenu} />;
   }
 
   // 游戏确认界面
@@ -56,6 +57,43 @@ export default function Home() {
                   <p className="text-xl font-bold text-purple-600 dark:text-purple-400">
                     {getQuestionTypeName(questionType)}
                   </p>
+                </div>
+              </div>
+
+              {/* 难度选择 */}
+              <div>
+                <p className="text-sm text-gray-600 dark:text-gray-400 mb-2">选择难度</p>
+                <div className="grid grid-cols-3 gap-3">
+                  <Button
+                    onClick={() => setDifficulty('easy')}
+                    variant={difficulty === 'easy' ? 'default' : 'outline'}
+                    className={difficulty === 'easy' ? 'bg-green-500 hover:bg-green-600' : ''}
+                  >
+                    <div className="text-center">
+                      <p className="font-bold">简单</p>
+                      <p className="text-xs opacity-75">5道题</p>
+                    </div>
+                  </Button>
+                  <Button
+                    onClick={() => setDifficulty('medium')}
+                    variant={difficulty === 'medium' ? 'default' : 'outline'}
+                    className={difficulty === 'medium' ? 'bg-yellow-500 hover:bg-yellow-600' : ''}
+                  >
+                    <div className="text-center">
+                      <p className="font-bold">中等</p>
+                      <p className="text-xs opacity-75">10道题</p>
+                    </div>
+                  </Button>
+                  <Button
+                    onClick={() => setDifficulty('hard')}
+                    variant={difficulty === 'hard' ? 'default' : 'outline'}
+                    className={difficulty === 'hard' ? 'bg-red-500 hover:bg-red-600' : ''}
+                  >
+                    <div className="text-center">
+                      <p className="font-bold">困难</p>
+                      <p className="text-xs opacity-75">15道题</p>
+                    </div>
+                  </Button>
                 </div>
               </div>
 

@@ -9,6 +9,8 @@ export interface Question {
 
 export type QuestionType = 'wenyan' | 'idiom' | 'poetry';
 
+export type Difficulty = 'easy' | 'medium' | 'hard';
+
 // 文言文字词题目（120道）
 export const wenyanQuestions: Question[] = [
   {
