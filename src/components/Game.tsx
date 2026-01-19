@@ -59,6 +59,14 @@ const playSoundEffect = (type: 'correct' | 'wrong') => {
 // 321并发语音提示函数
 const play321 = (onVoiceComplete: () => void) => {
   console.log('🎤 播放321倒计时...');
+
+  // 使用固定时间开始，不依赖语音，避免"一闪而过"
+  setTimeout(() => {
+    console.log('🎮 延迟开始游戏');
+    onVoiceComplete();
+  }, 3500); // 3.5秒后自动开始（足够播放321）
+
+  // 尝试播放语音
   if (typeof window !== 'undefined' && 'speechSynthesis' in window) {
     try {
       // 取消之前的播放
@@ -72,15 +80,15 @@ const play321 = (onVoiceComplete: () => void) => {
 
       // 设置参数
       [count3, count2, count1].forEach(utt => {
-        utt.rate = 1.0;
+        utt.rate = 0.8;
         utt.pitch = 1.0;
         utt.volume = 1.0;
         utt.lang = 'zh-CN';
       });
 
       // "开始"参数
-      start.rate = 1.2;
-      start.pitch = 1.2;
+      start.rate = 1.0;
+      start.pitch = 1.0;
       start.volume = 1.0;
       start.lang = 'zh-CN';
 
@@ -88,18 +96,6 @@ const play321 = (onVoiceComplete: () => void) => {
       count1.onend = () => {
         console.log('▶️ 321播放完成，开始播放"开始"');
         window.speechSynthesis.speak(start);
-      };
-
-      // 监听"开始"播放完成后调用回调
-      start.onend = () => {
-        console.log('▶️ "开始"语音播放完成');
-        onVoiceComplete();
-      };
-
-      // 如果语音播放失败，也要调用回调
-      start.onerror = () => {
-        console.log('❌ "开始"语音播放失败，强制开始游戏');
-        setTimeout(onVoiceComplete, 100);
       };
 
       // 并发播放321
@@ -110,13 +106,9 @@ const play321 = (onVoiceComplete: () => void) => {
       console.log('▶️ 321语音已并发播放');
     } catch (error) {
       console.log('❌ 321语音播放失败:', error);
-      // 出错也要开始游戏
-      setTimeout(onVoiceComplete, 500);
     }
   } else {
-    // 浏览器不支持语音，直接开始
-    console.log('❌ 浏览器不支持语音，直接开始游戏');
-    setTimeout(onVoiceComplete, 100);
+    console.log('❌ 浏览器不支持语音');
   }
 };
 
@@ -134,6 +126,34 @@ const playCountdownNumber = (number: number) => {
     } catch (error) {
       console.log('❌ 倒计时语音播放失败:', error);
     }
+  }
+};
+
+// 播放钟表滴答音效
+const playTickSound = () => {
+  try {
+    const audioContext = new (window.AudioContext || (window as any).webkitAudioContext)();
+
+    if (audioContext.state === 'suspended') {
+      audioContext.resume();
+    }
+
+    const oscillator = audioContext.createOscillator();
+    const gainNode = audioContext.createGain();
+
+    oscillator.connect(gainNode);
+    gainNode.connect(audioContext.destination);
+
+    oscillator.type = 'square';
+    oscillator.frequency.setValueAtTime(800, audioContext.currentTime);
+
+    gainNode.gain.setValueAtTime(0.3, audioContext.currentTime);
+    gainNode.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + 0.05);
+
+    oscillator.start(audioContext.currentTime);
+    oscillator.stop(audioContext.currentTime + 0.05);
+  } catch (error) {
+    console.log('❌ 滴答音效播放失败:', error);
   }
 };
 
@@ -279,6 +299,9 @@ export default function Game({ gameMode, questionType, onBack }: GameProps) {
     setGameStarted(true);
   };
 
+  // 滴答音效定时器ref
+  const tickTimerRef = useRef<NodeJS.Timeout | null>(null);
+
   // 最后5秒语音倒计时（仅双人模式）
   useEffect(() => {
     if (gameMode === 'multi' && timeLeft <= 5 && timeLeft > 0 && !gameEnded) {
@@ -344,9 +367,23 @@ export default function Game({ gameMode, questionType, onBack }: GameProps) {
     let timer: NodeJS.Timeout | null = null;
 
     if (gameMode === 'multi' && timeLeft > 0 && !gameEnded) {
+      // 启动滴答音效
+      if (!tickTimerRef.current) {
+        const tickTimer = setInterval(() => {
+          playTickSound();
+        }, 1000); // 每秒播放一次
+        tickTimerRef.current = tickTimer;
+      }
+
+      // 倒计时
       timer = setInterval(() => {
         setTimeLeft((prev) => {
           if (prev <= 1) {
+            // 立即停止滴答音效
+            if (tickTimerRef.current) {
+              clearInterval(tickTimerRef.current);
+              tickTimerRef.current = null;
+            }
             setGameEnded(true);
             setShowResult(true);
             return 0;
@@ -356,9 +393,14 @@ export default function Game({ gameMode, questionType, onBack }: GameProps) {
       }, 1000);
     }
 
+    // 清理滴答音效定时器
     return () => {
       if (timer) {
         clearInterval(timer);
+      }
+      if (tickTimerRef.current && !gameEnded) {
+        clearInterval(tickTimerRef.current);
+        tickTimerRef.current = null;
       }
     };
   }, [gameMode, timeLeft, gameEnded]);
@@ -476,6 +518,12 @@ export default function Game({ gameMode, questionType, onBack }: GameProps) {
   };
 
   const handleRestart = () => {
+    // 清理滴答音效定时器
+    if (tickTimerRef.current) {
+      clearInterval(tickTimerRef.current);
+      tickTimerRef.current = null;
+    }
+
     // 重置游戏未开始状态
     setGameStarted(false);
     setShowCountdown(false);
