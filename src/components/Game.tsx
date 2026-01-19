@@ -963,10 +963,10 @@ export default function Game({ gameMode, questionType, onBack }: GameProps) {
           <Card className="shadow-2xl">
             <CardHeader>
               <CardTitle className="text-3xl text-center">
-                {gameMode === 'single' ? '单人模式' : '双人PK模式'}
+                {gameMode === 'single' ? '单人模式' : gameMode === 'ladder' ? '天梯赛模式' : '双人PK模式'}
               </CardTitle>
               <CardDescription className="text-center text-lg">
-                {getQuestionTypeName(questionType)}
+                {gameMode === 'ladder' ? '判断题' : getQuestionTypeName(questionType)}
               </CardDescription>
             </CardHeader>
             <CardContent className="space-y-6">
