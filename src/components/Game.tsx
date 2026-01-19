@@ -535,28 +535,39 @@ export default function Game({ gameMode, questionType, onBack }: GameProps) {
     setAnimationId(id);
   };
 
-  // 检测碰撞
-  const checkCollision = (x: number, y: number): 'correct' | 'wrong' | null => {
-    // 左篮筐（正确）：x: 10-25, y: 42-52（垂直居中）
+  // 检测碰撞 - 返回玩家选择的篮筐
+  const checkCollision = (x: number, y: number): 'left' | 'right' | null => {
+    // 左篮筐（玩家认为正确）：x: 10-25, y: 42-52（垂直居中）
     const leftHoop = { xMin: 10, xMax: 25, yMin: 42, yMax: 52 };
-    // 右篮筐（错误）：x: 75-90, y: 42-52（垂直居中）
+    // 右篮筐（玩家认为错误）：x: 75-90, y: 42-52（垂直居中）
     const rightHoop = { xMin: 75, xMax: 90, yMin: 42, yMax: 52 };
 
     // 检测是否命中左篮筐
     if (x >= leftHoop.xMin && x <= leftHoop.xMax && y >= leftHoop.yMin && y <= leftHoop.yMax) {
-      return 'correct';
+      return 'left';
     }
 
     // 检测是否命中右篮筐
     if (x >= rightHoop.xMin && x <= rightHoop.xMax && y >= rightHoop.yMin && y <= rightHoop.yMax) {
-      return 'wrong';
+      return 'right';
     }
 
     return null;
   };
 
   // 处理天梯赛结果
-  const handleLadderResult = (result: 'correct' | 'wrong') => {
+  const handleLadderResult = (playerChoice: 'left' | 'right') => {
+    if (!currentJudgeQuestion) return;
+
+    // 判断逻辑：玩家选择的答案与题目真实答案是否一致
+    // 左篮筐 = 玩家认为正确，右篮筐 = 玩家认为错误
+    const playerThinksCorrect = playerChoice === 'left';
+    const isActuallyCorrect = currentJudgeQuestion.answer;
+
+    // 玩家判断正确：玩家认为正确且确实正确，或认为错误且确实错误
+    const isPlayerCorrect = playerThinksCorrect === isActuallyCorrect;
+
+    const result = isPlayerCorrect ? 'correct' : 'wrong';
     setLadderResult(result);
     setLadderShowResult(true);
 
@@ -569,7 +580,7 @@ export default function Game({ gameMode, questionType, onBack }: GameProps) {
       setAnimationId(null);
     }
 
-    // 1秒后处理层级变化
+    // 2秒后处理层级变化
     setTimeout(() => {
       if (result === 'correct') {
         // 答对，进入下一层
