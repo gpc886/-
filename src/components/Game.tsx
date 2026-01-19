@@ -315,6 +315,7 @@ export default function Game({ gameMode, questionType, onBack }: GameProps) {
   const [animationId, setAnimationId] = useState<number | null>(null); // 动画ID
   const [isDragging, setIsDragging] = useState(false); // 是否正在拖拽轨迹
   const [ballRotation, setBallRotation] = useState(0); // 篮球旋转角度
+  const [hoopScored, setHoopScored] = useState<'left' | 'right' | null>(null); // 已投中的篮筐
   const gameAreaRef = useRef<HTMLDivElement | null>(null); // 游戏区域引用
 
   // 初始化天梯赛题目
@@ -441,6 +442,7 @@ export default function Game({ gameMode, questionType, onBack }: GameProps) {
     setTrajectoryOffset({ x: 0, y: -30 });
     setThrowPower(6.0); // 重置力度到默认值
     setBallRotation(0); // 重置旋转角度
+    setHoopScored(null); // 重置投中状态
   };
 
   // ========== 天梯赛模式函数 ==========
@@ -450,6 +452,7 @@ export default function Game({ gameMode, questionType, onBack }: GameProps) {
     if (isBallThrown || gameMode !== 'ladder') return;
 
     setIsBallThrown(true);
+    setHoopScored(null); // 重置投中状态
 
     // 播放投篮球音效
     playSoundEffect('correct');
@@ -478,11 +481,15 @@ export default function Game({ gameMode, questionType, onBack }: GameProps) {
     const gravity = 0.15; // 重力加速度
     const dt = 1.0; // 时间步长
     const ballRadius = 3; // 篮球半径（百分比）
+    let prevY = currentY; // 记录上一帧的Y位置用于检测穿过篮筐
+    let framesAfterScore = 0; // 投中后的帧数计数器
+    let localHoopScored: 'left' | 'right' | null = null; // 本地变量跟踪投中状态
 
     // 开始动画
     const animate = () => {
       // 保存上一帧位置用于计算旋转
       const prevX = currentX;
+      prevY = currentY; // 记录上一帧Y位置
 
       // 更新位置
       currentX += currentVx * dt;
@@ -501,13 +508,21 @@ export default function Game({ gameMode, questionType, onBack }: GameProps) {
       setBallPosition({ x: currentX, y: currentY });
       setBallRotation(rotation);
 
-      // 检测碰撞（只在篮筐高度附近检测）
-      const hitResult = checkCollision(currentX, currentY);
-
-      if (hitResult !== null) {
-        // 命中篮筐
-        handleLadderResult(hitResult);
-        return;
+      // 如果已经投中，继续下落一段时间后再触发结果
+      if (localHoopScored) {
+        framesAfterScore++;
+        if (framesAfterScore > 30) { // 继续约0.5秒后显示结果
+          handleLadderResult(localHoopScored);
+          return;
+        }
+      } else {
+        // 检测碰撞（检测篮球是否从上往下穿过篮筐）
+        const hitResult = checkCollision(currentX, currentY, prevY);
+        if (hitResult !== null) {
+          // 命中篮筐，设置状态但继续动画让玩家看到篮球穿过篮筐的效果
+          setHoopScored(hitResult);
+          localHoopScored = hitResult;
+        }
       }
 
       // 检测是否落地（超过篮筐高度）
@@ -535,23 +550,36 @@ export default function Game({ gameMode, questionType, onBack }: GameProps) {
     setAnimationId(id);
   };
 
-  // 检测碰撞 - 返回玩家选择的篮筐
-  const checkCollision = (x: number, y: number): 'left' | 'right' | null => {
-    // 左篮筐（玩家认为正确）：只允许正好穿过篮筐中心附近
-    // 原范围：x: 10-25, y: 42-52；新范围：x: 16-19, y: 45-49（精确中心区域）
-    const leftHoop = { xMin: 16, xMax: 19, yMin: 45, yMax: 49 };
-    // 右篮筐（玩家认为错误）：只允许正好穿过篮筐中心附近
-    // 原范围：x: 75-90, y: 42-52；新范围：x: 81-84, y: 45-49（精确中心区域）
-    const rightHoop = { xMin: 81, xMax: 84, yMin: 45, yMax: 49 };
+  // 检测碰撞 - 返回玩家选择的篮筐（检测篮球是否从上往下穿过篮筐）
+  const checkCollision = (x: number, y: number, prevY: number): 'left' | 'right' | null => {
+    // 左篮筐（玩家认为正确）：x: 10-25, y: 42-52
+    const leftHoop = { xMin: 10, xMax: 25, yMin: 42, yMax: 52 };
+    // 右篮筐（玩家认为错误）：x: 75-90, y: 42-52
+    const rightHoop = { xMin: 75, xMax: 90, yMin: 42, yMax: 52 };
 
-    // 检测是否命中左篮筐
-    if (x >= leftHoop.xMin && x <= leftHoop.xMax && y >= leftHoop.yMin && y <= leftHoop.yMax) {
-      return 'left';
+    // 检测是否从上往下穿过左篮筐
+    // 条件：上一帧在篮筐上方，当前帧在篮筐范围内（或下方），且水平位置在篮筐范围内
+    if (x >= leftHoop.xMin && x <= leftHoop.xMax) {
+      // 检测是否穿过篮筐平面（y从上方变化到下方）
+      if (prevY < leftHoop.yMin && y >= leftHoop.yMin && y <= leftHoop.yMax) {
+        return 'left';
+      }
+      // 检测是否已经在篮筐范围内且继续向下移动
+      if (prevY >= leftHoop.yMin && prevY < leftHoop.yMax && y > prevY && y <= leftHoop.yMax) {
+        return 'left';
+      }
     }
 
-    // 检测是否命中右篮筐
-    if (x >= rightHoop.xMin && x <= rightHoop.xMax && y >= rightHoop.yMin && y <= rightHoop.yMax) {
-      return 'right';
+    // 检测是否从上往下穿过右篮筐
+    if (x >= rightHoop.xMin && x <= rightHoop.xMax) {
+      // 检测是否穿过篮筐平面（y从上方变化到下方）
+      if (prevY < rightHoop.yMin && y >= rightHoop.yMin && y <= rightHoop.yMax) {
+        return 'right';
+      }
+      // 检测是否已经在篮筐范围内且继续向下移动
+      if (prevY >= rightHoop.yMin && prevY < rightHoop.yMax && y > prevY && y <= rightHoop.yMax) {
+        return 'right';
+      }
     }
 
     return null;
