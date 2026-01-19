@@ -55,7 +55,7 @@ export default function Game({ gameMode, questionType, onBack }: GameProps) {
   };
   
   const [questionsData] = useState(generateQuestions);
-  const [timeLeft, setTimeLeft] = useState(gameMode === 'multi' ? 180 : 0); // 双人模式3分钟
+  const [timeLeft, setTimeLeft] = useState(gameMode === 'multi' ? 40 : 0); // 双人模式40秒
   const [gameEnded, setGameEnded] = useState(false);
   const [showResult, setShowResult] = useState(false);
 
@@ -247,7 +247,7 @@ export default function Game({ gameMode, questionType, onBack }: GameProps) {
     setRacePosition2(0);
 
     setGameEnded(false);
-    setTimeLeft(gameMode === 'multi' ? 180 : 0);
+    setTimeLeft(gameMode === 'multi' ? 40 : 0);
     setShowResult(false);
   };
 
