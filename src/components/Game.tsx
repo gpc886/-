@@ -803,56 +803,100 @@ function ResultMulti({
               </Button>
 
               {showDetailedAnalysis && (
-                <div className="space-y-4 max-h-96 overflow-y-auto">
+                <div className="space-y-6 max-h-96 overflow-y-auto">
                   <h3 className="text-lg font-bold text-gray-800 dark:text-white">题目详细解析</h3>
-                  
-                  {player1AnswerRecords.map((record, index) => {
-                    const player2Record = player2AnswerRecords[index];
-                    const question = record.question;
-                    
-                    return (
-                      <Card key={index} className="border-2 border-gray-200 dark:border-gray-700">
-                        <CardHeader className="pb-3">
-                          <CardTitle className="text-base flex items-center gap-2">
-                            <span className="flex-shrink-0 w-7 h-7 flex items-center justify-center rounded-full bg-blue-100 dark:bg-blue-900 text-blue-600 dark:text-blue-400 text-sm">
-                              {index + 1}
-                            </span>
-                            {question.question}
-                          </CardTitle>
-                        </CardHeader>
-                        <CardContent className="space-y-3">
-                          {/* 正确答案 */}
-                          <div className="p-3 bg-green-50 dark:bg-green-900/20 rounded-lg">
-                            <p className="text-sm font-semibold text-green-700 dark:text-green-300 mb-1">
-                              ✓ 正确答案：{question.options[question.answer]}
-                            </p>
-                          </div>
-                          
-                          {/* 玩家1的回答 */}
-                          <div className={`p-3 rounded-lg ${record.isCorrect ? 'bg-green-50 dark:bg-green-900/20' : 'bg-red-50 dark:bg-red-900/20'}`}>
-                            <p className={`text-sm font-semibold mb-1 ${record.isCorrect ? 'text-green-700 dark:text-green-300' : 'text-red-700 dark:text-red-300'}`}>
-                              {record.isCorrect ? '✓' : '✗'} 聪聪回答：{record.userAnswer !== null ? question.options[record.userAnswer] : '未作答'}
-                            </p>
-                          </div>
 
-                          {/* 玩家2的回答 */}
-                          <div className={`p-3 rounded-lg ${player2Record.isCorrect ? 'bg-green-50 dark:bg-green-900/20' : 'bg-red-50 dark:bg-red-900/20'}`}>
-                            <p className={`text-sm font-semibold mb-1 ${player2Record.isCorrect ? 'text-green-700 dark:text-green-300' : 'text-red-700 dark:text-red-300'}`}>
-                              {player2Record.isCorrect ? '✓' : '✗'} 明明回答：{player2Record.userAnswer !== null ? question.options[player2Record.userAnswer] : '未作答'}
-                            </p>
-                          </div>
-                          
-                          {/* 解析 */}
-                          <div className="p-3 bg-amber-50 dark:bg-amber-900/20 rounded-lg">
-                            <p className="text-sm text-gray-700 dark:text-gray-300">
-                              <span className="font-semibold">解析：</span>
-                              {question.explanation}
-                            </p>
-                          </div>
-                        </CardContent>
-                      </Card>
-                    );
-                  })}
+                  {/* 玩家1的答题记录 */}
+                  <div className="space-y-3">
+                    <h4 className="font-bold text-blue-600 dark:text-blue-400 flex items-center gap-2">
+                      <Crown className="w-5 h-5" />
+                      聪聪的答题记录
+                    </h4>
+                    {player1AnswerRecords.map((record, index) => {
+                      const question = record.question;
+                      return (
+                        <Card key={`p1-${index}`} className="border-2 border-gray-200 dark:border-gray-700">
+                          <CardHeader className="pb-3">
+                            <CardTitle className="text-base flex items-center gap-2">
+                              <span className="flex-shrink-0 w-7 h-7 flex items-center justify-center rounded-full bg-blue-100 dark:bg-blue-900 text-blue-600 dark:text-blue-400 text-sm">
+                                {index + 1}
+                              </span>
+                              {question.question}
+                            </CardTitle>
+                          </CardHeader>
+                          <CardContent className="space-y-3">
+                            {/* 正确答案 */}
+                            <div className="p-3 bg-green-50 dark:bg-green-900/20 rounded-lg">
+                              <p className="text-sm font-semibold text-green-700 dark:text-green-300 mb-1">
+                                ✓ 正确答案：{question.options[question.answer]}
+                              </p>
+                            </div>
+
+                            {/* 玩家1的回答 */}
+                            <div className={`p-3 rounded-lg ${record.isCorrect ? 'bg-green-50 dark:bg-green-900/20' : 'bg-red-50 dark:bg-red-900/20'}`}>
+                              <p className={`text-sm font-semibold mb-1 ${record.isCorrect ? 'text-green-700 dark:text-green-300' : 'text-red-700 dark:text-red-300'}`}>
+                                {record.isCorrect ? '✓' : '✗'} 聪聪回答：{record.userAnswer !== null ? question.options[record.userAnswer] : '未作答'}
+                              </p>
+                            </div>
+
+                            {/* 解析 */}
+                            <div className="p-3 bg-amber-50 dark:bg-amber-900/20 rounded-lg">
+                              <p className="text-sm text-gray-700 dark:text-gray-300">
+                                <span className="font-semibold">解析：</span>
+                                {question.explanation}
+                              </p>
+                            </div>
+                          </CardContent>
+                        </Card>
+                      );
+                    })}
+                  </div>
+
+                  {/* 玩家2的答题记录 */}
+                  <div className="space-y-3">
+                    <h4 className="font-bold text-pink-600 dark:text-pink-400 flex items-center gap-2">
+                      <Crown className="w-5 h-5" />
+                      明明的答题记录
+                    </h4>
+                    {player2AnswerRecords.map((record, index) => {
+                      const question = record.question;
+                      return (
+                        <Card key={`p2-${index}`} className="border-2 border-gray-200 dark:border-gray-700">
+                          <CardHeader className="pb-3">
+                            <CardTitle className="text-base flex items-center gap-2">
+                              <span className="flex-shrink-0 w-7 h-7 flex items-center justify-center rounded-full bg-pink-100 dark:bg-pink-900 text-pink-600 dark:text-pink-400 text-sm">
+                                {index + 1}
+                              </span>
+                              {question.question}
+                            </CardTitle>
+                          </CardHeader>
+                          <CardContent className="space-y-3">
+                            {/* 正确答案 */}
+                            <div className="p-3 bg-green-50 dark:bg-green-900/20 rounded-lg">
+                              <p className="text-sm font-semibold text-green-700 dark:text-green-300 mb-1">
+                                ✓ 正确答案：{question.options[question.answer]}
+                              </p>
+                            </div>
+
+                            {/* 玩家2的回答 */}
+                            <div className={`p-3 rounded-lg ${record.isCorrect ? 'bg-green-50 dark:bg-green-900/20' : 'bg-red-50 dark:bg-red-900/20'}`}>
+                              <p className={`text-sm font-semibold mb-1 ${record.isCorrect ? 'text-green-700 dark:text-green-300' : 'text-red-700 dark:text-red-300'}`}>
+                                {record.isCorrect ? '✓' : '✗'} 明明回答：{record.userAnswer !== null ? question.options[record.userAnswer] : '未作答'}
+                              </p>
+                            </div>
+
+                            {/* 解析 */}
+                            <div className="p-3 bg-amber-50 dark:bg-amber-900/20 rounded-lg">
+                              <p className="text-sm text-gray-700 dark:text-gray-300">
+                                <span className="font-semibold">解析：</span>
+                                {question.explanation}
+                              </p>
+                            </div>
+                          </CardContent>
+                        </Card>
+                      );
+                    })}
+                  </div>
                 </div>
               )}
             </div>
