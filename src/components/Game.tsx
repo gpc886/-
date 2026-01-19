@@ -552,10 +552,10 @@ export default function Game({ gameMode, questionType, onBack }: GameProps) {
 
   // 检测碰撞 - 返回玩家选择的篮筐（检测篮球是否从上往下穿过篮筐）
   const checkCollision = (x: number, y: number, prevY: number): 'left' | 'right' | null => {
-    // 左篮筐（玩家认为正确）：x: 8-27, y: 40-54（扩大约15%）
-    const leftHoop = { xMin: 8, xMax: 27, yMin: 40, yMax: 54 };
-    // 右篮筐（玩家认为错误）：x: 73-92, y: 40-54（扩大约15%）
-    const rightHoop = { xMin: 73, xMax: 92, yMin: 40, yMax: 54 };
+    // 左篮筐（玩家认为正确）：x: 5-30, y: 38-56（再扩大30%）
+    const leftHoop = { xMin: 5, xMax: 30, yMin: 38, yMax: 56 };
+    // 右篮筐（玩家认为错误）：x: 70-95, y: 38-56（再扩大30%）
+    const rightHoop = { xMin: 70, xMax: 95, yMin: 38, yMax: 56 };
 
     // 检测是否从上往下穿过左篮筐
     // 条件：上一帧在篮筐上方，当前帧在篮筐范围内（或下方），且水平位置在篮筐范围内
