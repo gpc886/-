@@ -309,10 +309,12 @@ export default function Game({ gameMode, questionType, onBack }: GameProps) {
   const [ballPosition, setBallPosition] = useState({ x: 50, y: 80 }); // 篮球位置（百分比）
   const [isBallThrown, setIsBallThrown] = useState(false); // 篮球是否已发射
   const [trajectoryOffset, setTrajectoryOffset] = useState({ x: 0, y: -30 }); // 虚拟抛物线偏移量（百分比）
+  const [throwPower, setThrowPower] = useState(3.0); // 发射力度（范围1.0-8.0）
   const [ladderShowResult, setLadderShowResult] = useState(false); // 显示结果
   const [ladderResult, setLadderResult] = useState<'correct' | 'wrong' | null>(null); // 天梯赛结果
   const [animationId, setAnimationId] = useState<number | null>(null); // 动画ID
   const [isDragging, setIsDragging] = useState(false); // 是否正在拖拽轨迹
+  const [isPowerAdjusting, setIsPowerAdjusting] = useState(false); // 是否正在调节力度
   const [ballRotation, setBallRotation] = useState(0); // 篮球旋转角度
 
   // 初始化天梯赛题目
@@ -389,11 +391,81 @@ export default function Game({ gameMode, questionType, onBack }: GameProps) {
     };
   }, [isDragging, ballPosition.x, ballPosition.y, gameMode]);
 
+  // 处理力度调节（鼠标）
+  useEffect(() => {
+    if (!isPowerAdjusting || gameMode !== 'ladder' || isBallThrown) return;
+
+    const handleMouseMove = (e: MouseEvent) => {
+      // 查找力度滑块元素
+      const sliderContainer = document.querySelector('[data-power-slider="true"]');
+      if (!sliderContainer) return;
+
+      const rect = sliderContainer.getBoundingClientRect();
+      const x = e.clientX - rect.left;
+
+      // 计算滑块位置百分比
+      const percentage = Math.max(0, Math.min(100, (x / rect.width) * 100));
+
+      // 将百分比转换为力度（1.0-8.0）
+      const newPower = 1.0 + (percentage / 100) * 7;
+      setThrowPower(newPower);
+    };
+
+    const handleMouseUp = () => {
+      setIsPowerAdjusting(false);
+    };
+
+    document.addEventListener('mousemove', handleMouseMove);
+    document.addEventListener('mouseup', handleMouseUp);
+
+    return () => {
+      document.removeEventListener('mousemove', handleMouseMove);
+      document.removeEventListener('mouseup', handleMouseUp);
+    };
+  }, [isPowerAdjusting, gameMode, isBallThrown]);
+
+  // 处理力度调节（触摸）
+  useEffect(() => {
+    if (!isPowerAdjusting || gameMode !== 'ladder' || isBallThrown) return;
+
+    const handleTouchMove = (e: TouchEvent) => {
+      e.preventDefault();
+
+      // 查找力度滑块元素
+      const sliderContainer = document.querySelector('[data-power-slider="true"]');
+      if (!sliderContainer) return;
+
+      const touch = e.touches[0];
+      const rect = sliderContainer.getBoundingClientRect();
+      const x = touch.clientX - rect.left;
+
+      // 计算滑块位置百分比
+      const percentage = Math.max(0, Math.min(100, (x / rect.width) * 100));
+
+      // 将百分比转换为力度（1.0-8.0）
+      const newPower = 1.0 + (percentage / 100) * 7;
+      setThrowPower(newPower);
+    };
+
+    const handleTouchEnd = () => {
+      setIsPowerAdjusting(false);
+    };
+
+    document.addEventListener('touchmove', handleTouchMove, { passive: false });
+    document.addEventListener('touchend', handleTouchEnd);
+
+    return () => {
+      document.removeEventListener('touchmove', handleTouchMove);
+      document.removeEventListener('touchend', handleTouchEnd);
+    };
+  }, [isPowerAdjusting, gameMode, isBallThrown]);
+
   // 重置篮球位置
   const resetBall = () => {
     setBallPosition({ x: 50, y: 80 });
     setIsBallThrown(false);
     setTrajectoryOffset({ x: 0, y: -30 });
+    setThrowPower(3.0); // 重置力度到默认值
     setBallRotation(0); // 重置旋转角度
   };
 
@@ -408,7 +480,7 @@ export default function Game({ gameMode, questionType, onBack }: GameProps) {
     // 播放投篮球音效
     playSoundEffect('correct');
 
-    // 计算初始速度（根据轨迹偏移量计算方向，固定力度）
+    // 计算初始速度（根据轨迹偏移量计算方向，使用可变力度）
     const targetX = ballPosition.x + trajectoryOffset.x;
     const targetY = ballPosition.y + trajectoryOffset.y;
 
@@ -419,10 +491,9 @@ export default function Game({ gameMode, questionType, onBack }: GameProps) {
     // 计算距离
     const distance = Math.sqrt(dx * dx + dy * dy);
 
-    // 固定力度，按方向标准化
-    const fixedPower = 3.0; // 固定力度值
-    const velocityX = (dx / distance) * fixedPower;
-    const velocityY = (dy / distance) * fixedPower;
+    // 使用当前力度，按方向标准化
+    const velocityX = (dx / distance) * throwPower;
+    const velocityY = (dy / distance) * throwPower;
 
     // 动画参数
     let currentX = ballPosition.x;
@@ -548,7 +619,7 @@ export default function Game({ gameMode, questionType, onBack }: GameProps) {
   const drawTrajectory = () => {
     if (isBallThrown) return null;
 
-    const points: { x: number; y: number }[] = [];
+    const points: { x: number; y: number; opacity: number }[] = [];
 
     // 从篮球中心开始（与投篮逻辑完全一致）
     let x = ballPosition.x;
@@ -558,23 +629,27 @@ export default function Game({ gameMode, questionType, onBack }: GameProps) {
     const targetX = ballPosition.x + trajectoryOffset.x;
     const targetY = ballPosition.y + trajectoryOffset.y;
 
-    // 计算方向向量（固定力度，与投篮逻辑一致）
+    // 计算方向向量（使用当前力度，与投篮逻辑一致）
     const dx = targetX - ballPosition.x;
     const dy = targetY - ballPosition.y;
     const distance = Math.sqrt(dx * dx + dy * dy);
 
-    const fixedPower = 3.0;
-    const vx = (dx / distance) * fixedPower;
-    let vy = (dy / distance) * fixedPower;
+    const vx = (dx / distance) * throwPower;
+    let vy = (dy / distance) * throwPower;
     const gravity = 0.15;
     const dt = 1.0;
 
-    // 预测30个点
-    for (let i = 0; i < 30; i++) {
+    // 预测30个点，根据力度调整点数（力度越大，轨迹越长）
+    const pointCount = Math.min(30, 10 + Math.floor(throwPower * 3));
+
+    for (let i = 0; i < pointCount; i++) {
       x += vx * dt;
       y += vy * dt;
       vy += gravity * dt;
-      points.push({ x, y });
+
+      // 计算透明度：越远越透明
+      const opacity = Math.max(0.1, 1 - (i / pointCount));
+      points.push({ x, y, opacity });
 
       // 提前停止如果超出屏幕
       if (y > 90 || x < 0 || x > 100) break;
@@ -1290,30 +1365,141 @@ export default function Game({ gameMode, questionType, onBack }: GameProps) {
           {/* 抛物线预览 */}
           {!isBallThrown && (
             <svg className="absolute inset-0 w-full h-full" viewBox="0 0 100 100" preserveAspectRatio="none" style={{ zIndex: 5 }}>
+              {/* 轨迹线 - 颜色根据力度变化（蓝色=低力度，红色=高力度） */}
               <polyline
                 points={drawTrajectory()
                   ?.map(p => `${p.x},${p.y}`)
                   .join(' ')}
                 fill="none"
-                stroke="rgba(59, 130, 246, 0.7)"
+                stroke={throwPower < 3 ? 'rgba(59, 130, 246, 0.7)' : throwPower < 5 ? 'rgba(249, 115, 22, 0.7)' : 'rgba(239, 68, 68, 0.7)'}
                 strokeWidth="0.8"
                 strokeDasharray="2,1"
               />
-              {/* 轨迹终点指示点 */}
+              {/* 轨迹终点指示点和力度显示 */}
               {drawTrajectory() && drawTrajectory()!.length > 0 && (
-                <circle
-                  cx={drawTrajectory()![drawTrajectory()!.length - 1].x}
-                  cy={drawTrajectory()![drawTrajectory()!.length - 1].y}
-                  r="1.5"
-                  fill="rgba(59, 130, 246, 0.9)"
-                  className="cursor-move"
-                  onMouseDown={(e) => {
-                    e.preventDefault();
-                    setIsDragging(true);
-                  }}
-                />
+                <>
+                  <circle
+                    cx={drawTrajectory()![drawTrajectory()!.length - 1].x}
+                    cy={drawTrajectory()![drawTrajectory()!.length - 1].y}
+                    r="1.5"
+                    fill={throwPower < 3 ? 'rgba(59, 130, 246, 0.9)' : throwPower < 5 ? 'rgba(249, 115, 22, 0.9)' : 'rgba(239, 68, 68, 0.9)'}
+                    className="cursor-move"
+                    onMouseDown={(e) => {
+                      e.preventDefault();
+                      setIsDragging(true);
+                    }}
+                  />
+                  {/* 力度百分比文本 */}
+                  <text
+                    x={drawTrajectory()![drawTrajectory()!.length - 1].x}
+                    y={drawTrajectory()![drawTrajectory()!.length - 1].y - 3}
+                    textAnchor="middle"
+                    fontSize="2.5"
+                    fontWeight="bold"
+                    fill={throwPower < 3 ? '#3b82f6' : throwPower < 5 ? '#f97316' : '#ef4444'}
+                  >
+                    {Math.round((throwPower / 8) * 100)}%
+                  </text>
+                  {/* 力度调节环 */}
+                  <circle
+                    cx={drawTrajectory()![drawTrajectory()!.length - 1].x}
+                    cy={drawTrajectory()![drawTrajectory()!.length - 1].y}
+                    r="4"
+                    fill="none"
+                    stroke={throwPower < 3 ? 'rgba(59, 130, 246, 0.3)' : throwPower < 5 ? 'rgba(249, 115, 22, 0.3)' : 'rgba(239, 68, 68, 0.3)'}
+                    strokeWidth="0.5"
+                    strokeDasharray="1,1"
+                    className="cursor-pointer"
+                    onMouseDown={(e) => {
+                      e.preventDefault();
+                      setIsPowerAdjusting(true);
+                    }}
+                  />
+                  {/* 力度指示箭头 */}
+                  {(() => {
+                    const lastPoint = drawTrajectory()![drawTrajectory()!.length - 1];
+                    const arrowLength = (throwPower / 8) * 6; // 根据力度计算箭头长度
+                    const angle = Math.atan2(
+                      lastPoint.y - ballPosition.y,
+                      lastPoint.x - ballPosition.x
+                    );
+                    const arrowX = lastPoint.x + Math.cos(angle) * arrowLength;
+                    const arrowY = lastPoint.y + Math.sin(angle) * arrowLength;
+                    return (
+                      <line
+                        x1={lastPoint.x}
+                        y1={lastPoint.y}
+                        x2={arrowX}
+                        y2={arrowY}
+                        stroke={throwPower < 3 ? '#3b82f6' : throwPower < 5 ? '#f97316' : '#ef4444'}
+                        strokeWidth="0.8"
+                        markerEnd="url(#arrowhead)"
+                      />
+                    );
+                  })()}
+                  {/* 箭头标记定义 */}
+                  <defs>
+                    <marker
+                      id="arrowhead"
+                      markerWidth="10"
+                      markerHeight="10"
+                      refX="9"
+                      refY="3"
+                      orient="auto"
+                    >
+                      <polygon
+                        points="0 0, 10 3, 0 6"
+                        fill={throwPower < 3 ? '#3b82f6' : throwPower < 5 ? '#f97316' : '#ef4444'}
+                      />
+                    </marker>
+                  </defs>
+                </>
               )}
             </svg>
+          )}
+
+          {/* 力度指示器 */}
+          {!isBallThrown && !ladderShowResult && (
+            <div className="absolute bottom-32 right-6 z-20 bg-white/90 dark:bg-gray-800/90 backdrop-blur-sm rounded-lg shadow-lg p-4 min-w-[160px]">
+              <div className="flex items-center justify-between mb-2">
+                <span className="text-sm font-semibold text-gray-700 dark:text-gray-300">发射力度</span>
+                <span className={`text-sm font-bold ${throwPower < 3 ? 'text-blue-500' : throwPower < 5 ? 'text-orange-500' : 'text-red-500'}`}>
+                  {Math.round((throwPower / 8) * 100)}%
+                </span>
+              </div>
+              {/* 力度滑块 */}
+              <div
+                data-power-slider="true"
+                className="relative h-3 bg-gray-200 dark:bg-gray-700 rounded-full overflow-hidden"
+              >
+                <div
+                  className={`h-full rounded-full transition-all duration-200 ${
+                    throwPower < 3 ? 'bg-blue-500' : throwPower < 5 ? 'bg-orange-500' : 'bg-red-500'
+                  }`}
+                  style={{ width: `${(throwPower / 8) * 100}%` }}
+                />
+                {/* 力度调节手柄 */}
+                <div
+                  className={`absolute top-1/2 -translate-y-1/2 w-5 h-5 rounded-full shadow-lg cursor-grab active:cursor-grabbing transition-colors ${
+                    throwPower < 3 ? 'bg-blue-500' : throwPower < 5 ? 'bg-orange-500' : 'bg-red-500'
+                  }`}
+                  style={{ left: `${((throwPower - 1) / 7) * 100}%` }}
+                  onMouseDown={(e) => {
+                    e.preventDefault();
+                    setIsPowerAdjusting(true);
+                  }}
+                  onTouchStart={(e) => {
+                    e.preventDefault();
+                    setIsPowerAdjusting(true);
+                  }}
+                />
+              </div>
+              <div className="flex justify-between mt-1 text-xs text-gray-500 dark:text-gray-400">
+                <span>轻</span>
+                <span>中</span>
+                <span>强</span>
+              </div>
+            </div>
           )}
 
           {/* 控制面板 */}
