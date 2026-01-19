@@ -329,6 +329,8 @@ export default function Game({ gameMode, questionType, onBack }: GameProps) {
 
   // 倒计时（仅双人模式）
   useEffect(() => {
+    let timer: NodeJS.Timeout | null = null;
+
     if (gameMode === 'multi' && timeLeft > 0 && !gameEnded) {
       // 启动滴答音效
       if (!tickTimerRef.current) {
@@ -339,7 +341,7 @@ export default function Game({ gameMode, questionType, onBack }: GameProps) {
       }
 
       // 倒计时
-      const timer = setInterval(() => {
+      timer = setInterval(() => {
         setTimeLeft((prev) => {
           if (prev <= 1) {
             // 立即停止滴答音效
@@ -354,11 +356,13 @@ export default function Game({ gameMode, questionType, onBack }: GameProps) {
           return prev - 1;
         });
       }, 1000);
-      return () => clearInterval(timer);
     }
 
-    // 清理滴答音效定时器
+    // 统一的清理函数
     return () => {
+      if (timer) {
+        clearInterval(timer);
+      }
       if (tickTimerRef.current) {
         clearInterval(tickTimerRef.current);
         tickTimerRef.current = null;
