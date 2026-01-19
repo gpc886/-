@@ -1534,7 +1534,7 @@ export default function Game({ gameMode, questionType, onBack }: GameProps) {
               onClick={throwBall}
               className="absolute bottom-6 right-6 w-20 h-20 rounded-full bg-gradient-to-br from-orange-500 to-red-500 hover:from-orange-600 hover:to-red-600 text-white font-bold shadow-2xl z-20 flex items-center justify-center transition-transform hover:scale-105 active:scale-95"
             >
-              <span className="text-4xl">🏀</span>
+              <span className="text-xl">投射</span>
             </button>
           )}
 
