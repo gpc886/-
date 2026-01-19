@@ -68,6 +68,7 @@ const play321 = () => {
       const count3 = new SpeechSynthesisUtterance('3');
       const count2 = new SpeechSynthesisUtterance('2');
       const count1 = new SpeechSynthesisUtterance('1');
+      const start = new SpeechSynthesisUtterance('开始');
 
       // 设置参数
       [count3, count2, count1].forEach(utt => {
@@ -77,7 +78,19 @@ const play321 = () => {
         utt.lang = 'zh-CN';
       });
 
-      // 并发播放
+      // "开始"参数
+      start.rate = 1.2;
+      start.pitch = 1.2;
+      start.volume = 1.0;
+      start.lang = 'zh-CN';
+
+      // 监听1播放完成后再播放"开始"
+      count1.onend = () => {
+        console.log('▶️ 321播放完成，开始播放"开始"');
+        window.speechSynthesis.speak(start);
+      };
+
+      // 并发播放321
       window.speechSynthesis.speak(count3);
       window.speechSynthesis.speak(count2);
       window.speechSynthesis.speak(count1);
@@ -405,8 +418,11 @@ export default function Game({ gameMode, questionType, onBack }: GameProps) {
         {showCountdown && (
           <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60">
             <div className="text-center animate-pulse">
-              <h1 className="text-9xl font-black bg-gradient-to-r from-yellow-400 via-orange-500 to-red-500 bg-clip-text text-transparent drop-shadow-2xl">
+              <h1 className="text-9xl font-black bg-gradient-to-r from-yellow-400 via-orange-500 to-red-500 bg-clip-text text-transparent drop-shadow-2xl mb-4">
                 3 2 1
+              </h1>
+              <h1 className="text-7xl font-bold text-white drop-shadow-2xl">
+                开始
               </h1>
             </div>
           </div>
