@@ -309,13 +309,12 @@ export default function Game({ gameMode, questionType, onBack }: GameProps) {
   const [ballPosition, setBallPosition] = useState({ x: 50, y: 80 }); // 篮球位置（百分比）
   const [isBallThrown, setIsBallThrown] = useState(false); // 篮球是否已发射
   const [trajectoryOffset, setTrajectoryOffset] = useState({ x: 0, y: -30 }); // 虚拟抛物线偏移量（百分比）
-  const [throwPower, setThrowPower] = useState(6.0); // 发射力度（范围2.0-16.0）
+  const [throwPower, setThrowPower] = useState(3.0); // 发射力度（范围1.0-8.0）
   const [ladderShowResult, setLadderShowResult] = useState(false); // 显示结果
   const [ladderResult, setLadderResult] = useState<'correct' | 'wrong' | null>(null); // 天梯赛结果
   const [animationId, setAnimationId] = useState<number | null>(null); // 动画ID
   const [isDragging, setIsDragging] = useState(false); // 是否正在拖拽轨迹
   const [ballRotation, setBallRotation] = useState(0); // 篮球旋转角度
-  const gameAreaRef = useRef<HTMLDivElement | null>(null); // 游戏区域引用
 
   // 初始化天梯赛题目
   useEffect(() => {
@@ -330,17 +329,13 @@ export default function Game({ gameMode, questionType, onBack }: GameProps) {
   useEffect(() => {
     if (!isDragging || gameMode !== 'ladder') return;
 
-    // 获取容器位置信息（只查询一次）
-    const container = gameAreaRef.current;
-    if (!container) return;
-    const rect = container.getBoundingClientRect();
-    const width = rect.width;
-    const height = rect.height;
-
     const handleMouseMove = (e: MouseEvent) => {
-      // 直接使用缓存的尺寸信息，避免重复查询 DOM
-      const x = ((e.clientX - rect.left) / width) * 100;
-      const y = ((e.clientY - rect.top) / height) * 100;
+      const container = document.querySelector('[data-game-area="true"]');
+      if (!container) return;
+
+      const rect = container.getBoundingClientRect();
+      const x = ((e.clientX - rect.left) / rect.width) * 100;
+      const y = ((e.clientY - rect.top) / rect.height) * 100;
 
       // 计算偏移量
       const offsetX = x - ballPosition.x;
@@ -350,17 +345,20 @@ export default function Game({ gameMode, questionType, onBack }: GameProps) {
       const distance = Math.sqrt(offsetX * offsetX + offsetY * offsetY);
 
       // 限制水平方向范围（-45到45）
-      const limitedOffsetX = Math.max(-45, Math.min(45, offsetX));
+      let limitedOffsetX = offsetX;
+      if (offsetX > 45) limitedOffsetX = 45;
+      if (offsetX < -45) limitedOffsetX = -45;
 
       // 限制垂直方向范围（-270到20）
-      const limitedOffsetY = Math.max(-270, Math.min(20, offsetY));
+      let limitedOffsetY = offsetY;
+      if (offsetY > 20) limitedOffsetY = 20;
+      if (offsetY < -270) limitedOffsetY = -270;
 
       // 根据拖拽距离计算力度（距离越远，力度越大）
       // 最小距离约15%，最大距离约270%
       const normalizedDistance = Math.max(15, Math.min(270, distance));
-      const newPower = 2.0 + ((normalizedDistance - 15) / 255) * 14; // 转换到2.0-16.0
+      const newPower = 1.0 + ((normalizedDistance - 15) / 255) * 7; // 转换到1.0-8.0
 
-      // 使用批处理更新，减少重新渲染次数
       setTrajectoryOffset({ x: limitedOffsetX, y: limitedOffsetY });
       setThrowPower(newPower);
     };
@@ -369,8 +367,7 @@ export default function Game({ gameMode, questionType, onBack }: GameProps) {
       setIsDragging(false);
     };
 
-    // 使用 passive: false 提高性能
-    document.addEventListener('mousemove', handleMouseMove, { passive: false });
+    document.addEventListener('mousemove', handleMouseMove);
     document.addEventListener('mouseup', handleMouseUp);
 
     return () => {
@@ -383,20 +380,14 @@ export default function Game({ gameMode, questionType, onBack }: GameProps) {
   useEffect(() => {
     if (!isDragging || gameMode !== 'ladder') return;
 
-    // 获取容器位置信息（只查询一次）
-    const container = gameAreaRef.current;
-    if (!container) return;
-    const rect = container.getBoundingClientRect();
-    const width = rect.width;
-    const height = rect.height;
-
     const handleTouchMove = (e: TouchEvent) => {
-      e.preventDefault();
-
       const touch = e.touches[0];
-      // 直接使用缓存的尺寸信息，避免重复查询 DOM
-      const x = ((touch.clientX - rect.left) / width) * 100;
-      const y = ((touch.clientY - rect.top) / height) * 100;
+      const container = document.querySelector('[data-game-area="true"]');
+      if (!container) return;
+
+      const rect = container.getBoundingClientRect();
+      const x = ((touch.clientX - rect.left) / rect.width) * 100;
+      const y = ((touch.clientY - rect.top) / rect.height) * 100;
 
       // 计算偏移量
       const offsetX = x - ballPosition.x;
@@ -406,17 +397,20 @@ export default function Game({ gameMode, questionType, onBack }: GameProps) {
       const distance = Math.sqrt(offsetX * offsetX + offsetY * offsetY);
 
       // 限制水平方向范围（-45到45）
-      const limitedOffsetX = Math.max(-45, Math.min(45, offsetX));
+      let limitedOffsetX = offsetX;
+      if (offsetX > 45) limitedOffsetX = 45;
+      if (offsetX < -45) limitedOffsetX = -45;
 
       // 限制垂直方向范围（-270到20）
-      const limitedOffsetY = Math.max(-270, Math.min(20, offsetY));
+      let limitedOffsetY = offsetY;
+      if (offsetY > 20) limitedOffsetY = 20;
+      if (offsetY < -270) limitedOffsetY = -270;
 
       // 根据拖拽距离计算力度（距离越远，力度越大）
       // 最小距离约15%，最大距离约270%
       const normalizedDistance = Math.max(15, Math.min(270, distance));
-      const newPower = 2.0 + ((normalizedDistance - 15) / 255) * 14; // 转换到2.0-16.0
+      const newPower = 1.0 + ((normalizedDistance - 15) / 255) * 7; // 转换到1.0-8.0
 
-      // 使用批处理更新，减少重新渲染次数
       setTrajectoryOffset({ x: limitedOffsetX, y: limitedOffsetY });
       setThrowPower(newPower);
     };
@@ -436,10 +430,10 @@ export default function Game({ gameMode, questionType, onBack }: GameProps) {
 
   // 重置篮球位置
   const resetBall = () => {
-    setBallPosition({ x: 50, y: 80 }); // 原始位置
+    setBallPosition({ x: 50, y: 80 });
     setIsBallThrown(false);
-    setTrajectoryOffset({ x: 0, y: -30 }); // 原始轨迹偏移
-    setThrowPower(6.0); // 重置力度到默认值
+    setTrajectoryOffset({ x: 0, y: -30 });
+    setThrowPower(3.0); // 重置力度到默认值
     setBallRotation(0); // 重置旋转角度
   };
 
@@ -511,7 +505,7 @@ export default function Game({ gameMode, questionType, onBack }: GameProps) {
       }
 
       // 检测是否落地（超过篮筐高度）
-      if (currentY > 90) {
+      if (currentY > 85) {
         // 落地但没有命中任何篮筐，重置篮球
         if (animationId) {
           cancelAnimationFrame(animationId);
@@ -535,39 +529,28 @@ export default function Game({ gameMode, questionType, onBack }: GameProps) {
     setAnimationId(id);
   };
 
-  // 检测碰撞 - 返回玩家选择的篮筐
-  const checkCollision = (x: number, y: number): 'left' | 'right' | null => {
-    // 左篮筐（玩家认为正确）：x: 5-15（在左侧20%区域的中心），y: 30-40（flex items-center 居中位置，考虑容器布局）
-    const leftHoop = { xMin: 5, xMax: 15, yMin: 30, yMax: 40 };
-    // 右篮筐（玩家认为错误）：x: 85-95（在右侧20%区域的中心），y: 30-40（flex items-center 居中位置，考虑容器布局）
-    const rightHoop = { xMin: 85, xMax: 95, yMin: 30, yMax: 40 };
+  // 检测碰撞
+  const checkCollision = (x: number, y: number): 'correct' | 'wrong' | null => {
+    // 左篮筐（正确）：x: 10-25, y: 42-52（垂直居中）
+    const leftHoop = { xMin: 10, xMax: 25, yMin: 42, yMax: 52 };
+    // 右篮筐（错误）：x: 75-90, y: 42-52（垂直居中）
+    const rightHoop = { xMin: 75, xMax: 90, yMin: 42, yMax: 52 };
 
     // 检测是否命中左篮筐
     if (x >= leftHoop.xMin && x <= leftHoop.xMax && y >= leftHoop.yMin && y <= leftHoop.yMax) {
-      return 'left';
+      return 'correct';
     }
 
     // 检测是否命中右篮筐
     if (x >= rightHoop.xMin && x <= rightHoop.xMax && y >= rightHoop.yMin && y <= rightHoop.yMax) {
-      return 'right';
+      return 'wrong';
     }
 
     return null;
   };
 
   // 处理天梯赛结果
-  const handleLadderResult = (playerChoice: 'left' | 'right') => {
-    if (!currentJudgeQuestion) return;
-
-    // 判断逻辑：玩家选择的答案与题目真实答案是否一致
-    // 左篮筐 = 玩家认为正确，右篮筐 = 玩家认为错误
-    const playerThinksCorrect = playerChoice === 'left';
-    const isActuallyCorrect = currentJudgeQuestion.answer;
-
-    // 玩家判断正确：玩家认为正确且确实正确，或认为错误且确实错误
-    const isPlayerCorrect = playerThinksCorrect === isActuallyCorrect;
-
-    const result = isPlayerCorrect ? 'correct' : 'wrong';
+  const handleLadderResult = (result: 'correct' | 'wrong') => {
     setLadderResult(result);
     setLadderShowResult(true);
 
@@ -580,7 +563,7 @@ export default function Game({ gameMode, questionType, onBack }: GameProps) {
       setAnimationId(null);
     }
 
-    // 2秒后处理层级变化
+    // 1秒后处理层级变化
     setTimeout(() => {
       if (result === 'correct') {
         // 答对，进入下一层
@@ -1240,7 +1223,6 @@ export default function Game({ gameMode, questionType, onBack }: GameProps) {
 
         {/* 游戏区域 */}
         <div
-          ref={gameAreaRef}
           className="max-w-6xl mx-auto relative h-[500px] z-10"
           data-game-area="true"
           onClick={(e) => {
@@ -1251,23 +1233,11 @@ export default function Game({ gameMode, questionType, onBack }: GameProps) {
             const x = ((e.clientX - rect.left) / rect.width) * 100;
             const y = ((e.clientY - rect.top) / rect.height) * 100;
 
-            // 计算偏移量
-            const offsetX = x - ballPosition.x;
-            const offsetY = y - ballPosition.y;
-
-            // 计算距离
-            const distance = Math.sqrt(offsetX * offsetX + offsetY * offsetY);
-
-            // 限制偏移范围
-            const newOffsetX = Math.max(-45, Math.min(45, offsetX));
-            const newOffsetY = Math.max(-270, Math.min(20, offsetY));
-
-            // 根据距离计算力度
-            const normalizedDistance = Math.max(15, Math.min(270, distance));
-            const newPower = 2.0 + ((normalizedDistance - 15) / 255) * 14;
+            // 限制偏移范围（扩大可调节范围）
+            const newOffsetX = Math.max(-45, Math.min(45, x - ballPosition.x));
+            const newOffsetY = Math.max(-270, Math.min(20, y - ballPosition.y));
 
             setTrajectoryOffset({ x: newOffsetX, y: newOffsetY });
-            setThrowPower(newPower);
           }}
           onTouchStart={(e) => {
             if (isBallThrown || ladderShowResult) return;
@@ -1278,74 +1248,20 @@ export default function Game({ gameMode, questionType, onBack }: GameProps) {
             const x = ((touch.clientX - rect.left) / rect.width) * 100;
             const y = ((touch.clientY - rect.top) / rect.height) * 100;
 
-            // 计算偏移量
-            const offsetX = x - ballPosition.x;
-            const offsetY = y - ballPosition.y;
-
-            // 计算距离
-            const distance = Math.sqrt(offsetX * offsetX + offsetY * offsetY);
-
-            // 限制偏移范围
-            const newOffsetX = Math.max(-45, Math.min(45, offsetX));
-            const newOffsetY = Math.max(-270, Math.min(20, offsetY));
-
-            // 根据距离计算力度
-            const normalizedDistance = Math.max(15, Math.min(270, distance));
-            const newPower = 2.0 + ((normalizedDistance - 15) / 255) * 14;
+            // 限制偏移范围（扩大可调节范围）
+            const newOffsetX = Math.max(-45, Math.min(45, x - ballPosition.x));
+            const newOffsetY = Math.max(-270, Math.min(20, y - ballPosition.y));
 
             setTrajectoryOffset({ x: newOffsetX, y: newOffsetY });
-            setThrowPower(newPower);
           }}
         >
           {/* 左篮筐（正确） */}
           <div className="absolute left-0 top-0 w-[20%] h-full flex items-center justify-center">
             <div className="relative">
-              {/* 篮板 */}
-              <div className="absolute bottom-16 left-1/2 -translate-x-1/2 w-36 h-24 bg-gradient-to-br from-gray-100 to-gray-200 dark:from-gray-700 dark:to-gray-800 rounded border-2 border-gray-300 dark:border-gray-600 shadow-xl overflow-hidden">
-                {/* 篮板内框 */}
-                <div className="absolute inset-4 border-2 border-green-500/50 rounded"></div>
-                {/* 玻璃反光效果 */}
-                <div className="absolute inset-0 bg-gradient-to-tr from-white/20 via-transparent to-transparent"></div>
+              {/* 篮筐 */}
+              <div className="w-32 h-8 border-4 border-green-500 rounded-b-full bg-green-100 dark:bg-green-900/30 shadow-lg">
+                <div className="absolute bottom-0 left-1/2 -translate-x-1/2 w-1 h-20 bg-gray-400 dark:bg-gray-600"></div>
               </div>
-
-              {/* 篮筐主体 */}
-              <div className="absolute bottom-8 left-1/2 -translate-x-1/2 w-28 h-4 relative">
-                {/* 篮筐环 - 金属质感 */}
-                <div className="absolute inset-0 border-[5px] border-green-600 rounded-full shadow-2xl"
-                     style={{
-                       background: 'linear-gradient(135deg, #22c55e 0%, #16a34a 50%, #15803d 100%)',
-                       boxShadow: 'inset 0 2px 4px rgba(255,255,255,0.3), 0 4px 12px rgba(0,0,0,0.3)'
-                     }}>
-                </div>
-
-                {/* 篮网 - 使用渐变和条纹模拟 */}
-                <div className="absolute -bottom-16 left-1/2 -translate-x-1/2 w-24 h-16 overflow-hidden">
-                  <svg className="w-full h-full" viewBox="0 0 100 80" preserveAspectRatio="none">
-                    {/* 篮网线条 */}
-                    <defs>
-                      <linearGradient id="netGradient" x1="0%" y1="0%" x2="0%" y2="100%">
-                        <stop offset="0%" style={{ stopColor: '#ffffff', stopOpacity: 0.8 }} />
-                        <stop offset="100%" style={{ stopColor: '#ffffff', stopOpacity: 0.3 }} />
-                      </linearGradient>
-                    </defs>
-                    {/* 垂直线 */}
-                    <line x1="10" y1="0" x2="15" y2="80" stroke="url(#netGradient)" strokeWidth="1" />
-                    <line x1="25" y1="0" x2="30" y2="80" stroke="url(#netGradient)" strokeWidth="1" />
-                    <line x1="40" y1="0" x2="45" y2="80" stroke="url(#netGradient)" strokeWidth="1" />
-                    <line x1="55" y1="0" x2="50" y2="80" stroke="url(#netGradient)" strokeWidth="1" />
-                    <line x1="70" y1="0" x2="75" y2="80" stroke="url(#netGradient)" strokeWidth="1" />
-                    <line x1="85" y1="0" x2="90" y2="80" stroke="url(#netGradient)" strokeWidth="1" />
-                    {/* 水平线 */}
-                    <line x1="10" y1="20" x2="90" y2="20" stroke="url(#netGradient)" strokeWidth="1" />
-                    <line x1="12" y1="40" x2="88" y2="40" stroke="url(#netGradient)" strokeWidth="1" />
-                    <line x1="14" y1="60" x2="86" y2="60" stroke="url(#netGradient)" strokeWidth="1" />
-                  </svg>
-                </div>
-
-                {/* 篮筐支架 */}
-                <div className="absolute -bottom-20 left-1/2 -translate-x-1/2 w-2 h-20 bg-gradient-to-b from-gray-400 to-gray-500 rounded-full shadow-md"></div>
-              </div>
-
               <div className="absolute -top-16 left-1/2 -translate-x-1/2 text-center">
                 <CheckCircle className="w-12 h-12 text-green-600 dark:text-green-400 mx-auto mb-2" />
                 <span className="font-bold text-green-700 dark:text-green-300">正确</span>
@@ -1356,52 +1272,10 @@ export default function Game({ gameMode, questionType, onBack }: GameProps) {
           {/* 右篮筐（错误） */}
           <div className="absolute right-0 top-0 w-[20%] h-full flex items-center justify-center">
             <div className="relative">
-              {/* 篮板 */}
-              <div className="absolute bottom-16 left-1/2 -translate-x-1/2 w-36 h-24 bg-gradient-to-br from-gray-100 to-gray-200 dark:from-gray-700 dark:to-gray-800 rounded border-2 border-gray-300 dark:border-gray-600 shadow-xl overflow-hidden">
-                {/* 篮板内框 */}
-                <div className="absolute inset-4 border-2 border-red-500/50 rounded"></div>
-                {/* 玻璃反光效果 */}
-                <div className="absolute inset-0 bg-gradient-to-tr from-white/20 via-transparent to-transparent"></div>
+              {/* 篮筐 */}
+              <div className="w-32 h-8 border-4 border-red-500 rounded-b-full bg-red-100 dark:bg-red-900/30 shadow-lg">
+                <div className="absolute bottom-0 left-1/2 -translate-x-1/2 w-1 h-20 bg-gray-400 dark:bg-gray-600"></div>
               </div>
-
-              {/* 篮筐主体 */}
-              <div className="absolute bottom-8 left-1/2 -translate-x-1/2 w-28 h-4 relative">
-                {/* 篮筐环 - 金属质感 */}
-                <div className="absolute inset-0 border-[5px] border-red-600 rounded-full shadow-2xl"
-                     style={{
-                       background: 'linear-gradient(135deg, #ef4444 0%, #dc2626 50%, #b91c1c 100%)',
-                       boxShadow: 'inset 0 2px 4px rgba(255,255,255,0.3), 0 4px 12px rgba(0,0,0,0.3)'
-                     }}>
-                </div>
-
-                {/* 篮网 - 使用渐变和条纹模拟 */}
-                <div className="absolute -bottom-16 left-1/2 -translate-x-1/2 w-24 h-16 overflow-hidden">
-                  <svg className="w-full h-full" viewBox="0 0 100 80" preserveAspectRatio="none">
-                    {/* 篮网线条 */}
-                    <defs>
-                      <linearGradient id="netGradientRight" x1="0%" y1="0%" x2="0%" y2="100%">
-                        <stop offset="0%" style={{ stopColor: '#ffffff', stopOpacity: 0.8 }} />
-                        <stop offset="100%" style={{ stopColor: '#ffffff', stopOpacity: 0.3 }} />
-                      </linearGradient>
-                    </defs>
-                    {/* 垂直线 */}
-                    <line x1="10" y1="0" x2="15" y2="80" stroke="url(#netGradientRight)" strokeWidth="1" />
-                    <line x1="25" y1="0" x2="30" y2="80" stroke="url(#netGradientRight)" strokeWidth="1" />
-                    <line x1="40" y1="0" x2="45" y2="80" stroke="url(#netGradientRight)" strokeWidth="1" />
-                    <line x1="55" y1="0" x2="50" y2="80" stroke="url(#netGradientRight)" strokeWidth="1" />
-                    <line x1="70" y1="0" x2="75" y2="80" stroke="url(#netGradientRight)" strokeWidth="1" />
-                    <line x1="85" y1="0" x2="90" y2="80" stroke="url(#netGradientRight)" strokeWidth="1" />
-                    {/* 水平线 */}
-                    <line x1="10" y1="20" x2="90" y2="20" stroke="url(#netGradientRight)" strokeWidth="1" />
-                    <line x1="12" y1="40" x2="88" y2="40" stroke="url(#netGradientRight)" strokeWidth="1" />
-                    <line x1="14" y1="60" x2="86" y2="60" stroke="url(#netGradientRight)" strokeWidth="1" />
-                  </svg>
-                </div>
-
-                {/* 篮筐支架 */}
-                <div className="absolute -bottom-20 left-1/2 -translate-x-1/2 w-2 h-20 bg-gradient-to-b from-gray-400 to-gray-500 rounded-full shadow-md"></div>
-              </div>
-
               <div className="absolute -top-16 left-1/2 -translate-x-1/2 text-center">
                 <XCircle className="w-12 h-12 text-red-600 dark:text-red-400 mx-auto mb-2" />
                 <span className="font-bold text-red-700 dark:text-red-300">错误</span>
@@ -1465,7 +1339,7 @@ export default function Game({ gameMode, questionType, onBack }: GameProps) {
                   ?.map(p => `${p.x},${p.y}`)
                   .join(' ')}
                 fill="none"
-                stroke={throwPower < 6 ? 'rgba(59, 130, 246, 0.7)' : throwPower < 10 ? 'rgba(249, 115, 22, 0.7)' : 'rgba(239, 68, 68, 0.7)'}
+                stroke={throwPower < 3 ? 'rgba(59, 130, 246, 0.7)' : throwPower < 5 ? 'rgba(249, 115, 22, 0.7)' : 'rgba(239, 68, 68, 0.7)'}
                 strokeWidth="0.8"
                 strokeDasharray="2,1"
               />
@@ -1476,17 +1350,28 @@ export default function Game({ gameMode, questionType, onBack }: GameProps) {
                     cx={drawTrajectory()![drawTrajectory()!.length - 1].x}
                     cy={drawTrajectory()![drawTrajectory()!.length - 1].y}
                     r="1.5"
-                    fill={throwPower < 6 ? 'rgba(59, 130, 246, 0.9)' : throwPower < 10 ? 'rgba(249, 115, 22, 0.9)' : 'rgba(239, 68, 68, 0.9)'}
+                    fill={throwPower < 3 ? 'rgba(59, 130, 246, 0.9)' : throwPower < 5 ? 'rgba(249, 115, 22, 0.9)' : 'rgba(239, 68, 68, 0.9)'}
                     className="cursor-move"
                     onMouseDown={(e) => {
                       e.preventDefault();
                       setIsDragging(true);
                     }}
                   />
+                  {/* 力度百分比文本 */}
+                  <text
+                    x={drawTrajectory()![drawTrajectory()!.length - 1].x}
+                    y={drawTrajectory()![drawTrajectory()!.length - 1].y - 3}
+                    textAnchor="middle"
+                    fontSize="2.5"
+                    fontWeight="bold"
+                    fill={throwPower < 3 ? '#3b82f6' : throwPower < 5 ? '#f97316' : '#ef4444'}
+                  >
+                    {Math.round((throwPower / 8) * 100)}%
+                  </text>
                   {/* 力度指示箭头 */}
                   {(() => {
                     const lastPoint = drawTrajectory()![drawTrajectory()!.length - 1];
-                    const arrowLength = (throwPower / 16) * 6; // 根据力度计算箭头长度
+                    const arrowLength = (throwPower / 8) * 6; // 根据力度计算箭头长度
                     const angle = Math.atan2(
                       lastPoint.y - ballPosition.y,
                       lastPoint.x - ballPosition.x
@@ -1499,7 +1384,7 @@ export default function Game({ gameMode, questionType, onBack }: GameProps) {
                         y1={lastPoint.y}
                         x2={arrowX}
                         y2={arrowY}
-                        stroke={throwPower < 6 ? '#3b82f6' : throwPower < 10 ? '#f97316' : '#ef4444'}
+                        stroke={throwPower < 3 ? '#3b82f6' : throwPower < 5 ? '#f97316' : '#ef4444'}
                         strokeWidth="0.8"
                         markerEnd="url(#arrowhead)"
                       />
@@ -1517,7 +1402,7 @@ export default function Game({ gameMode, questionType, onBack }: GameProps) {
                     >
                       <polygon
                         points="0 0, 10 3, 0 6"
-                        fill={throwPower < 6 ? '#3b82f6' : throwPower < 10 ? '#f97316' : '#ef4444'}
+                        fill={throwPower < 3 ? '#3b82f6' : throwPower < 5 ? '#f97316' : '#ef4444'}
                       />
                     </marker>
                   </defs>
