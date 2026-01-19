@@ -316,6 +316,8 @@ export default function Game({ gameMode, questionType, onBack }: GameProps) {
   const [isDragging, setIsDragging] = useState(false); // 是否正在拖拽轨迹
   const [ballRotation, setBallRotation] = useState(0); // 篮球旋转角度
   const gameAreaRef = useRef<HTMLDivElement | null>(null); // 游戏区域引用
+  const [pendingResult, setPendingResult] = useState<'left' | 'right' | null>(null); // 待处理的命中结果
+  const [hitTime, setHitTime] = useState<number | null>(null); // 命中时间戳
 
   // 初始化天梯赛题目
   useEffect(() => {
@@ -441,6 +443,8 @@ export default function Game({ gameMode, questionType, onBack }: GameProps) {
     setTrajectoryOffset({ x: 0, y: -30 }); // 原始轨迹偏移
     setThrowPower(6.0); // 重置力度到默认值
     setBallRotation(0); // 重置旋转角度
+    setPendingResult(null); // 重置待处理结果
+    setHitTime(null); // 重置命中时间
   };
 
   // ========== 天梯赛模式函数 ==========
@@ -450,6 +454,8 @@ export default function Game({ gameMode, questionType, onBack }: GameProps) {
     if (isBallThrown || gameMode !== 'ladder') return;
 
     setIsBallThrown(true);
+    setPendingResult(null);
+    setHitTime(null);
 
     // 播放投篮球音效
     playSoundEffect('correct');
@@ -504,10 +510,22 @@ export default function Game({ gameMode, questionType, onBack }: GameProps) {
       // 检测碰撞（只在篮筐高度附近检测）
       const hitResult = checkCollision(currentX, currentY);
 
-      if (hitResult !== null) {
-        // 命中篮筐
-        handleLadderResult(hitResult);
-        return;
+      // 检查是否已经命中篮筐并且过了0.3秒
+      if (pendingResult && hitTime) {
+        const timeSinceHit = Date.now() - hitTime;
+        if (timeSinceHit >= 300) {
+          // 0.3秒后停止动画并显示结果
+          handleLadderResult(pendingResult);
+          return;
+        }
+      }
+
+      // 如果命中篮筐且尚未记录命中时间
+      if (hitResult !== null && !pendingResult) {
+        // 记录命中结果和时间
+        setPendingResult(hitResult);
+        setHitTime(Date.now());
+        // 继续动画，不要立即停止
       }
 
       // 检测是否落地（超过篮筐高度）
@@ -558,6 +576,10 @@ export default function Game({ gameMode, questionType, onBack }: GameProps) {
   // 处理天梯赛结果
   const handleLadderResult = (playerChoice: 'left' | 'right') => {
     if (!currentJudgeQuestion) return;
+
+    // 清除待处理状态
+    setPendingResult(null);
+    setHitTime(null);
 
     // 判断逻辑：玩家选择的答案与题目真实答案是否一致
     // 左篮筐 = 玩家认为正确，右篮筐 = 玩家认为错误
