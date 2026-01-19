@@ -279,7 +279,7 @@ export default function Game({ gameMode, questionType, onBack }: GameProps) {
         <div className="max-w-7xl mx-auto grid md:grid-cols-2 gap-6">
           {/* 玩家1区域 */}
           <PlayerArea
-            playerName="玩家 1"
+            playerName="聪聪"
             playerColor="blue"
             questions={questionsData.player1Questions}
             playerState={player1State}
@@ -298,7 +298,7 @@ export default function Game({ gameMode, questionType, onBack }: GameProps) {
 
           {/* 玩家2区域 */}
           <PlayerArea
-            playerName="玩家 2"
+            playerName="明明"
             playerColor="pink"
             questions={questionsData.player2Questions}
             playerState={player2State}
@@ -627,12 +627,12 @@ function ResultMulti({
             {winner !== 0 && (
               <div className="text-center p-6 bg-gradient-to-r from-yellow-100 to-amber-100 dark:from-yellow-900/30 dark:to-amber-900/30 rounded-xl">
                 <p className="text-2xl font-bold text-yellow-700 dark:text-yellow-300 mb-2">
-                  🎉 恭喜 玩家 {winner} 获胜！
+                  🎉 恭喜 {winner === 1 ? '聪聪' : '明明'} 获胜！
                 </p>
                 <p className="text-gray-600 dark:text-gray-400">
                   {winner === 1
-                    ? `玩家1以 ${player1Score} 分击败 玩家2 (${player2Score} 分)`
-                    : `玩家2以 ${player2Score} 分击败 玩家1 (${player1Score} 分)`}
+                    ? `聪聪以 ${player1Score} 分击败 明明 (${player2Score} 分)`
+                    : `明明以 ${player2Score} 分击败 聪聪 (${player1Score} 分)`}
                 </p>
               </div>
             )}
@@ -655,11 +655,11 @@ function ResultMulti({
                 <div className="text-center">
                   <p className="text-xl font-bold text-blue-600 dark:text-blue-400 mb-2 flex items-center justify-center gap-2">
                     {winner === 1 && <Crown className="w-6 h-6 text-yellow-500" />}
-                    玩家 1
+                    聪聪
                   </p>
                   <p className="text-5xl font-bold mb-2">{player1Score}</p>
                   <p className="text-gray-600 dark:text-gray-400 text-sm">总得分 / 100分</p>
-                  
+
                   <div className="mt-4 flex justify-center gap-4">
                     <div className="text-center">
                       <p className="text-2xl font-bold text-green-600">{player1Correct}</p>
@@ -678,11 +678,11 @@ function ResultMulti({
                 <div className="text-center">
                   <p className="text-xl font-bold text-pink-600 dark:text-pink-400 mb-2 flex items-center justify-center gap-2">
                     {winner === 2 && <Crown className="w-6 h-6 text-yellow-500" />}
-                    玩家 2
+                    明明
                   </p>
                   <p className="text-5xl font-bold mb-2">{player2Score}</p>
                   <p className="text-gray-600 dark:text-gray-400 text-sm">总得分 / 100分</p>
-                  
+
                   <div className="mt-4 flex justify-center gap-4">
                     <div className="text-center">
                       <p className="text-2xl font-bold text-green-600">{player2Correct}</p>
@@ -736,14 +736,14 @@ function ResultMulti({
                           {/* 玩家1的回答 */}
                           <div className={`p-3 rounded-lg ${record.isCorrect ? 'bg-green-50 dark:bg-green-900/20' : 'bg-red-50 dark:bg-red-900/20'}`}>
                             <p className={`text-sm font-semibold mb-1 ${record.isCorrect ? 'text-green-700 dark:text-green-300' : 'text-red-700 dark:text-red-300'}`}>
-                              {record.isCorrect ? '✓' : '✗'} 玩家1回答：{record.userAnswer !== null ? question.options[record.userAnswer] : '未作答'}
+                              {record.isCorrect ? '✓' : '✗'} 聪聪回答：{record.userAnswer !== null ? question.options[record.userAnswer] : '未作答'}
                             </p>
                           </div>
-                          
+
                           {/* 玩家2的回答 */}
                           <div className={`p-3 rounded-lg ${player2Record.isCorrect ? 'bg-green-50 dark:bg-green-900/20' : 'bg-red-50 dark:bg-red-900/20'}`}>
                             <p className={`text-sm font-semibold mb-1 ${player2Record.isCorrect ? 'text-green-700 dark:text-green-300' : 'text-red-700 dark:text-red-300'}`}>
-                              {player2Record.isCorrect ? '✓' : '✗'} 玩家2回答：{player2Record.userAnswer !== null ? question.options[player2Record.userAnswer] : '未作答'}
+                              {player2Record.isCorrect ? '✓' : '✗'} 明明回答：{player2Record.userAnswer !== null ? question.options[player2Record.userAnswer] : '未作答'}
                             </p>
                           </div>
                           
