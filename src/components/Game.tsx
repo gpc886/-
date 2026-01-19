@@ -313,6 +313,7 @@ export default function Game({ gameMode, questionType, onBack }: GameProps) {
   const [ladderResult, setLadderResult] = useState<'correct' | 'wrong' | null>(null); // 天梯赛结果
   const [animationId, setAnimationId] = useState<number | null>(null); // 动画ID
   const [isDragging, setIsDragging] = useState(false); // 是否正在拖拽轨迹
+  const [ballRotation, setBallRotation] = useState(0); // 篮球旋转角度
 
   // 初始化天梯赛题目
   useEffect(() => {
@@ -393,6 +394,7 @@ export default function Game({ gameMode, questionType, onBack }: GameProps) {
     setBallPosition({ x: 50, y: 80 });
     setIsBallThrown(false);
     setTrajectoryOffset({ x: 0, y: -30 });
+    setBallRotation(0); // 重置旋转角度
   };
 
   // ========== 天梯赛模式函数 ==========
@@ -427,11 +429,16 @@ export default function Game({ gameMode, questionType, onBack }: GameProps) {
     let currentY = ballPosition.y;
     let currentVx = velocityX;
     let currentVy = velocityY;
+    let rotation = ballRotation; // 篮球旋转角度
     const gravity = 0.15; // 重力加速度
     const dt = 1.0; // 时间步长
+    const ballRadius = 3; // 篮球半径（百分比）
 
     // 开始动画
     const animate = () => {
+      // 保存上一帧位置用于计算旋转
+      const prevX = currentX;
+
       // 更新位置
       currentX += currentVx * dt;
       currentY += currentVy * dt;
@@ -439,8 +446,15 @@ export default function Game({ gameMode, questionType, onBack }: GameProps) {
       // 应用重力
       currentVy += gravity * dt;
 
-      // 更新篮球位置
+      // 计算旋转角度（根据水平移动距离）
+      const deltaX = currentX - prevX;
+      // 滚动距离对应的旋转角度 = (移动距离 / 半径) * 180 / PI
+      const rotationDelta = (deltaX / ballRadius) * (180 / Math.PI);
+      rotation += rotationDelta;
+
+      // 更新篮球位置和旋转
       setBallPosition({ x: currentX, y: currentY });
+      setBallRotation(rotation);
 
       // 检测碰撞（只在篮筐高度附近检测）
       const hitResult = checkCollision(currentX, currentY);
@@ -1228,17 +1242,20 @@ export default function Game({ gameMode, questionType, onBack }: GameProps) {
 
           {/* 篮球 */}
           <div
-            className="absolute w-12 h-12 rounded-full bg-orange-500 border-4 border-orange-700 shadow-2xl transition-all duration-100 ease-linear"
+            className="absolute w-12 h-12 rounded-full bg-orange-500 border-4 border-orange-700 shadow-2xl"
             style={{
               left: `${ballPosition.x}%`,
               top: `${ballPosition.y}%`,
-              transform: 'translate(-50%, -50%)',
+              transform: `translate(-50%, -50%) rotate(${ballRotation}deg)`,
             }}
           >
             {/* 篮球纹理 */}
             <div className="absolute inset-0 flex items-center justify-center">
-              <div className="w-full h-0.5 bg-orange-700 rotate-90"></div>
-              <div className="absolute w-full h-0.5 bg-orange-700"></div>
+              <div className="w-full h-0.5 bg-orange-700"></div>
+              <div className="absolute w-full h-0.5 bg-orange-700 rotate-90"></div>
+              {/* 横向纹理 */}
+              <div className="absolute w-full h-0.5 bg-orange-700/50 rotate-45"></div>
+              <div className="absolute w-full h-0.5 bg-orange-700/50 -rotate-45"></div>
             </div>
           </div>
 
