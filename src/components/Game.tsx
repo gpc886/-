@@ -5,6 +5,7 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Progress } from '@/components/ui/progress';
 import { getQuestionsByType, Question, QuestionType, shuffleArray } from '@/lib/questions';
+import { drawOneStudent, drawTwoStudents } from '@/lib/students';
 import { ArrowLeft, CheckCircle, XCircle, Clock, Trophy, RotateCcw, Crown } from 'lucide-react';
 
 interface GameProps {
@@ -226,6 +227,13 @@ export default function Game({ gameMode, questionType, onBack }: GameProps) {
 
   // 显示视觉提示"3 2 1"
   const [showCountdown, setShowCountdown] = useState(false);
+
+  // 滴答音效定时器ref
+  const tickTimerRef = useRef<NodeJS.Timeout | null>(null);
+
+  // 玩家名称
+  const [player1Name, setPlayer1Name] = useState('聪聪');
+  const [player2Name, setPlayer2Name] = useState('明明');
 
   // 滴答音效定时器ref
   const tickTimerRef = useRef<NodeJS.Timeout | null>(null);
@@ -487,6 +495,8 @@ export default function Game({ gameMode, questionType, onBack }: GameProps) {
           player2AnswerRecords={player2State.answerRecords}
           totalCount={questionsData.player1Questions.length}
           questionType={questionType}
+          player1Name={player1Name}
+          player2Name={player2Name}
           onRestart={handleRestart}
           onBack={onBack}
         />
@@ -532,6 +542,34 @@ export default function Game({ gameMode, questionType, onBack }: GameProps) {
                 </div>
               )}
 
+              {/* 玩家信息展示 */}
+              <div className="p-4 bg-blue-50 dark:bg-blue-900/20 rounded-lg">
+                <p className="text-sm text-gray-600 dark:text-gray-400 mb-2">👤 参赛选手</p>
+                {gameMode === 'single' ? (
+                  <p className="text-lg font-bold text-blue-700 dark:text-blue-300">
+                    {player1Name}
+                  </p>
+                ) : (
+                  <div className="flex justify-center gap-8">
+                    <p className="text-lg font-bold text-blue-700 dark:text-blue-300">
+                      聪聪: {player1Name}
+                    </p>
+                    <p className="text-lg font-bold text-pink-700 dark:text-pink-300">
+                      明明: {player2Name}
+                    </p>
+                  </div>
+                )}
+              </div>
+
+              {/* 抽人按钮 */}
+              <Button
+                onClick={() => setShowDrawStudent(true)}
+                variant="outline"
+                className="w-full"
+              >
+                🎲 随机抽人
+              </Button>
+
               <Button
                 onClick={() => {
                   // 播放321语音
@@ -556,8 +594,8 @@ export default function Game({ gameMode, questionType, onBack }: GameProps) {
           </Card>
         </div>
       </div>
-    );
-  }
+    </div>
+  );
 
   // 双人PK模式界面
   if (gameMode === 'multi') {
@@ -595,8 +633,8 @@ export default function Game({ gameMode, questionType, onBack }: GameProps) {
           <RaceTrack
             position1={racePosition1}
             position2={racePosition2}
-            player1Name="聪聪"
-            player2Name="明明"
+            player1Name={player1Name}
+            player2Name={player2Name}
           />
         </div>
 
@@ -604,7 +642,7 @@ export default function Game({ gameMode, questionType, onBack }: GameProps) {
         <div className="max-w-7xl mx-auto grid md:grid-cols-2 gap-6">
           {/* 玩家1区域 */}
           <PlayerArea
-            playerName="聪聪"
+            playerName={player1Name}
             playerColor="blue"
             questions={questionsData.player1Questions}
             playerState={player1State}
@@ -623,7 +661,7 @@ export default function Game({ gameMode, questionType, onBack }: GameProps) {
 
           {/* 玩家2区域 */}
           <PlayerArea
-            playerName="明明"
+            playerName={player2Name}
             playerColor="pink"
             questions={questionsData.player2Questions}
             playerState={player2State}
@@ -917,6 +955,8 @@ function ResultMulti({
   player2AnswerRecords,
   totalCount,
   questionType,
+  player1Name,
+  player2Name,
   onRestart,
   onBack,
 }: {
@@ -928,6 +968,8 @@ function ResultMulti({
   player2AnswerRecords: AnswerRecord[];
   totalCount: number;
   questionType: QuestionType;
+  player1Name: string;
+  player2Name: string;
   onRestart: () => void;
   onBack: () => void;
 }) {
@@ -952,12 +994,12 @@ function ResultMulti({
             {winner !== 0 && (
               <div className="text-center p-6 bg-gradient-to-r from-yellow-100 to-amber-100 dark:from-yellow-900/30 dark:to-amber-900/30 rounded-xl">
                 <p className="text-2xl font-bold text-yellow-700 dark:text-yellow-300 mb-2">
-                  🎉 恭喜 {winner === 1 ? '聪聪' : '明明'} 获胜！
+                  🎉 恭喜 {winner === 1 ? player1Name : player2Name} 获胜！
                 </p>
                 <p className="text-gray-600 dark:text-gray-400">
                   {winner === 1
-                    ? `聪聪以 ${player1Score} 分击败 明明 (${player2Score} 分)`
-                    : `明明以 ${player2Score} 分击败 聪聪 (${player1Score} 分)`}
+                    ? `${player1Name}以 ${player1Score} 分击败 ${player2Name} (${player2Score} 分)`
+                    : `${player2Name}以 ${player2Score} 分击败 ${player1Name} (${player1Score} 分)`}
                 </p>
               </div>
             )}
@@ -980,7 +1022,7 @@ function ResultMulti({
                 <div className="text-center">
                   <p className="text-xl font-bold text-blue-600 dark:text-blue-400 mb-2 flex items-center justify-center gap-2">
                     {winner === 1 && <Crown className="w-6 h-6 text-yellow-500" />}
-                    聪聪
+                    {player1Name}
                   </p>
                   <p className="text-5xl font-bold mb-2">{player1Score}</p>
                   <p className="text-gray-600 dark:text-gray-400 text-sm">总得分 / 100分</p>
@@ -1003,7 +1045,7 @@ function ResultMulti({
                 <div className="text-center">
                   <p className="text-xl font-bold text-pink-600 dark:text-pink-400 mb-2 flex items-center justify-center gap-2">
                     {winner === 2 && <Crown className="w-6 h-6 text-yellow-500" />}
-                    明明
+                    {player2Name}
                   </p>
                   <p className="text-5xl font-bold mb-2">{player2Score}</p>
                   <p className="text-gray-600 dark:text-gray-400 text-sm">总得分 / 100分</p>
@@ -1040,7 +1082,7 @@ function ResultMulti({
                   <div className="space-y-3">
                     <h4 className="font-bold text-blue-600 dark:text-blue-400 flex items-center gap-2">
                       <Crown className="w-5 h-5" />
-                      聪聪的答题记录
+                      {player1Name}的答题记录
                     </h4>
                     {player1AnswerRecords.map((record, index) => {
                       const question = record.question;
@@ -1065,7 +1107,7 @@ function ResultMulti({
                             {/* 玩家1的回答 */}
                             <div className={`p-3 rounded-lg ${record.isCorrect ? 'bg-green-50 dark:bg-green-900/20' : 'bg-red-50 dark:bg-red-900/20'}`}>
                               <p className={`text-sm font-semibold mb-1 ${record.isCorrect ? 'text-green-700 dark:text-green-300' : 'text-red-700 dark:text-red-300'}`}>
-                                {record.isCorrect ? '✓' : '✗'} 聪聪回答：{record.userAnswer !== null ? question.options[record.userAnswer] : '未作答'}
+                                {record.isCorrect ? '✓' : '✗'} {player1Name}回答：{record.userAnswer !== null ? question.options[record.userAnswer] : '未作答'}
                               </p>
                             </div>
 
@@ -1086,7 +1128,7 @@ function ResultMulti({
                   <div className="space-y-3">
                     <h4 className="font-bold text-pink-600 dark:text-pink-400 flex items-center gap-2">
                       <Crown className="w-5 h-5" />
-                      明明的答题记录
+                      {player2Name}的答题记录
                     </h4>
                     {player2AnswerRecords.map((record, index) => {
                       const question = record.question;
@@ -1111,7 +1153,7 @@ function ResultMulti({
                             {/* 玩家2的回答 */}
                             <div className={`p-3 rounded-lg ${record.isCorrect ? 'bg-green-50 dark:bg-green-900/20' : 'bg-red-50 dark:bg-red-900/20'}`}>
                               <p className={`text-sm font-semibold mb-1 ${record.isCorrect ? 'text-green-700 dark:text-green-300' : 'text-red-700 dark:text-red-300'}`}>
-                                {record.isCorrect ? '✓' : '✗'} 明明回答：{record.userAnswer !== null ? question.options[record.userAnswer] : '未作答'}
+                                {record.isCorrect ? '✓' : '✗'} {player2Name}回答：{record.userAnswer !== null ? question.options[record.userAnswer] : '未作答'}
                               </p>
                             </div>
 
@@ -1352,4 +1394,5 @@ function getResultComment(score: number): string {
   if (score >= 70) return '😊 不错的成绩！还有提升空间，加油！';
   if (score >= 60) return '💪 及格了！多加练习，你会更好！';
   return '📚 还需要继续努力哦！不要灰心，再接再厉！';
+}
 }
