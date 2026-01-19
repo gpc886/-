@@ -265,6 +265,31 @@ export default function Game({ gameMode, questionType, onBack }: GameProps) {
     }
   }, []);
 
+  // 最后5秒语音倒计时（仅双人模式）
+  useEffect(() => {
+    if (gameMode === 'multi' && timeLeft <= 5 && timeLeft > 0 && !gameEnded) {
+      console.log(`⏰ 倒计时: ${timeLeft}`);
+      playCountdownNumber(timeLeft);
+    }
+  }, [gameMode, timeLeft, gameEnded]);
+
+  // 播放倒计时数字
+  const playCountdownNumber = (number: number) => {
+    if (typeof window !== 'undefined' && 'speechSynthesis' in window) {
+      try {
+        window.speechSynthesis.cancel();
+        const utterance = new SpeechSynthesisUtterance(number.toString());
+        utterance.rate = 1.0;
+        utterance.pitch = 1.0;
+        utterance.volume = 1.0;
+        utterance.lang = 'zh-CN'; // 使用中文，更符合高中语文场景
+        window.speechSynthesis.speak(utterance);
+      } catch (error) {
+        console.log('❌ 倒计时语音播放失败:', error);
+      }
+    }
+  };
+
   // 倒计时（仅双人模式）
   useEffect(() => {
     if (gameMode === 'multi' && timeLeft > 0 && !gameEnded) {
