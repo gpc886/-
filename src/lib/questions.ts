@@ -2947,20 +2947,6 @@ export const judgeQuestions: JudgeQuestion[] = [
     difficulty: 1
   },
   {
-    id: 'judge-1-7',
-    question: '"四大发明"包括造纸术、印刷术、火药和指南针。',
-    answer: true,
-    explanation: '正确。这四大发明是中国古代劳动人民的重要创造。',
-    difficulty: 1
-  },
-  {
-    id: 'judge-1-8',
-    question: '中国的首都北京位于南方。',
-    answer: false,
-    explanation: '错误。北京位于中国北方。',
-    difficulty: 1
-  },
-  {
     id: 'judge-1-9',
     question: '《西游记》中的孙悟空是从石头里蹦出来的。',
     answer: true,
