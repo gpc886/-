@@ -132,8 +132,20 @@ export default function Game({ gameMode, questionType, onBack }: GameProps) {
   // 游戏是否已开始（用于显示开始按钮）
   const [gameStarted, setGameStarted] = useState(false);
 
-  // 学生名单（双人PK模式抽签用）
-  const [students, setStudents] = useState<string[]>(['聪聪', '明明', '小明', '小红', '小华']);
+  // 学生名单（双人PK模式抽签用）- 从 localStorage 读取或使用默认值
+  const [students, setStudents] = useState<string[]>(() => {
+    if (typeof window !== 'undefined') {
+      const saved = localStorage.getItem('game-students');
+      if (saved) {
+        try {
+          return JSON.parse(saved);
+        } catch {
+          return ['聪聪', '明明', '小明', '小红', '小华'];
+        }
+      }
+    }
+    return ['聪聪', '明明', '小明', '小红', '小华'];
+  });
   const [newStudentName, setNewStudentName] = useState('');
 
   // 抽签界面状态
@@ -141,9 +153,41 @@ export default function Game({ gameMode, questionType, onBack }: GameProps) {
   const [drawnPlayers, setDrawnPlayers] = useState<{ player1: string; player2: string } | null>(null);
   const [isDrawing, setIsDrawing] = useState(false);
 
-  // 玩家名字（用于显示）
-  const [player1Name, setPlayer1Name] = useState('聪聪');
-  const [player2Name, setPlayer2Name] = useState('明明');
+  // 玩家名字（用于显示）- 从 localStorage 读取或使用默认值
+  const [player1Name, setPlayer1Name] = useState(() => {
+    if (typeof window !== 'undefined') {
+      const saved = localStorage.getItem('game-player1-name');
+      return saved || '聪聪';
+    }
+    return '聪聪';
+  });
+  const [player2Name, setPlayer2Name] = useState(() => {
+    if (typeof window !== 'undefined') {
+      const saved = localStorage.getItem('game-player2-name');
+      return saved || '明明';
+    }
+    return '明明';
+  });
+
+  // 保存学生名单到 localStorage
+  useEffect(() => {
+    if (typeof window !== 'undefined') {
+      localStorage.setItem('game-students', JSON.stringify(students));
+    }
+  }, [students]);
+
+  // 保存玩家名字到 localStorage
+  useEffect(() => {
+    if (typeof window !== 'undefined') {
+      localStorage.setItem('game-player1-name', player1Name);
+    }
+  }, [player1Name]);
+
+  useEffect(() => {
+    if (typeof window !== 'undefined') {
+      localStorage.setItem('game-player2-name', player2Name);
+    }
+  }, [player2Name]);
 
   // 添加学生
   const handleAddStudent = () => {
