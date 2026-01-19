@@ -88,6 +88,10 @@ export default function Game({ gameMode, questionType, onBack }: GameProps) {
     answerRecords: [],
   });
 
+  // 赛跑状态
+  const [racePosition1, setRacePosition1] = useState(0); // 玩家1赛跑位置 0-100
+  const [racePosition2, setRacePosition2] = useState(0); // 玩家2赛跑位置 0-100
+
   // 倒计时（仅双人模式）
   useEffect(() => {
     if (gameMode === 'multi' && timeLeft > 0 && !gameEnded) {
@@ -104,6 +108,17 @@ export default function Game({ gameMode, questionType, onBack }: GameProps) {
       return () => clearInterval(timer);
     }
   }, [gameMode, timeLeft, gameEnded]);
+
+  // 赛跑动画（仅双人模式）
+  useEffect(() => {
+    if (gameMode === 'multi' && !gameEnded) {
+      const animationFrame = setInterval(() => {
+        setRacePosition1((prev) => Math.min(prev + 0.15, 100)); // 自动前进
+        setRacePosition2((prev) => Math.min(prev + 0.15, 100)); // 自动前进
+      }, 100); // 每100ms更新一次
+      return () => clearInterval(animationFrame);
+    }
+  }, [gameMode, gameEnded]);
 
   // 单人模式处理函数
   const handleSingleAnswer = (answerIndex: number) => {
@@ -143,24 +158,33 @@ export default function Game({ gameMode, questionType, onBack }: GameProps) {
     const setState = player === 1 ? setPlayer1State : setPlayer2State;
     const playerQuestions = player === 1 ? questionsData.player1Questions : questionsData.player2Questions;
     const otherState = player === 1 ? player2State : player1State;
-    
+
     if (state.isAnswered) return;
-    
+
     const currentQuestion = playerQuestions[state.currentQuestionIndex];
     const isCorrect = answerIndex === currentQuestion.answer;
     const newScore = isCorrect ? state.score + 1 : state.score;
-    
+
+    // 答对题目时，小动物额外前进
+    if (isCorrect) {
+      if (player === 1) {
+        setRacePosition1((prev) => Math.min(prev + 8, 100)); // 答对前进8%
+      } else {
+        setRacePosition2((prev) => Math.min(prev + 8, 100)); // 答对前进8%
+      }
+    }
+
     // 记录答题
     const newAnswerRecord: AnswerRecord = {
       question: currentQuestion,
       userAnswer: answerIndex,
       isCorrect,
     };
-    
+
     // 自动跳转到下一题
     const nextQuestionIndex = state.currentQuestionIndex + 1;
     const isLastQuestion = nextQuestionIndex >= playerQuestions.length;
-    
+
     setState({
       currentQuestionIndex: nextQuestionIndex,
       selectedAnswer: null,
@@ -169,7 +193,7 @@ export default function Game({ gameMode, questionType, onBack }: GameProps) {
       showExplanation: false,
       answerRecords: [...state.answerRecords, newAnswerRecord],
     });
-    
+
     // 检查是否两个玩家都完成了
     if (isLastQuestion && otherState.currentQuestionIndex >= playerQuestions.length) {
       setGameEnded(true);
@@ -186,7 +210,7 @@ export default function Game({ gameMode, questionType, onBack }: GameProps) {
       showExplanation: false,
       answerRecords: [],
     });
-    
+
     setPlayer1State({
       currentQuestionIndex: 0,
       selectedAnswer: null,
@@ -195,7 +219,7 @@ export default function Game({ gameMode, questionType, onBack }: GameProps) {
       showExplanation: false,
       answerRecords: [],
     });
-    
+
     setPlayer2State({
       currentQuestionIndex: 0,
       selectedAnswer: null,
@@ -204,7 +228,11 @@ export default function Game({ gameMode, questionType, onBack }: GameProps) {
       showExplanation: false,
       answerRecords: [],
     });
-    
+
+    // 重置赛跑位置
+    setRacePosition1(0);
+    setRacePosition2(0);
+
     setGameEnded(false);
     setTimeLeft(gameMode === 'multi' ? 180 : 0);
     setShowResult(false);
@@ -273,6 +301,16 @@ export default function Game({ gameMode, questionType, onBack }: GameProps) {
             双人对战 - {getQuestionTypeName(questionType)}
           </h2>
           <p className="text-gray-600 dark:text-gray-400 mt-2">两位选手同时答题，分数高者获胜！</p>
+        </div>
+
+        {/* 赛跑动画 */}
+        <div className="max-w-7xl mx-auto mb-6">
+          <RaceTrack
+            position1={racePosition1}
+            position2={racePosition2}
+            player1Name="聪聪"
+            player2Name="明明"
+          />
         </div>
 
         {/* 双人答题区域 */}
@@ -777,6 +815,95 @@ function ResultMulti({
         </Card>
       </div>
     </div>
+  );
+}
+
+// 赛跑动画组件
+function RaceTrack({
+  position1,
+  position2,
+  player1Name,
+  player2Name,
+}: {
+  position1: number;
+  position2: number;
+  player1Name: string;
+  player2Name: string;
+}) {
+  return (
+    <Card className="shadow-xl mb-6 bg-gradient-to-r from-green-50 via-emerald-50 to-teal-50 dark:from-green-900/20 dark:via-emerald-900/20 dark:to-teal-900/20">
+      <CardHeader className="pb-3">
+        <CardTitle className="text-xl text-center flex items-center justify-center gap-2">
+          🏃 赛跑竞技场
+        </CardTitle>
+      </CardHeader>
+      <CardContent className="space-y-4">
+        {/* 玩家1跑道 */}
+        <div className="relative">
+          <div className="flex items-center justify-between mb-2">
+            <div className="flex items-center gap-2">
+              <span className="text-3xl">🐰</span>
+              <span className="font-bold text-blue-600 dark:text-blue-400">{player1Name}</span>
+            </div>
+            <span className="text-sm text-gray-600 dark:text-gray-400">{position1.toFixed(0)}%</span>
+          </div>
+          <div className="h-12 bg-white dark:bg-gray-800 rounded-full border-2 border-blue-200 dark:border-blue-800 relative overflow-hidden">
+            {/* 跑道装饰 */}
+            <div className="absolute inset-0 flex items-center">
+              {[0, 25, 50, 75, 100].map((pos, i) => (
+                <div
+                  key={i}
+                  className="w-0.5 h-8 bg-blue-200 dark:bg-blue-800/50"
+                  style={{ left: `${pos}%` }}
+                />
+              ))}
+            </div>
+            {/* 小动物 */}
+            <div
+              className="absolute top-1/2 transform -translate-y-1/2 transition-all duration-300 ease-out"
+              style={{ left: `${Math.max(0, Math.min(position1 - 2, 96))}%` }}
+            >
+              <span className="text-3xl">🐰</span>
+            </div>
+          </div>
+        </div>
+
+        {/* 玩家2跑道 */}
+        <div className="relative">
+          <div className="flex items-center justify-between mb-2">
+            <div className="flex items-center gap-2">
+              <span className="text-3xl">🐢</span>
+              <span className="font-bold text-pink-600 dark:text-pink-400">{player2Name}</span>
+            </div>
+            <span className="text-sm text-gray-600 dark:text-gray-400">{position2.toFixed(0)}%</span>
+          </div>
+          <div className="h-12 bg-white dark:bg-gray-800 rounded-full border-2 border-pink-200 dark:border-pink-800 relative overflow-hidden">
+            {/* 跑道装饰 */}
+            <div className="absolute inset-0 flex items-center">
+              {[0, 25, 50, 75, 100].map((pos, i) => (
+                <div
+                  key={i}
+                  className="w-0.5 h-8 bg-pink-200 dark:bg-pink-800/50"
+                  style={{ left: `${pos}%` }}
+                />
+              ))}
+            </div>
+            {/* 小动物 */}
+            <div
+              className="absolute top-1/2 transform -translate-y-1/2 transition-all duration-300 ease-out"
+              style={{ left: `${Math.max(0, Math.min(position2 - 2, 96))}%` }}
+            >
+              <span className="text-3xl">🐢</span>
+            </div>
+          </div>
+        </div>
+
+        {/* 提示文字 */}
+        <p className="text-center text-sm text-gray-600 dark:text-gray-400">
+          💡 答对题目可以让你的小动物加速前进！
+        </p>
+      </CardContent>
+    </Card>
   );
 }
 
