@@ -390,6 +390,15 @@ export default function Game({ gameMode, questionType, onBack }: GameProps) {
     }
   }, [gameMode]);
 
+  // 加载天梯赛题目（当输入姓名后）
+  useEffect(() => {
+    if (gameMode === 'ladder' && challengerName && !showNameInput) {
+      const question = getJudgeQuestionByLevel(ladderLevel);
+      setCurrentJudgeQuestion(question);
+      resetBall();
+    }
+  }, [gameMode, challengerName, showNameInput, ladderLevel]);
+
   // 保存最高记录到 localStorage
   useEffect(() => {
     if (typeof window !== 'undefined' && highestRecord.level > 0) {
