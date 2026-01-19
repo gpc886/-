@@ -1271,21 +1271,20 @@ export default function Game({ gameMode, questionType, onBack }: GameProps) {
 
           {/* 控制面板 */}
           {!isBallThrown && !ladderShowResult && (
-            <div className="absolute bottom-0 left-1/2 -translate-x-1/2 w-full max-w-md z-20">
-              <Card className="shadow-xl">
-                <CardContent className="pt-6">
-                  <div className="space-y-4">
-                    <div className="text-center text-sm text-gray-600 dark:text-gray-400">
-                      <p>💡 拖拽蓝色轨迹线或轨迹终点调整方向</p>
-                      <p>🎯 向左上方瞄准正确答案，向右上方瞄准错误答案</p>
-                      <p>⚠️ 投篮力度固定，未投进篮筐会重新投掷</p>
+            <div className="absolute bottom-4 left-1/2 -translate-x-1/2 w-[90%] max-w-sm z-20">
+              <Card className="shadow-xl bg-white/90 dark:bg-gray-800/90 backdrop-blur-sm">
+                <CardContent className="pt-4 pb-4">
+                  <div className="space-y-3">
+                    <div className="text-center text-xs text-gray-600 dark:text-gray-400">
+                      <p>💡 拖拽蓝色轨迹线调整方向</p>
+                      <p>🎯 左篮筐=正确 右篮筐=错误</p>
                     </div>
 
                     {/* 发射按钮 */}
                     <Button
                       onClick={throwBall}
-                      className="w-full bg-gradient-to-r from-orange-500 to-red-500 hover:from-orange-600 hover:to-red-600 text-white font-bold py-6 text-lg"
-                      size="lg"
+                      className="w-full bg-gradient-to-r from-orange-500 to-red-500 hover:from-orange-600 hover:to-red-600 text-white font-bold py-4 text-base"
+                      size="default"
                     >
                       🏀 发射篮球
                     </Button>
