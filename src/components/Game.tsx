@@ -277,6 +277,11 @@ export default function Game({ gameMode, questionType, onBack }: GameProps) {
       const timer = setInterval(() => {
         setTimeLeft((prev) => {
           if (prev <= 1) {
+            // 立即停止滴答音效
+            if (tickTimerRef.current) {
+              clearInterval(tickTimerRef.current);
+              tickTimerRef.current = null;
+            }
             setGameEnded(true);
             setShowResult(true);
             return 0;
