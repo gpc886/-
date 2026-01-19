@@ -56,6 +56,34 @@ const playSoundEffect = (type: 'correct' | 'wrong') => {
   }
 };
 
+// 语音提示函数
+const playReadyGo = () => {
+  if (typeof window !== 'undefined' && 'speechSynthesis' in window) {
+    try {
+      // 先说 Ready
+      const readyUtterance = new SpeechSynthesisUtterance('Ready');
+      readyUtterance.rate = 0.9;
+      readyUtterance.pitch = 1.1;
+      readyUtterance.volume = 0.9;
+      readyUtterance.lang = 'en-US';
+
+      // 0.6秒后说 Go
+      setTimeout(() => {
+        const goUtterance = new SpeechSynthesisUtterance('Go!!!');
+        goUtterance.rate = 1.3;
+        goUtterance.pitch = 1.6;
+        goUtterance.volume = 1.0;
+        goUtterance.lang = 'en-US';
+        window.speechSynthesis.speak(goUtterance);
+      }, 600);
+
+      window.speechSynthesis.speak(readyUtterance);
+    } catch (error) {
+      console.log('语音播放失败:', error);
+    }
+  }
+};
+
 
 // 玩家状态接口
 interface PlayerState {
@@ -128,6 +156,16 @@ export default function Game({ gameMode, questionType, onBack }: GameProps) {
   // 赛跑状态
   const [racePosition1, setRacePosition1] = useState(0); // 玩家1赛跑位置 0-100
   const [racePosition2, setRacePosition2] = useState(0); // 玩家2赛跑位置 0-100
+
+  // 游戏开始时播放Ready Go语音
+  useEffect(() => {
+    // 延迟500ms播放，确保页面渲染完成
+    const timer = setTimeout(() => {
+      playReadyGo();
+    }, 500);
+
+    return () => clearTimeout(timer);
+  }, []);
 
   // 倒计时（仅双人模式）
   useEffect(() => {
@@ -259,6 +297,9 @@ export default function Game({ gameMode, questionType, onBack }: GameProps) {
   };
 
   const handleRestart = () => {
+    // 播放Ready Go语音
+    playReadyGo();
+
     setPlayerState({
       currentQuestionIndex: 0,
       selectedAnswer: null,
