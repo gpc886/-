@@ -314,7 +314,6 @@ export default function Game({ gameMode, questionType, onBack }: GameProps) {
   const [ladderResult, setLadderResult] = useState<'correct' | 'wrong' | null>(null); // 天梯赛结果
   const [animationId, setAnimationId] = useState<number | null>(null); // 动画ID
   const [isDragging, setIsDragging] = useState(false); // 是否正在拖拽轨迹
-  const [isPowerAdjusting, setIsPowerAdjusting] = useState(false); // 是否正在调节力度
   const [ballRotation, setBallRotation] = useState(0); // 篮球旋转角度
 
   // 初始化天梯赛题目
@@ -326,7 +325,7 @@ export default function Game({ gameMode, questionType, onBack }: GameProps) {
     }
   }, [gameMode, ladderLevel]);
 
-  // 处理轨迹拖拽
+  // 处理轨迹拖拽（同时调节方向和力度）
   useEffect(() => {
     if (!isDragging || gameMode !== 'ladder') return;
 
@@ -338,11 +337,30 @@ export default function Game({ gameMode, questionType, onBack }: GameProps) {
       const x = ((e.clientX - rect.left) / rect.width) * 100;
       const y = ((e.clientY - rect.top) / rect.height) * 100;
 
-      // 限制偏移范围（扩大可调节范围）
-      const newOffsetX = Math.max(-45, Math.min(45, x - ballPosition.x));
-      const newOffsetY = Math.max(-270, Math.min(20, y - ballPosition.y));
+      // 计算偏移量
+      const offsetX = x - ballPosition.x;
+      const offsetY = y - ballPosition.y;
 
-      setTrajectoryOffset({ x: newOffsetX, y: newOffsetY });
+      // 计算拖拽距离
+      const distance = Math.sqrt(offsetX * offsetX + offsetY * offsetY);
+
+      // 限制水平方向范围（-45到45）
+      let limitedOffsetX = offsetX;
+      if (offsetX > 45) limitedOffsetX = 45;
+      if (offsetX < -45) limitedOffsetX = -45;
+
+      // 限制垂直方向范围（-270到20）
+      let limitedOffsetY = offsetY;
+      if (offsetY > 20) limitedOffsetY = 20;
+      if (offsetY < -270) limitedOffsetY = -270;
+
+      // 根据拖拽距离计算力度（距离越远，力度越大）
+      // 最小距离约15%，最大距离约270%
+      const normalizedDistance = Math.max(15, Math.min(270, distance));
+      const newPower = 1.0 + ((normalizedDistance - 15) / 255) * 7; // 转换到1.0-8.0
+
+      setTrajectoryOffset({ x: limitedOffsetX, y: limitedOffsetY });
+      setThrowPower(newPower);
     };
 
     const handleMouseUp = () => {
@@ -358,7 +376,7 @@ export default function Game({ gameMode, questionType, onBack }: GameProps) {
     };
   }, [isDragging, ballPosition.x, ballPosition.y, gameMode]);
 
-  // 处理触摸拖拽（移动端）
+  // 处理触摸拖拽（移动端，同时调节方向和力度）
   useEffect(() => {
     if (!isDragging || gameMode !== 'ladder') return;
 
@@ -371,11 +389,30 @@ export default function Game({ gameMode, questionType, onBack }: GameProps) {
       const x = ((touch.clientX - rect.left) / rect.width) * 100;
       const y = ((touch.clientY - rect.top) / rect.height) * 100;
 
-      // 限制偏移范围（扩大可调节范围）
-      const newOffsetX = Math.max(-45, Math.min(45, x - ballPosition.x));
-      const newOffsetY = Math.max(-270, Math.min(20, y - ballPosition.y));
+      // 计算偏移量
+      const offsetX = x - ballPosition.x;
+      const offsetY = y - ballPosition.y;
 
-      setTrajectoryOffset({ x: newOffsetX, y: newOffsetY });
+      // 计算拖拽距离
+      const distance = Math.sqrt(offsetX * offsetX + offsetY * offsetY);
+
+      // 限制水平方向范围（-45到45）
+      let limitedOffsetX = offsetX;
+      if (offsetX > 45) limitedOffsetX = 45;
+      if (offsetX < -45) limitedOffsetX = -45;
+
+      // 限制垂直方向范围（-270到20）
+      let limitedOffsetY = offsetY;
+      if (offsetY > 20) limitedOffsetY = 20;
+      if (offsetY < -270) limitedOffsetY = -270;
+
+      // 根据拖拽距离计算力度（距离越远，力度越大）
+      // 最小距离约15%，最大距离约270%
+      const normalizedDistance = Math.max(15, Math.min(270, distance));
+      const newPower = 1.0 + ((normalizedDistance - 15) / 255) * 7; // 转换到1.0-8.0
+
+      setTrajectoryOffset({ x: limitedOffsetX, y: limitedOffsetY });
+      setThrowPower(newPower);
     };
 
     const handleTouchEnd = () => {
@@ -390,75 +427,6 @@ export default function Game({ gameMode, questionType, onBack }: GameProps) {
       document.removeEventListener('touchend', handleTouchEnd);
     };
   }, [isDragging, ballPosition.x, ballPosition.y, gameMode]);
-
-  // 处理力度调节（鼠标）
-  useEffect(() => {
-    if (!isPowerAdjusting || gameMode !== 'ladder' || isBallThrown) return;
-
-    const handleMouseMove = (e: MouseEvent) => {
-      // 查找力度滑块元素
-      const sliderContainer = document.querySelector('[data-power-slider="true"]');
-      if (!sliderContainer) return;
-
-      const rect = sliderContainer.getBoundingClientRect();
-      const x = e.clientX - rect.left;
-
-      // 计算滑块位置百分比
-      const percentage = Math.max(0, Math.min(100, (x / rect.width) * 100));
-
-      // 将百分比转换为力度（1.0-8.0）
-      const newPower = 1.0 + (percentage / 100) * 7;
-      setThrowPower(newPower);
-    };
-
-    const handleMouseUp = () => {
-      setIsPowerAdjusting(false);
-    };
-
-    document.addEventListener('mousemove', handleMouseMove);
-    document.addEventListener('mouseup', handleMouseUp);
-
-    return () => {
-      document.removeEventListener('mousemove', handleMouseMove);
-      document.removeEventListener('mouseup', handleMouseUp);
-    };
-  }, [isPowerAdjusting, gameMode, isBallThrown]);
-
-  // 处理力度调节（触摸）
-  useEffect(() => {
-    if (!isPowerAdjusting || gameMode !== 'ladder' || isBallThrown) return;
-
-    const handleTouchMove = (e: TouchEvent) => {
-      e.preventDefault();
-
-      // 查找力度滑块元素
-      const sliderContainer = document.querySelector('[data-power-slider="true"]');
-      if (!sliderContainer) return;
-
-      const touch = e.touches[0];
-      const rect = sliderContainer.getBoundingClientRect();
-      const x = touch.clientX - rect.left;
-
-      // 计算滑块位置百分比
-      const percentage = Math.max(0, Math.min(100, (x / rect.width) * 100));
-
-      // 将百分比转换为力度（1.0-8.0）
-      const newPower = 1.0 + (percentage / 100) * 7;
-      setThrowPower(newPower);
-    };
-
-    const handleTouchEnd = () => {
-      setIsPowerAdjusting(false);
-    };
-
-    document.addEventListener('touchmove', handleTouchMove, { passive: false });
-    document.addEventListener('touchend', handleTouchEnd);
-
-    return () => {
-      document.removeEventListener('touchmove', handleTouchMove);
-      document.removeEventListener('touchend', handleTouchEnd);
-    };
-  }, [isPowerAdjusting, gameMode, isBallThrown]);
 
   // 重置篮球位置
   const resetBall = () => {
@@ -1400,21 +1368,6 @@ export default function Game({ gameMode, questionType, onBack }: GameProps) {
                   >
                     {Math.round((throwPower / 8) * 100)}%
                   </text>
-                  {/* 力度调节环 */}
-                  <circle
-                    cx={drawTrajectory()![drawTrajectory()!.length - 1].x}
-                    cy={drawTrajectory()![drawTrajectory()!.length - 1].y}
-                    r="4"
-                    fill="none"
-                    stroke={throwPower < 3 ? 'rgba(59, 130, 246, 0.3)' : throwPower < 5 ? 'rgba(249, 115, 22, 0.3)' : 'rgba(239, 68, 68, 0.3)'}
-                    strokeWidth="0.5"
-                    strokeDasharray="1,1"
-                    className="cursor-pointer"
-                    onMouseDown={(e) => {
-                      e.preventDefault();
-                      setIsPowerAdjusting(true);
-                    }}
-                  />
                   {/* 力度指示箭头 */}
                   {(() => {
                     const lastPoint = drawTrajectory()![drawTrajectory()!.length - 1];
@@ -1458,49 +1411,7 @@ export default function Game({ gameMode, questionType, onBack }: GameProps) {
             </svg>
           )}
 
-          {/* 力度指示器 */}
-          {!isBallThrown && !ladderShowResult && (
-            <div className="absolute bottom-32 right-6 z-20 bg-white/90 dark:bg-gray-800/90 backdrop-blur-sm rounded-lg shadow-lg p-4 min-w-[160px]">
-              <div className="flex items-center justify-between mb-2">
-                <span className="text-sm font-semibold text-gray-700 dark:text-gray-300">发射力度</span>
-                <span className={`text-sm font-bold ${throwPower < 3 ? 'text-blue-500' : throwPower < 5 ? 'text-orange-500' : 'text-red-500'}`}>
-                  {Math.round((throwPower / 8) * 100)}%
-                </span>
-              </div>
-              {/* 力度滑块 */}
-              <div
-                data-power-slider="true"
-                className="relative h-3 bg-gray-200 dark:bg-gray-700 rounded-full overflow-hidden"
-              >
-                <div
-                  className={`h-full rounded-full transition-all duration-200 ${
-                    throwPower < 3 ? 'bg-blue-500' : throwPower < 5 ? 'bg-orange-500' : 'bg-red-500'
-                  }`}
-                  style={{ width: `${(throwPower / 8) * 100}%` }}
-                />
-                {/* 力度调节手柄 */}
-                <div
-                  className={`absolute top-1/2 -translate-y-1/2 w-5 h-5 rounded-full shadow-lg cursor-grab active:cursor-grabbing transition-colors ${
-                    throwPower < 3 ? 'bg-blue-500' : throwPower < 5 ? 'bg-orange-500' : 'bg-red-500'
-                  }`}
-                  style={{ left: `${((throwPower - 1) / 7) * 100}%` }}
-                  onMouseDown={(e) => {
-                    e.preventDefault();
-                    setIsPowerAdjusting(true);
-                  }}
-                  onTouchStart={(e) => {
-                    e.preventDefault();
-                    setIsPowerAdjusting(true);
-                  }}
-                />
-              </div>
-              <div className="flex justify-between mt-1 text-xs text-gray-500 dark:text-gray-400">
-                <span>轻</span>
-                <span>中</span>
-                <span>强</span>
-              </div>
-            </div>
-          )}
+
 
           {/* 控制面板 */}
           {!isBallThrown && !ladderShowResult && (
