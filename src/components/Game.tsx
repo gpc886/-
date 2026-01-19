@@ -409,6 +409,13 @@ export default function Game({ gameMode, questionType, onBack }: GameProps) {
     }
   }, [challengerName]);
 
+  // 保存最高记录到 localStorage
+  useEffect(() => {
+    if (typeof window !== 'undefined' && highestRecord.level > 0) {
+      localStorage.setItem('ladder-highest-record', JSON.stringify(highestRecord));
+    }
+  }, [highestRecord]);
+
   // 处理轨迹拖拽（同时调节方向和力度）
   useEffect(() => {
     if (!isDragging || gameMode !== 'ladder') return;
