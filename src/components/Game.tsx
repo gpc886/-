@@ -56,98 +56,6 @@ const playSoundEffect = (type: 'correct' | 'wrong') => {
   }
 };
 
-// 321并发语音提示函数
-const play321 = (onVoiceComplete: () => void) => {
-  console.log('🎤 播放321倒计时...');
-  if (typeof window !== 'undefined' && 'speechSynthesis' in window) {
-    try {
-      // 取消之前的播放
-      window.speechSynthesis.cancel();
-
-      // 同时创建3、2、1三个语音
-      const count3 = new SpeechSynthesisUtterance('3');
-      const count2 = new SpeechSynthesisUtterance('2');
-      const count1 = new SpeechSynthesisUtterance('1');
-      const start = new SpeechSynthesisUtterance('开始');
-
-      // 设置参数
-      [count3, count2, count1].forEach(utt => {
-        utt.rate = 1.0;
-        utt.pitch = 1.0;
-        utt.volume = 1.0;
-        utt.lang = 'zh-CN';
-      });
-
-      // "开始"参数
-      start.rate = 1.2;
-      start.pitch = 1.2;
-      start.volume = 1.0;
-      start.lang = 'zh-CN';
-
-      // 监听1播放完成后再播放"开始"
-      count1.onend = () => {
-        console.log('▶️ 321播放完成，开始播放"开始"');
-        window.speechSynthesis.speak(start);
-      };
-
-      // 监听"开始"播放完成后调用回调
-      start.onend = () => {
-        console.log('▶️ "开始"语音播放完成');
-        onVoiceComplete();
-      };
-
-      // 如果语音播放失败，也要调用回调
-      start.onerror = () => {
-        console.log('❌ "开始"语音播放失败，强制开始游戏');
-        setTimeout(onVoiceComplete, 100);
-      };
-
-      // 并发播放321
-      window.speechSynthesis.speak(count3);
-      window.speechSynthesis.speak(count2);
-      window.speechSynthesis.speak(count1);
-
-      console.log('▶️ 321语音已并发播放');
-    } catch (error) {
-      console.log('❌ 321语音播放失败:', error);
-      // 出错也要开始游戏
-      setTimeout(onVoiceComplete, 500);
-    }
-  } else {
-    // 浏览器不支持语音，直接开始
-    console.log('❌ 浏览器不支持语音，直接开始游戏');
-    setTimeout(onVoiceComplete, 100);
-  }
-};
-
-// 播放钟表滴答音效
-const playTickSound = () => {
-  try {
-    const audioContext = new (window.AudioContext || (window as any).webkitAudioContext)();
-
-    if (audioContext.state === 'suspended') {
-      audioContext.resume();
-    }
-
-    const oscillator = audioContext.createOscillator();
-    const gainNode = audioContext.createGain();
-
-    oscillator.connect(gainNode);
-    gainNode.connect(audioContext.destination);
-
-    oscillator.type = 'square';
-    oscillator.frequency.setValueAtTime(800, audioContext.currentTime);
-
-    gainNode.gain.setValueAtTime(0.3, audioContext.currentTime);
-    gainNode.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + 0.05);
-
-    oscillator.start(audioContext.currentTime);
-    oscillator.stop(audioContext.currentTime + 0.05);
-  } catch (error) {
-    console.log('❌ 滴答音效播放失败:', error);
-  }
-};
-
 
 // 玩家状态接口
 interface PlayerState {
@@ -224,9 +132,6 @@ export default function Game({ gameMode, questionType, onBack }: GameProps) {
   // 游戏是否已开始（用于显示开始按钮）
   const [gameStarted, setGameStarted] = useState(false);
 
-  // 显示视觉提示"3 2 1"
-  const [showCountdown, setShowCountdown] = useState(false);
-
   // 学生名单（双人PK模式抽签用）
   const [students, setStudents] = useState<string[]>(['聪聪', '明明', '小明', '小红', '小华']);
   const [newStudentName, setNewStudentName] = useState('');
@@ -239,41 +144,6 @@ export default function Game({ gameMode, questionType, onBack }: GameProps) {
   // 玩家名字（用于显示）
   const [player1Name, setPlayer1Name] = useState('聪聪');
   const [player2Name, setPlayer2Name] = useState('明明');
-
-  // 滴答音效定时器ref
-  const tickTimerRef = useRef<NodeJS.Timeout | null>(null);
-
-  // 游戏开始回调函数（在"开始"语音播放完成后调用）
-  const startGameAfterVoice = () => {
-    console.log('🎮 "开始"语音播放完成，游戏开始');
-    setShowCountdown(false);
-    setGameStarted(true);
-  };
-
-  // 最后5秒语音倒计时（仅双人模式）
-  useEffect(() => {
-    if (gameMode === 'multi' && timeLeft <= 5 && timeLeft > 0 && !gameEnded) {
-      console.log(`⏰ 倒计时: ${timeLeft}`);
-      playCountdownNumber(timeLeft);
-    }
-  }, [gameMode, timeLeft, gameEnded]);
-
-  // 播放倒计时数字
-  const playCountdownNumber = (number: number) => {
-    if (typeof window !== 'undefined' && 'speechSynthesis' in window) {
-      try {
-        window.speechSynthesis.cancel();
-        const utterance = new SpeechSynthesisUtterance(number.toString());
-        utterance.rate = 1.0;
-        utterance.pitch = 1.0;
-        utterance.volume = 1.0;
-        utterance.lang = 'zh-CN';
-        window.speechSynthesis.speak(utterance);
-      } catch (error) {
-        console.log('❌ 倒计时语音播放失败:', error);
-      }
-    }
-  };
 
   // 添加学生
   const handleAddStudent = () => {
@@ -332,23 +202,9 @@ export default function Game({ gameMode, questionType, onBack }: GameProps) {
     let timer: NodeJS.Timeout | null = null;
 
     if (gameMode === 'multi' && timeLeft > 0 && !gameEnded) {
-      // 启动滴答音效
-      if (!tickTimerRef.current) {
-        const tickTimer = setInterval(() => {
-          playTickSound();
-        }, 1000); // 每秒播放一次
-        tickTimerRef.current = tickTimer;
-      }
-
-      // 倒计时
       timer = setInterval(() => {
         setTimeLeft((prev) => {
           if (prev <= 1) {
-            // 立即停止滴答音效
-            if (tickTimerRef.current) {
-              clearInterval(tickTimerRef.current);
-              tickTimerRef.current = null;
-            }
             setGameEnded(true);
             setShowResult(true);
             return 0;
@@ -358,7 +214,6 @@ export default function Game({ gameMode, questionType, onBack }: GameProps) {
       }, 1000);
     }
 
-    // 只清理本地定时器，不清理 ref 定时器
     return () => {
       if (timer) {
         clearInterval(timer);
@@ -479,15 +334,8 @@ export default function Game({ gameMode, questionType, onBack }: GameProps) {
   };
 
   const handleRestart = () => {
-    // 清理滴答音效定时器
-    if (tickTimerRef.current) {
-      clearInterval(tickTimerRef.current);
-      tickTimerRef.current = null;
-    }
-
-    // 重置游戏未开始状态，让用户点击开始按钮时播放语音
+    // 重置游戏未开始状态
     setGameStarted(false);
-    setShowCountdown(false);
 
     setPlayerState({
       currentQuestionIndex: 0,
@@ -565,20 +413,6 @@ export default function Game({ gameMode, questionType, onBack }: GameProps) {
   if (!gameStarted) {
     return (
       <div className="min-h-screen bg-gradient-to-br from-blue-50 via-purple-50 to-pink-50 dark:from-gray-900 dark:via-purple-900 dark:to-blue-900 flex items-center justify-center p-4">
-        {/* 321 视觉提示 */}
-        {showCountdown && (
-          <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60">
-            <div className="text-center animate-pulse">
-              <h1 className="text-9xl font-black bg-gradient-to-r from-yellow-400 via-orange-500 to-red-500 bg-clip-text text-transparent drop-shadow-2xl mb-4">
-                3 2 1
-              </h1>
-              <h1 className="text-7xl font-bold text-white drop-shadow-2xl">
-                开始
-              </h1>
-            </div>
-          </div>
-        )}
-
         <div className="max-w-2xl w-full">
           <Card className="shadow-2xl">
             <CardHeader>
@@ -637,14 +471,7 @@ export default function Game({ gameMode, questionType, onBack }: GameProps) {
 
               <Button
                 onClick={() => {
-                  // 播放321语音
-                  play321(() => {
-                    // 语音播放完成后，隐藏视觉提示并开始游戏
-                    startGameAfterVoice();
-                  });
-
-                  // 显示321视觉提示
-                  setShowCountdown(true);
+                  setGameStarted(true);
                 }}
                 className="w-full text-lg py-6"
                 size="lg"
