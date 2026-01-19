@@ -364,14 +364,50 @@ export default function Game({ gameMode, questionType, onBack }: GameProps) {
   const [ballInHoop, setBallInHoop] = useState(false); // 篮球是否在篮筐中
   const gameAreaRef = useRef<HTMLDivElement | null>(null); // 游戏区域引用
 
+  // 挑战者姓名和最高记录
+  const [challengerName, setChallengerName] = useState(() => {
+    if (typeof window !== 'undefined') {
+      const saved = localStorage.getItem('ladder-challenger-name');
+      return saved || '';
+    }
+    return '';
+  });
+  const [showNameInput, setShowNameInput] = useState(false); // 是否显示姓名输入框
+  const [highestRecord, setHighestRecord] = useState<{ name: string; level: number }>(() => {
+    if (typeof window !== 'undefined') {
+      const saved = localStorage.getItem('ladder-highest-record');
+      if (saved) {
+        try {
+          return JSON.parse(saved);
+        } catch {
+          return { name: '', level: 0 };
+        }
+      }
+    }
+    return { name: '', level: 0 };
+  });
+
   // 初始化天梯赛题目
   useEffect(() => {
     if (gameMode === 'ladder') {
+      // 如果没有挑战者姓名，显示输入框
+      if (!challengerName) {
+        setShowNameInput(true);
+        return;
+      }
+
       const question = getJudgeQuestionByLevel(ladderLevel);
       setCurrentJudgeQuestion(question);
       resetBall();
     }
-  }, [gameMode, ladderLevel]);
+  }, [gameMode, ladderLevel, challengerName]);
+
+  // 保存挑战者姓名到 localStorage
+  useEffect(() => {
+    if (typeof window !== 'undefined' && challengerName) {
+      localStorage.setItem('ladder-challenger-name', challengerName);
+    }
+  }, [challengerName]);
 
   // 处理轨迹拖拽（同时调节方向和力度）
   useEffect(() => {
@@ -645,8 +681,16 @@ export default function Game({ gameMode, questionType, onBack }: GameProps) {
     setTimeout(() => {
       if (result === 'correct') {
         // 答对，进入下一层
-        setLadderMaxLevel(prev => Math.max(prev, ladderLevel + 1));
-        setLadderLevel(ladderLevel + 1);
+        const newLevel = ladderLevel + 1;
+        setLadderMaxLevel(prev => Math.max(prev, newLevel));
+        setLadderLevel(newLevel);
+
+        // 检查是否超越最高记录
+        if (newLevel > highestRecord.level) {
+          const newRecord = { name: challengerName, level: newLevel };
+          setHighestRecord(newRecord);
+          localStorage.setItem('ladder-highest-record', JSON.stringify(newRecord));
+        }
       } else {
         // 答错，退回前一层（最低第一层）
         setLadderLevel(prev => Math.max(prev - 1, 1));
@@ -1254,6 +1298,57 @@ export default function Game({ gameMode, questionType, onBack }: GameProps) {
   if (gameMode === 'ladder') {
     return (
       <div className="min-h-screen bg-gradient-to-br from-green-50 via-emerald-50 to-teal-50 dark:from-gray-900 dark:via-emerald-900 dark:to-teal-900 p-4 relative overflow-hidden">
+        {/* 姓名输入界面 */}
+        {showNameInput && (
+          <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm">
+            <Card className="shadow-2xl w-full max-w-md mx-4">
+              <CardHeader>
+                <CardTitle className="text-2xl text-center">🏆 欢迎挑战天梯赛</CardTitle>
+                <CardDescription className="text-center text-lg">请输入你的挑战者姓名</CardDescription>
+              </CardHeader>
+              <CardContent className="space-y-4">
+                <input
+                  type="text"
+                  placeholder="请输入姓名（2-10个字符）"
+                  value={challengerName}
+                  onChange={(e) => setChallengerName(e.target.value)}
+                  maxLength={10}
+                  className="w-full px-4 py-3 text-lg border-2 border-gray-300 rounded-lg focus:border-green-500 focus:outline-none"
+                  autoFocus
+                />
+                <div className="space-y-3">
+                  {highestRecord.level > 0 && (
+                    <div className="p-4 bg-yellow-50 dark:bg-yellow-900/20 rounded-lg border-2 border-yellow-300 dark:border-yellow-700">
+                      <p className="text-sm text-yellow-700 dark:text-yellow-300 mb-2">🏆 当前最高纪录</p>
+                      <p className="text-2xl font-bold text-yellow-800 dark:text-yellow-200">
+                        {highestRecord.name} - 第 {highestRecord.level} 层
+                      </p>
+                    </div>
+                  )}
+                  <Button
+                    onClick={() => {
+                      if (challengerName.trim().length >= 2) {
+                        setShowNameInput(false);
+                      }
+                    }}
+                    disabled={challengerName.trim().length < 2}
+                    className="w-full py-3 text-lg"
+                  >
+                    开始挑战
+                  </Button>
+                  <Button
+                    onClick={onBack}
+                    variant="outline"
+                    className="w-full py-3 text-lg"
+                  >
+                    返回
+                  </Button>
+                </div>
+              </CardContent>
+            </Card>
+          </div>
+        )}
+
         {/* 顶部信息栏 */}
         <div className="max-w-7xl mx-auto mb-4 z-10 relative">
           <div className="flex items-center justify-between">
@@ -1262,6 +1357,10 @@ export default function Game({ gameMode, questionType, onBack }: GameProps) {
               返回
             </Button>
             <div className="flex items-center gap-4">
+              <div className="flex items-center gap-2 px-4 py-2 bg-white dark:bg-gray-800 rounded-lg shadow">
+                <span className="text-sm text-gray-600 dark:text-gray-400">挑战者：</span>
+                <span className="font-bold">{challengerName}</span>
+              </div>
               <div className="flex items-center gap-2 px-4 py-2 bg-white dark:bg-gray-800 rounded-lg shadow">
                 <Trophy className="w-5 h-5 text-yellow-600" />
                 <span className="font-bold">第 {ladderLevel} 层</span>
