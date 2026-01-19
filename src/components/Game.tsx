@@ -336,9 +336,9 @@ export default function Game({ gameMode, questionType, onBack }: GameProps) {
       const x = ((e.clientX - rect.left) / rect.width) * 100;
       const y = ((e.clientY - rect.top) / rect.height) * 100;
 
-      // 限制偏移范围
-      const newOffsetX = Math.max(-40, Math.min(40, x - ballPosition.x));
-      const newOffsetY = Math.max(-50, Math.min(-10, y - ballPosition.y));
+      // 限制偏移范围（扩大可调节范围）
+      const newOffsetX = Math.max(-45, Math.min(45, x - ballPosition.x));
+      const newOffsetY = Math.max(-70, Math.min(20, y - ballPosition.y));
 
       setTrajectoryOffset({ x: newOffsetX, y: newOffsetY });
     };
@@ -369,9 +369,9 @@ export default function Game({ gameMode, questionType, onBack }: GameProps) {
       const x = ((touch.clientX - rect.left) / rect.width) * 100;
       const y = ((touch.clientY - rect.top) / rect.height) * 100;
 
-      // 限制偏移范围
-      const newOffsetX = Math.max(-40, Math.min(40, x - ballPosition.x));
-      const newOffsetY = Math.max(-50, Math.min(-10, y - ballPosition.y));
+      // 限制偏移范围（扩大可调节范围）
+      const newOffsetX = Math.max(-45, Math.min(45, x - ballPosition.x));
+      const newOffsetY = Math.max(-70, Math.min(20, y - ballPosition.y));
 
       setTrajectoryOffset({ x: newOffsetX, y: newOffsetY });
     };
@@ -1190,9 +1190,9 @@ export default function Game({ gameMode, questionType, onBack }: GameProps) {
             const x = ((e.clientX - rect.left) / rect.width) * 100;
             const y = ((e.clientY - rect.top) / rect.height) * 100;
 
-            // 限制偏移范围
-            const newOffsetX = Math.max(-40, Math.min(40, x - ballPosition.x));
-            const newOffsetY = Math.max(-50, Math.min(-10, y - ballPosition.y));
+            // 限制偏移范围（扩大可调节范围）
+            const newOffsetX = Math.max(-45, Math.min(45, x - ballPosition.x));
+            const newOffsetY = Math.max(-70, Math.min(20, y - ballPosition.y));
 
             setTrajectoryOffset({ x: newOffsetX, y: newOffsetY });
           }}
@@ -1205,9 +1205,9 @@ export default function Game({ gameMode, questionType, onBack }: GameProps) {
             const x = ((touch.clientX - rect.left) / rect.width) * 100;
             const y = ((touch.clientY - rect.top) / rect.height) * 100;
 
-            // 限制偏移范围
-            const newOffsetX = Math.max(-40, Math.min(40, x - ballPosition.x));
-            const newOffsetY = Math.max(-50, Math.min(-10, y - ballPosition.y));
+            // 限制偏移范围（扩大可调节范围）
+            const newOffsetX = Math.max(-45, Math.min(45, x - ballPosition.x));
+            const newOffsetY = Math.max(-70, Math.min(20, y - ballPosition.y));
 
             setTrajectoryOffset({ x: newOffsetX, y: newOffsetY });
           }}
