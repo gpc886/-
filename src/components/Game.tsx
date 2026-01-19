@@ -620,6 +620,13 @@ export default function Game({ gameMode, questionType, onBack }: GameProps) {
     setLadderResult(result);
     setLadderShowResult(true);
 
+    // 立即处理连进计数：答对增加，答错立即重置
+    if (result === 'correct') {
+      setStreak(prev => prev + 1);
+    } else {
+      setStreak(0);
+    }
+
     // 播放结果音效
     playSoundEffect(result);
 
@@ -632,13 +639,11 @@ export default function Game({ gameMode, questionType, onBack }: GameProps) {
     // 2秒后处理层级变化
     setTimeout(() => {
       if (result === 'correct') {
-        // 答对，进入下一层并增加连进计数
-        setStreak(prev => prev + 1);
+        // 答对，进入下一层
         setLadderMaxLevel(prev => Math.max(prev, ladderLevel + 1));
         setLadderLevel(ladderLevel + 1);
       } else {
-        // 答错，退回前一层并重置连进计数
-        setStreak(0);
+        // 答错，退回前一层（最低第一层）
         setLadderLevel(prev => Math.max(prev - 1, 1));
       }
 
