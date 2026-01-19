@@ -537,10 +537,12 @@ export default function Game({ gameMode, questionType, onBack }: GameProps) {
 
   // 检测碰撞 - 返回玩家选择的篮筐
   const checkCollision = (x: number, y: number): 'left' | 'right' | null => {
-    // 左篮筐（玩家认为正确）：x: 10-25, y: 42-52（垂直居中）
-    const leftHoop = { xMin: 10, xMax: 25, yMin: 42, yMax: 52 };
-    // 右篮筐（玩家认为错误）：x: 75-90, y: 42-52（垂直居中）
-    const rightHoop = { xMin: 75, xMax: 90, yMin: 42, yMax: 52 };
+    // 左篮筐（玩家认为正确）：只允许正好穿过篮筐中心附近
+    // 原范围：x: 10-25, y: 42-52；新范围：x: 16-19, y: 45-49（精确中心区域）
+    const leftHoop = { xMin: 16, xMax: 19, yMin: 45, yMax: 49 };
+    // 右篮筐（玩家认为错误）：只允许正好穿过篮筐中心附近
+    // 原范围：x: 75-90, y: 42-52；新范围：x: 81-84, y: 45-49（精确中心区域）
+    const rightHoop = { xMin: 81, xMax: 84, yMin: 45, yMax: 49 };
 
     // 检测是否命中左篮筐
     if (x >= leftHoop.xMin && x <= leftHoop.xMax && y >= leftHoop.yMin && y <= leftHoop.yMax) {
