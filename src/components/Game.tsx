@@ -413,9 +413,9 @@ export default function Game({ gameMode, questionType, onBack }: GameProps) {
     const targetX = ballPosition.x + trajectoryOffset.x;
     const targetY = startY + trajectoryOffset.y;
 
-    // 计算从篮球上方到目标点的方向
+    // 计算从篮球位置到目标点的方向（与实际运动起点一致）
     const dx = targetX - ballPosition.x;
-    const dy = targetY - startY;
+    const dy = targetY - ballPosition.y;
 
     // 计算距离
     const distance = Math.sqrt(dx * dx + dy * dy);
@@ -548,9 +548,9 @@ export default function Game({ gameMode, questionType, onBack }: GameProps) {
     const targetX = ballPosition.x + trajectoryOffset.x;
     const targetY = startY + trajectoryOffset.y;
 
-    // 计算方向向量（固定力度）
+    // 计算方向向量（固定力度，与投篮逻辑一致）
     const dx = targetX - ballPosition.x;
-    const dy = targetY - startY;
+    const dy = targetY - ballPosition.y;
     const distance = Math.sqrt(dx * dx + dy * dy);
 
     const fixedPower = 3.0;
