@@ -308,7 +308,7 @@ export default function Game({ gameMode, questionType, onBack }: GameProps) {
   const [currentJudgeQuestion, setCurrentJudgeQuestion] = useState<JudgeQuestion | null>(null);
   const [ballPosition, setBallPosition] = useState({ x: 50, y: 80 }); // 篮球位置（百分比）
   const [isBallThrown, setIsBallThrown] = useState(false); // 篮球是否已发射
-  const [trajectoryEndpoint, setTrajectoryEndpoint] = useState({ x: 50, y: 50 }); // 虚拟抛物线终点（百分比）
+  const [trajectoryOffset, setTrajectoryOffset] = useState({ x: 0, y: -30 }); // 虚拟抛物线偏移量（百分比）
   const [throwPower, setThrowPower] = useState(6.0); // 发射力度（范围2.0-16.0）
   const [ladderShowResult, setLadderShowResult] = useState(false); // 显示结果
   const [ladderResult, setLadderResult] = useState<'correct' | 'wrong' | null>(null); // 天梯赛结果
@@ -342,26 +342,26 @@ export default function Game({ gameMode, questionType, onBack }: GameProps) {
       const x = ((e.clientX - rect.left) / width) * 100;
       const y = ((e.clientY - rect.top) / height) * 100;
 
-      // 计算偏移量（从篮球到鼠标位置）
+      // 计算偏移量
       const offsetX = x - ballPosition.x;
       const offsetY = y - ballPosition.y;
 
-      // 限制虚拟线终点范围
-      // 水平范围：5-95（左右各留5%边距）
-      const limitedX = Math.max(5, Math.min(95, x));
-      // 垂直范围：10-80（上下留足空间）
-      const limitedY = Math.max(10, Math.min(80, y));
-
-      // 计算拖拽距离（从篮球到鼠标）
+      // 计算拖拽距离
       const distance = Math.sqrt(offsetX * offsetX + offsetY * offsetY);
 
-      // 根据拖拽距离计算力度（距离越远，力度越大）
-      // 最小距离约10%，最大距离约70%
-      const normalizedDistance = Math.max(10, Math.min(70, distance));
-      const newPower = 2.0 + ((normalizedDistance - 10) / 60) * 14; // 转换到2.0-16.0
+      // 限制水平方向范围（-45到45）
+      const limitedOffsetX = Math.max(-45, Math.min(45, offsetX));
 
-      // 直接设置虚拟线终点为鼠标位置
-      setTrajectoryEndpoint({ x: limitedX, y: limitedY });
+      // 限制垂直方向范围（-270到20）
+      const limitedOffsetY = Math.max(-270, Math.min(20, offsetY));
+
+      // 根据拖拽距离计算力度（距离越远，力度越大）
+      // 最小距离约15%，最大距离约270%
+      const normalizedDistance = Math.max(15, Math.min(270, distance));
+      const newPower = 2.0 + ((normalizedDistance - 15) / 255) * 14; // 转换到2.0-16.0
+
+      // 使用批处理更新，减少重新渲染次数
+      setTrajectoryOffset({ x: limitedOffsetX, y: limitedOffsetY });
       setThrowPower(newPower);
     };
 
@@ -398,26 +398,26 @@ export default function Game({ gameMode, questionType, onBack }: GameProps) {
       const x = ((touch.clientX - rect.left) / width) * 100;
       const y = ((touch.clientY - rect.top) / height) * 100;
 
-      // 计算偏移量（从篮球到触摸位置）
+      // 计算偏移量
       const offsetX = x - ballPosition.x;
       const offsetY = y - ballPosition.y;
 
-      // 限制虚拟线终点范围
-      // 水平范围：5-95（左右各留5%边距）
-      const limitedX = Math.max(5, Math.min(95, x));
-      // 垂直范围：10-80（上下留足空间）
-      const limitedY = Math.max(10, Math.min(80, y));
-
-      // 计算拖拽距离（从篮球到触摸位置）
+      // 计算拖拽距离
       const distance = Math.sqrt(offsetX * offsetX + offsetY * offsetY);
 
-      // 根据拖拽距离计算力度（距离越远，力度越大）
-      // 最小距离约10%，最大距离约70%
-      const normalizedDistance = Math.max(10, Math.min(70, distance));
-      const newPower = 2.0 + ((normalizedDistance - 10) / 60) * 14; // 转换到2.0-16.0
+      // 限制水平方向范围（-45到45）
+      const limitedOffsetX = Math.max(-45, Math.min(45, offsetX));
 
-      // 直接设置虚拟线终点为触摸位置
-      setTrajectoryEndpoint({ x: limitedX, y: limitedY });
+      // 限制垂直方向范围（-270到20）
+      const limitedOffsetY = Math.max(-270, Math.min(20, offsetY));
+
+      // 根据拖拽距离计算力度（距离越远，力度越大）
+      // 最小距离约15%，最大距离约270%
+      const normalizedDistance = Math.max(15, Math.min(270, distance));
+      const newPower = 2.0 + ((normalizedDistance - 15) / 255) * 14; // 转换到2.0-16.0
+
+      // 使用批处理更新，减少重新渲染次数
+      setTrajectoryOffset({ x: limitedOffsetX, y: limitedOffsetY });
       setThrowPower(newPower);
     };
 
@@ -438,7 +438,7 @@ export default function Game({ gameMode, questionType, onBack }: GameProps) {
   const resetBall = () => {
     setBallPosition({ x: 50, y: 80 });
     setIsBallThrown(false);
-    setTrajectoryEndpoint({ x: 50, y: 50 }); // 重置虚拟线终点到默认位置
+    setTrajectoryOffset({ x: 0, y: -30 });
     setThrowPower(6.0); // 重置力度到默认值
     setBallRotation(0); // 重置旋转角度
   };
@@ -454,9 +454,9 @@ export default function Game({ gameMode, questionType, onBack }: GameProps) {
     // 播放投篮球音效
     playSoundEffect('correct');
 
-    // 计算初始速度（根据虚拟线终点计算方向，使用可变力度）
-    const targetX = trajectoryEndpoint.x;
-    const targetY = trajectoryEndpoint.y;
+    // 计算初始速度（根据轨迹偏移量计算方向，使用可变力度）
+    const targetX = ballPosition.x + trajectoryOffset.x;
+    const targetY = ballPosition.y + trajectoryOffset.y;
 
     // 计算从篮球位置到目标点的方向
     const dx = targetX - ballPosition.x;
@@ -612,9 +612,9 @@ export default function Game({ gameMode, questionType, onBack }: GameProps) {
     let x = ballPosition.x;
     let y = ballPosition.y;
 
-    // 计算目标点（使用虚拟线终点）
-    const targetX = trajectoryEndpoint.x;
-    const targetY = trajectoryEndpoint.y;
+    // 计算目标点（基于偏移量）
+    const targetX = ballPosition.x + trajectoryOffset.x;
+    const targetY = ballPosition.y + trajectoryOffset.y;
 
     // 计算方向向量（使用当前力度，与投篮逻辑一致）
     const dx = targetX - ballPosition.x;
@@ -1253,22 +1253,22 @@ export default function Game({ gameMode, questionType, onBack }: GameProps) {
             const x = ((e.clientX - rect.left) / rect.width) * 100;
             const y = ((e.clientY - rect.top) / rect.height) * 100;
 
-            // 计算偏移量（从篮球到点击位置）
+            // 计算偏移量
             const offsetX = x - ballPosition.x;
             const offsetY = y - ballPosition.y;
-
-            // 限制虚拟线终点范围
-            const limitedX = Math.max(5, Math.min(95, x));
-            const limitedY = Math.max(10, Math.min(80, y));
 
             // 计算距离
             const distance = Math.sqrt(offsetX * offsetX + offsetY * offsetY);
 
-            // 根据距离计算力度
-            const normalizedDistance = Math.max(10, Math.min(70, distance));
-            const newPower = 2.0 + ((normalizedDistance - 10) / 60) * 14;
+            // 限制偏移范围
+            const newOffsetX = Math.max(-45, Math.min(45, offsetX));
+            const newOffsetY = Math.max(-270, Math.min(20, offsetY));
 
-            setTrajectoryEndpoint({ x: limitedX, y: limitedY });
+            // 根据距离计算力度
+            const normalizedDistance = Math.max(15, Math.min(270, distance));
+            const newPower = 2.0 + ((normalizedDistance - 15) / 255) * 14;
+
+            setTrajectoryOffset({ x: newOffsetX, y: newOffsetY });
             setThrowPower(newPower);
           }}
           onTouchStart={(e) => {
@@ -1280,22 +1280,22 @@ export default function Game({ gameMode, questionType, onBack }: GameProps) {
             const x = ((touch.clientX - rect.left) / rect.width) * 100;
             const y = ((touch.clientY - rect.top) / rect.height) * 100;
 
-            // 计算偏移量（从篮球到触摸位置）
+            // 计算偏移量
             const offsetX = x - ballPosition.x;
             const offsetY = y - ballPosition.y;
-
-            // 限制虚拟线终点范围
-            const limitedX = Math.max(5, Math.min(95, x));
-            const limitedY = Math.max(10, Math.min(80, y));
 
             // 计算距离
             const distance = Math.sqrt(offsetX * offsetX + offsetY * offsetY);
 
-            // 根据距离计算力度
-            const normalizedDistance = Math.max(10, Math.min(70, distance));
-            const newPower = 2.0 + ((normalizedDistance - 10) / 60) * 14;
+            // 限制偏移范围
+            const newOffsetX = Math.max(-45, Math.min(45, offsetX));
+            const newOffsetY = Math.max(-270, Math.min(20, offsetY));
 
-            setTrajectoryEndpoint({ x: limitedX, y: limitedY });
+            // 根据距离计算力度
+            const normalizedDistance = Math.max(15, Math.min(270, distance));
+            const newPower = 2.0 + ((normalizedDistance - 15) / 255) * 14;
+
+            setTrajectoryOffset({ x: newOffsetX, y: newOffsetY });
             setThrowPower(newPower);
           }}
         >
