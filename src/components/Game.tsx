@@ -1357,17 +1357,6 @@ export default function Game({ gameMode, questionType, onBack }: GameProps) {
                       setIsDragging(true);
                     }}
                   />
-                  {/* 力度百分比文本 */}
-                  <text
-                    x={drawTrajectory()![drawTrajectory()!.length - 1].x}
-                    y={drawTrajectory()![drawTrajectory()!.length - 1].y - 3}
-                    textAnchor="middle"
-                    fontSize="2.5"
-                    fontWeight="bold"
-                    fill={throwPower < 3 ? '#3b82f6' : throwPower < 5 ? '#f97316' : '#ef4444'}
-                  >
-                    {Math.round((throwPower / 8) * 100)}%
-                  </text>
                   {/* 力度指示箭头 */}
                   {(() => {
                     const lastPoint = drawTrajectory()![drawTrajectory()!.length - 1];
