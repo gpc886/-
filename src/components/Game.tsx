@@ -810,7 +810,8 @@ export default function Game({ gameMode, questionType, onBack }: GameProps) {
   useEffect(() => {
     let timer: NodeJS.Timeout | null = null;
 
-    if (gameMode === 'multi' && timeLeft > 0 && !gameEnded) {
+    // 只有当321倒计时完成后（showCountdown为false）才开始播放滴答声
+    if (gameMode === 'multi' && timeLeft > 0 && !gameEnded && gameStarted && !showCountdown) {
       // 启动滴答音效
       if (!tickTimerRef.current) {
         const tickTimer = setInterval(() => {
