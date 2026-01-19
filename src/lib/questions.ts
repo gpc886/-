@@ -2937,6 +2937,1941 @@ export const judgeQuestions: JudgeQuestion[] = [
     answer: true,
     explanation: '正确。这是杜牧《寄扬州韩绰判官》中的名句，描写扬州夜色。',
     difficulty: 10
+  },
+  // 难度1补充
+  {
+    id: 'judge-1-6',
+    question: '汉字书法中，"楷书"是最早出现的字体。',
+    answer: false,
+    explanation: '错误。汉字的演变顺序是:甲骨文→金文→篆书→隶书→楷书。',
+    difficulty: 1
+  },
+  {
+    id: 'judge-1-7',
+    question: '"四大发明"包括造纸术、印刷术、火药和指南针。',
+    answer: true,
+    explanation: '正确。这四大发明是中国古代劳动人民的重要创造。',
+    difficulty: 1
+  },
+  {
+    id: 'judge-1-8',
+    question: '中国的首都北京位于南方。',
+    answer: false,
+    explanation: '错误。北京位于中国北方。',
+    difficulty: 1
+  },
+  {
+    id: 'judge-1-9',
+    question: '《西游记》中的孙悟空是从石头里蹦出来的。',
+    answer: true,
+    explanation: '正确。孙悟空是从花果山的一块仙石中诞生的。',
+    difficulty: 1
+  },
+  {
+    id: 'judge-1-10',
+    question: '唐宋八大家中有三位姓苏。',
+    answer: false,
+    explanation: '错误。唐宋八大家中有三位姓苏:苏洵、苏轼、苏辙。',
+    difficulty: 1
+  },
+  {
+    id: 'judge-1-11',
+    question: '《三国演义》的作者是罗贯中。',
+    answer: true,
+    explanation: '正确。罗贯中是元末明初小说家，代表作《三国演义》。',
+    difficulty: 1
+  },
+  {
+    id: 'judge-1-12',
+    question: '"诗圣"指的是杜甫。',
+    answer: true,
+    explanation: '正确。杜甫被称为"诗圣"，李白被称为"诗仙"。',
+    difficulty: 1
+  },
+  {
+    id: 'judge-1-13',
+    question: '"诗佛"指的是李白。',
+    answer: false,
+    explanation: '错误。"诗佛"指的是王维，李白被称为"诗仙"。',
+    difficulty: 1
+  },
+  {
+    id: 'judge-1-14',
+    question: '《水浒传》描写的是农民起义的故事。',
+    answer: true,
+    explanation: '正确。《水浒传》描写了北宋末年梁山好汉起义的故事。',
+    difficulty: 1
+  },
+  {
+    id: 'judge-1-15',
+    question: '"《西游记》是神魔小说。',
+    answer: true,
+    explanation: '正确。《西游记》是中国古代神魔小说的代表作。',
+    difficulty: 1
+  },
+  // 难度2补充
+  {
+    id: 'judge-2-6',
+    question: '"三人成虎"的意思是真的有三只老虎。',
+    answer: false,
+    explanation: '错误。这个成语比喻谣言或讹传一再重复，就会使人信以为真。',
+    difficulty: 2
+  },
+  {
+    id: 'judge-2-7',
+    question: '"孔孟之道"指的是孔子和孟子的思想学说。',
+    answer: true,
+    explanation: '正确。孔孟之道是中国传统文化的重要组成部分。',
+    difficulty: 2
+  },
+  {
+    id: 'judge-2-8',
+    question: '"鸿门宴"讲的是刘邦和项羽的故事。',
+    answer: true,
+    explanation: '正确。鸿门宴是楚汉相争中的一次著名宴会。',
+    difficulty: 2
+  },
+  {
+    id: 'judge-2-9',
+    question: '《三字经》是一本儿童启蒙读物。',
+    answer: true,
+    explanation: '正确。《三字经》是中国传统启蒙教材之一。',
+    difficulty: 2
+  },
+  {
+    id: 'judge-2-10',
+    question: '"学富五车"形容一个人车很多。',
+    answer: false,
+    explanation: '错误。这个成语形容读书多，学问大。',
+    difficulty: 2
+  },
+  {
+    id: 'judge-2-11',
+    question: '"闻鸡起舞"的主人公是祖逖和刘琨。',
+    answer: true,
+    explanation: '正确。他们每天听到鸡叫就起床练武，形容勤奋刻苦。',
+    difficulty: 2
+  },
+  {
+    id: 'judge-2-12',
+    question: '"程门立雪"表达的是对老师的尊敬。',
+    answer: true,
+    explanation: '正确。这个典故讲述杨时在程颐门前立雪等待，表现对老师的尊敬。',
+    difficulty: 2
+  },
+  {
+    id: 'judge-2-13',
+    question: '"高山流水"讲的是伯牙和子期的故事。',
+    answer: true,
+    explanation: '正确。这个故事比喻知己难寻。',
+    difficulty: 2
+  },
+  {
+    id: 'judge-2-14',
+    question: '"高山流水"是关于音乐的成语。',
+    answer: true,
+    explanation: '正确。伯牙善鼓琴，子期善听琴，是知音难觅的典故。',
+    difficulty: 2
+  },
+  {
+    id: 'judge-2-15',
+    question: '"守株待兔"讽刺的是懒人。',
+    answer: true,
+    explanation: '正确。这个成语讽刺妄想不劳而获的人。',
+    difficulty: 2
+  },
+  {
+    id: 'judge-2-16',
+    question: '"杞人忧天"出自《列子》。',
+    answer: true,
+    explanation: '正确。这个寓言出自《列子·天瑞》。',
+    difficulty: 2
+  },
+  {
+    id: 'judge-2-17',
+    question: '"愚公移山"出自《韩非子》。',
+    answer: false,
+    explanation: '错误。这个寓言出自《列子·汤问》。',
+    difficulty: 2
+  },
+  {
+    id: 'judge-2-18',
+    question: '"亡羊补牢"比喻出了问题补救还不晚。',
+    answer: true,
+    explanation: '正确。这个成语比喻出了问题以后想办法补救，可以防止继续受损失。',
+    difficulty: 2
+  },
+  {
+    id: 'judge-2-19',
+    question: '"画龙点睛"出自张僧繇的故事。',
+    answer: true,
+    explanation: '正确。传说张僧繇画龙不点睛，点了眼睛龙就飞走了。',
+    difficulty: 2
+  },
+  {
+    id: 'judge-2-20',
+    question: '"画蛇添足"比喻做多余的事。',
+    answer: true,
+    explanation: '正确。这个成语比喻做了多余的事，反而把事情搞糟了。',
+    difficulty: 2
+  },
+  // 难度3补充
+  {
+    id: 'judge-3-6',
+    question: '"对牛弹琴"出自《庄子》。',
+    answer: false,
+    explanation: '错误。这个成语出自《牟子理惑论》。',
+    difficulty: 3
+  },
+  {
+    id: 'judge-3-7',
+    question: '"叶公好龙"的叶公是真的喜欢龙。',
+    answer: false,
+    explanation: '错误。叶公只是表面上喜欢龙，当真龙出现时却吓坏了。',
+    difficulty: 3
+  },
+  {
+    id: 'judge-3-8',
+    question: '"杯弓蛇影"的意思是酒杯里有蛇的影子。',
+    answer: false,
+    explanation: '错误。这个成语比喻疑神疑鬼，自相惊扰。',
+    difficulty: 3
+  },
+  {
+    id: 'judge-3-9',
+    question: '"杞人忧天"出自《列子》。',
+    answer: true,
+    explanation: '正确。这个寓言出自《列子·天瑞》。',
+    difficulty: 3
+  },
+  {
+    id: 'judge-3-10',
+    question: '"滥竽充数"的主人公是南郭先生。',
+    answer: true,
+    explanation: '正确。南郭先生不会吹竽却混在乐队里凑数。',
+    difficulty: 3
+  },
+  {
+    id: 'judge-3-11',
+    question: '"胸有成竹"与文与可有关。',
+    answer: true,
+    explanation: '正确。文与可是北宋画家，他画竹子之前胸中已有成竹的形象。',
+    difficulty: 3
+  },
+  {
+    id: 'judge-3-12',
+    question: '"愚公移山"出自《孟子》。',
+    answer: false,
+    explanation: '错误。这个寓言出自《列子·汤问》。',
+    difficulty: 3
+  },
+  {
+    id: 'judge-3-13',
+    question: '"掩耳盗铃"出自《吕氏春秋》。',
+    answer: true,
+    explanation: '正确。这个寓言出自《吕氏春秋·自知》。',
+    difficulty: 3
+  },
+  {
+    id: 'judge-3-14',
+    question: '"自相矛盾"出自《韩非子》。',
+    answer: true,
+    explanation: '正确。这个寓言出自《韩非子·难一》。',
+    difficulty: 3
+  },
+  {
+    id: 'judge-3-15',
+    question: '"刻舟求剑"出自《吕氏春秋》。',
+    answer: true,
+    explanation: '正确。这个寓言出自《吕氏春秋·察今》。',
+    difficulty: 3
+  },
+  {
+    id: 'judge-3-16',
+    question: '"揠苗助长"出自《孟子》。',
+    answer: true,
+    explanation: '正确。这个寓言出自《孟子·公孙丑上》。',
+    difficulty: 3
+  },
+  {
+    id: 'judge-3-17',
+    question: '"按图索骥"出自《韩非子》。',
+    answer: false,
+    explanation: '错误。这个成语出自《汉书》等记载，相传伯乐善相马。',
+    difficulty: 3
+  },
+  {
+    id: 'judge-3-18',
+    question: '"井底之蛙"出自《庄子》。',
+    answer: true,
+    explanation: '正确。这个寓言出自《庄子·秋水》。',
+    difficulty: 3
+  },
+  {
+    id: 'judge-3-19',
+    question: '"坐井观天"和"井底之蛙"意思相近。',
+    answer: true,
+    explanation: '正确。这两个成语都比喻眼界狭窄，见识短浅。',
+    difficulty: 3
+  },
+  {
+    id: 'judge-3-20',
+    question: '"盲人摸象"出自佛经故事。',
+    answer: true,
+    explanation: '正确。这个寓言最初来自佛教经典。',
+    difficulty: 3
+  },
+  // 难度4补充
+  {
+    id: 'judge-4-6',
+    question: '"野火烧不尽，春风吹又生"出自白居易的《赋得古原草送别》。',
+    answer: true,
+    explanation: '正确。这是白居易16岁时的成名作。',
+    difficulty: 4
+  },
+  {
+    id: 'judge-4-7',
+    question: '王维被称为"诗圣"。',
+    answer: false,
+    explanation: '错误。王维被称为"诗佛"，杜甫才被称为"诗圣"。',
+    difficulty: 4
+  },
+  {
+    id: 'judge-4-8',
+    question: '"千门万户曈曈日，总把新桃换旧符"描写的是春节。',
+    answer: true,
+    explanation: '正确。这是王安石《元日》中的诗句，描写春节的景象。',
+    difficulty: 4
+  },
+  {
+    id: 'judge-4-9',
+    question: '"随风潜入夜，润物细无声"描写的是雨水。',
+    answer: true,
+    explanation: '正确。这是杜甫《春夜喜雨》中的诗句，描写春雨。',
+    difficulty: 4
+  },
+  {
+    id: 'judge-4-10',
+    question: '"飞流直下三千尺，疑是银河落九天"描写的是黄河。',
+    answer: false,
+    explanation: '错误。这是李白《望庐山瀑布》中的诗句，描写庐山瀑布。',
+    difficulty: 4
+  },
+  {
+    id: 'judge-4-11',
+    question: '"独在异乡为异客，每逢佳节倍思亲"是王维的诗句。',
+    answer: true,
+    explanation: '正确。这是王维《九月九日忆山东兄弟》中的名句。',
+    difficulty: 4
+  },
+  {
+    id: 'judge-4-12',
+    question: '杜牧被称为"小杜"。',
+    answer: true,
+    explanation: '正确。杜牧与李商隐并称"小李杜"，杜牧被称为"小杜"。',
+    difficulty: 4
+  },
+  {
+    id: 'judge-4-13',
+    question: '"慈母手中线，游子身上衣"出自孟郊的《游子吟》。',
+    answer: true,
+    explanation: '正确。这首诗歌颂了母爱的伟大。',
+    difficulty: 4
+  },
+  {
+    id: 'judge-4-14',
+    question: '孟郊是唐代诗人。',
+    answer: true,
+    explanation: '正确。孟郊是唐代诗人，与韩愈并称"韩孟"。',
+    difficulty: 4
+  },
+  {
+    id: 'judge-4-15',
+    question: '"谁知盘中餐，粒粒皆辛苦"是李绅的诗句。',
+    answer: true,
+    explanation: '正确。这是李绅《悯农》中的名句。',
+    difficulty: 4
+  },
+  {
+    id: 'judge-4-16',
+    question: '"春眠不觉晓，处处闻啼鸟"是孟浩然的诗。',
+    answer: true,
+    explanation: '正确。这是孟浩然《春晓》中的诗句。',
+    difficulty: 4
+  },
+  {
+    id: 'judge-4-17',
+    question: '"夜来风雨声，花落知多少"描写的是春天的景象。',
+    answer: true,
+    explanation: '正确。这句诗描写了春夜风雨后的景象。',
+    difficulty: 4
+  },
+  {
+    id: 'judge-4-18',
+    question: '"少小离家老大回，乡音无改鬓毛衰"是贺知章的诗。',
+    answer: true,
+    explanation: '正确。这是贺知章《回乡偶书》中的诗句。',
+    difficulty: 4
+  },
+  {
+    id: 'judge-4-19',
+    question: '"儿童相见不相识，笑问客从何处来"表达思乡之情。',
+    answer: true,
+    explanation: '正确。这两句表达了诗人久别还乡的感慨。',
+    difficulty: 4
+  },
+  {
+    id: 'judge-4-20',
+    question: '"离离原上草，一岁一枯荣"是白居易的诗句。',
+    answer: true,
+    explanation: '正确。这是白居易《赋得古原草送别》中的诗句。',
+    difficulty: 4
+  },
+  // 难度5补充
+  {
+    id: 'judge-5-6',
+    question: '"采菊东篱下，悠然见南山"是陶渊明的诗句。',
+    answer: true,
+    explanation: '正确。这是陶渊明《饮酒》中的名句，表现了隐逸情怀。',
+    difficulty: 5
+  },
+  {
+    id: 'judge-5-7',
+    question: '"慈母手中线，游子身上衣"出自孟郊的《游子吟》。',
+    answer: true,
+    explanation: '正确。这首诗歌颂了母爱的伟大。',
+    difficulty: 5
+  },
+  {
+    id: 'judge-5-8',
+    question: '"商女不知亡国恨，隔江犹唱后庭花"是杜牧的诗句。',
+    answer: true,
+    explanation: '正确。这是杜牧《泊秦淮》中的诗句，表达了忧国之情。',
+    difficulty: 5
+  },
+  {
+    id: 'judge-5-9',
+    question: '刘禹锡被称为"诗豪"。',
+    answer: true,
+    explanation: '正确。刘禹锡的诗风豪放，被称为"诗豪"。',
+    difficulty: 5
+  },
+  {
+    id: 'judge-5-10',
+    question: '"国破山河在，城春草木深"表达了诗人对国家的忧虑。',
+    answer: true,
+    explanation: '正确。这是杜甫《春望》中的名句，表达了对国破家亡的悲痛。',
+    difficulty: 5
+  },
+  {
+    id: 'judge-5-11',
+    question: '"春蚕到死丝方尽，蜡炬成灰泪始干"描写的是蚕和蜡烛。',
+    answer: false,
+    explanation: '错误。这是李商隐《无题》中的名句，借物喻人，表达至死不渝的爱情。',
+    difficulty: 5
+  },
+  {
+    id: 'judge-5-12',
+    question: '"相见时难别亦难"是李商隐的诗句。',
+    answer: true,
+    explanation: '正确。这是李商隐《无题》中的名句。',
+    difficulty: 5
+  },
+  {
+    id: 'judge-5-13',
+    question: '"落红不是无情物，化作春泥更护花"是龚自珍的诗句。',
+    answer: true,
+    explanation: '正确。这是龚自珍《己亥杂诗》中的名句。',
+    difficulty: 5
+  },
+  {
+    id: 'judge-5-14',
+    question: '"落红"指落花。',
+    answer: true,
+    explanation: '正确。"落红"指落花，比喻辞官归隐。',
+    difficulty: 5
+  },
+  {
+    id: 'judge-5-15',
+    question: '陶渊明开创了田园诗派。',
+    answer: true,
+    explanation: '正确。陶渊明是东晋诗人，开创了田园诗派。',
+    difficulty: 5
+  },
+  {
+    id: 'judge-5-16',
+    question: '"不为五斗米折腰"是陶渊明的故事。',
+    answer: true,
+    explanation: '正确。陶渊明不愿为五斗米俸禄向权贵低头。',
+    difficulty: 5
+  },
+  {
+    id: 'judge-5-17',
+    question: '"桃花源记》是陶渊明的作品。',
+    answer: true,
+    explanation: '正确。《桃花源记》是陶渊明描绘的理想社会。',
+    difficulty: 5
+  },
+  {
+    id: 'judge-5-18',
+    question: '"世外桃源"出自《桃花源记》。',
+    answer: true,
+    explanation: '正确。这个成语出自陶渊明的《桃花源记》。',
+    difficulty: 5
+  },
+  {
+    id: 'judge-5-19',
+    question: '"黄四娘家花满蹊，千朵万朵压枝低"是杜甫的诗。',
+    answer: true,
+    explanation: '正确。这是杜甫《江畔独步寻花》中的诗句。',
+    difficulty: 5
+  },
+  {
+    id: 'judge-5-20',
+    question: '"留连戏蝶时时舞，自在娇莺恰恰啼"是杜甫的诗句。',
+    answer: true,
+    explanation: '正确。这是杜甫《江畔独步寻花》中的诗句。',
+    difficulty: 5
+  },
+  // 难度6补充
+  {
+    id: 'judge-6-6',
+    question: '"八仙过海"中的八仙是道教传说人物。',
+    answer: true,
+    explanation: '正确。八仙是道教传说中的八位仙人。',
+    difficulty: 6
+  },
+  {
+    id: 'judge-6-7',
+    question: '"卧薪尝胆"讲的是勾践的故事。',
+    answer: true,
+    explanation: '正确。越王勾践卧薪尝胆，最终复国成功。',
+    difficulty: 6
+  },
+  {
+    id: 'judge-6-8',
+    question: '"精卫填海"是关于女娲的神话。',
+    answer: false,
+    explanation: '错误。精卫是炎帝女儿死后化身而成的鸟，不是女娲。',
+    difficulty: 6
+  },
+  {
+    id: 'judge-6-9',
+    question: '"女娲补天"是关于补天的神话传说。',
+    answer: true,
+    explanation: '正确。女娲补天是中国古代著名神话。',
+    difficulty: 6
+  },
+  {
+    id: 'judge-6-10',
+    question: '"完璧归赵"的主人公是蔺相如。',
+    answer: true,
+    explanation: '正确。蔺相如将和氏璧完好无损地送回赵国。',
+    difficulty: 6
+  },
+  {
+    id: 'judge-6-11',
+    question: '"入木三分"形容书法笔力强劲。',
+    answer: true,
+    explanation: '正确。这个成语形容书法笔力强劲，也比喻见解深刻。',
+    difficulty: 6
+  },
+  {
+    id: 'judge-6-12',
+    question: '"程门立雪"讲的是程颢和程颐的故事。',
+    answer: true,
+    explanation: '正确。杨时在程颐门前立雪等待请教。',
+    difficulty: 6
+  },
+  {
+    id: 'judge-6-13',
+    question: '"高山流水"讲的是伯牙和子期的故事。',
+    answer: true,
+    explanation: '正确。这个故事比喻知己难寻。',
+    difficulty: 6
+  },
+  {
+    id: 'judge-6-14',
+    question: '"破釜沉舟"的主人公是项羽。',
+    answer: true,
+    explanation: '正确。巨鹿之战中，项羽命令士兵砸锅沉船，表示不胜利不回头的决心。',
+    difficulty: 6
+  },
+  {
+    id: 'judge-6-15',
+    question: '"背水一战"的主人公是韩信。',
+    answer: true,
+    explanation: '正确。韩信在井陉之战中背水列阵，置之死地而后生。',
+    difficulty: 6
+  },
+  {
+    id: 'judge-6-16',
+    question: '"四面楚歌"的主人公是项羽。',
+    answer: true,
+    explanation: '正确。楚汉相争中，项羽被汉军包围，听到四面楚歌，知道大势已去。',
+    difficulty: 6
+  },
+  {
+    id: 'judge-6-17',
+    question: '"乌江自刎"的主人公是项羽。',
+    answer: true,
+    explanation: '正确。项羽兵败后，在乌江边自刎而死。',
+    difficulty: 6
+  },
+  {
+    id: 'judge-6-18',
+    question: '"三顾茅庐"的主人公是刘备和诸葛亮。',
+    answer: true,
+    explanation: '正确。刘备三顾茅庐请诸葛亮出山辅佐。',
+    difficulty: 6
+  },
+  {
+    id: 'judge-6-19',
+    question: '"草船借箭"的主人公是诸葛亮。',
+    answer: true,
+    explanation: '正确。诸葛亮利用草船借来十万支箭。',
+    difficulty: 6
+  },
+  {
+    id: 'judge-6-20',
+    question: '"空城计"的主人公是诸葛亮。',
+    answer: true,
+    explanation: '正确。诸葛亮在城门大开的情况下，抚琴吓退司马懿大军。',
+    difficulty: 6
+  },
+  // 难度7补充
+  {
+    id: 'judge-7-6',
+    question: '"大江东去，浪淘尽"出自苏轼的《念奴娇·赤壁怀古》。',
+    answer: true,
+    explanation: '正确。这是苏轼豪放词的代表作。',
+    difficulty: 7
+  },
+  {
+    id: 'judge-7-7',
+    question: '"寻寻觅觅，冷冷清清，凄凄惨惨戚戚"是李清照的词句。',
+    answer: true,
+    explanation: '正确。这是李清照《声声慢》中的名句。',
+    difficulty: 7
+  },
+  {
+    id: 'judge-7-8',
+    question: '岳飞的《满江红》是词牌名。',
+    answer: true,
+    explanation: '正确。《满江红》是词牌名，岳飞用这个词牌写了著名的爱国词。',
+    difficulty: 7
+  },
+  {
+    id: 'judge-7-9',
+    question: '"醉卧沙场君莫笑"写的是江南战场。',
+    answer: false,
+    explanation: '错误。这是王翰《凉州词》中的诗句，描写的是西北边塞。',
+    difficulty: 7
+  },
+  {
+    id: 'judge-7-10',
+    question: '辛弃疾的《青玉案·元夕》描写的是元宵节。',
+    answer: true,
+    explanation: '正确。这首词描写了元宵节的景象。',
+    difficulty: 7
+  },
+  {
+    id: 'judge-7-11',
+    question: '"莫道不销魂，帘卷西风，人比黄花瘦"是李清照的词。',
+    answer: true,
+    explanation: '正确。这是李清照《醉花阴》中的名句。',
+    difficulty: 7
+  },
+  {
+    id: 'judge-7-12',
+    question: '"无可奈何花落去，似曾相识燕归来"是晏殊的词。',
+    answer: true,
+    explanation: '正确。这是晏殊《浣溪沙》中的名句。',
+    difficulty: 7
+  },
+  {
+    id: 'judge-7-13',
+    question: '"问君能有几多愁，恰似一江春水向东流"是李煜的词。',
+    answer: true,
+    explanation: '正确。这是李煜《虞美人》中的名句，表达亡国之痛。',
+    difficulty: 7
+  },
+  {
+    id: 'judge-7-14',
+    question: '"曾经沧海难为水"是刘禹锡的诗句。',
+    answer: false,
+    explanation: '错误。这是元稹《离思》中的诗句。',
+    difficulty: 7
+  },
+  {
+    id: 'judge-7-15',
+    question: '"曾经沧海难为水"是元稹悼念亡妻的诗句。',
+    answer: true,
+    explanation: '正确。这是元稹《离思》中的名句，表达对亡妻的深切怀念。',
+    difficulty: 7
+  },
+  {
+    id: 'judge-7-16',
+    question: '"剪不断，理还乱，是离愁"是李煜的词句。',
+    answer: true,
+    explanation: '正确。这是李煜《相见欢》中的名句。',
+    difficulty: 7
+  },
+  {
+    id: 'judge-7-17',
+    question: '李煜被称为"词帝"。',
+    answer: true,
+    explanation: '正确。李煜是南唐后主，被称为"词帝"。',
+    difficulty: 7
+  },
+  {
+    id: 'judge-7-18',
+    question: '李清照是宋代女词人。',
+    answer: true,
+    explanation: '正确。李清照是宋代著名女词人，婉约词派代表人物。',
+    difficulty: 7
+  },
+  {
+    id: 'judge-7-19',
+    question: '辛弃疾是宋代词人。',
+    answer: true,
+    explanation: '正确。辛弃疾是南宋豪放派词人代表。',
+    difficulty: 7
+  },
+  {
+    id: 'judge-7-20',
+    question: '苏轼是北宋词人。',
+    answer: true,
+    explanation: '正确。苏轼是北宋文学家，豪放词派的开创者之一。',
+    difficulty: 7
+  },
+  // 难度8补充
+  {
+    id: 'judge-8-6',
+    question: '"竹杖芒鞋轻胜马，谁怕"是苏轼的词。',
+    answer: true,
+    explanation: '正确。这是苏轼《定风波》中的句子。',
+    difficulty: 8
+  },
+  {
+    id: 'judge-8-7',
+    question: '黄庭坚是江西诗派的开创者。',
+    answer: true,
+    explanation: '正确。黄庭坚是江西诗派的开创者之一。',
+    difficulty: 8
+  },
+  {
+    id: 'judge-8-8',
+    question: '秦观的词风以豪放著称。',
+    answer: false,
+    explanation: '错误。秦观是婉约派词人代表，词风婉约清丽。',
+    difficulty: 8
+  },
+  {
+    id: 'judge-8-9',
+    question: '"昨夜西风凋碧树，独上高楼"是晏几道的词。',
+    answer: false,
+    explanation: '错误。这是晏殊《蝶恋花》中的句子。',
+    difficulty: 8
+  },
+  {
+    id: 'judge-8-10',
+    question: '范成大是"南宋四大家"之一。',
+    answer: true,
+    explanation: '正确。南宋四大家是尤袤、杨万里、范成大、陆游。',
+    difficulty: 8
+  },
+  {
+    id: 'judge-8-11',
+    question: '杨万里的诗风清新自然，被称为"诚斋体"。',
+    answer: true,
+    explanation: '正确。杨万里，号诚斋，创立了"诚斋体"。',
+    difficulty: 8
+  },
+  {
+    id: 'judge-8-12',
+    question: '陆游是中国历史上存诗最多的诗人之一。',
+    answer: true,
+    explanation: '正确。陆游一生创作诗歌近万首，是中国历史上存诗最多的诗人之一。',
+    difficulty: 8
+  },
+  {
+    id: 'judge-8-13',
+    question: '"小楼一夜听春雨，深巷明朝卖杏花"是陆游的诗句。',
+    answer: true,
+    explanation: '正确。这是陆游《临安春雨初霁》中的名句。',
+    difficulty: 8
+  },
+  {
+    id: 'judge-8-14',
+    question: '"山重水复疑无路，柳暗花明又一村"是陆游的诗句。',
+    answer: true,
+    explanation: '正确。这是陆游《游山西村》中的名句。',
+    difficulty: 8
+  },
+  {
+    id: 'judge-8-15',
+    question: '尤袤是南宋诗人。',
+    answer: true,
+    explanation: '正确。尤袤是南宋四大家之一。',
+    difficulty: 8
+  },
+  {
+    id: 'judge-8-16',
+    question: '柳永是北宋婉约派词人。',
+    answer: true,
+    explanation: '正确。柳永是北宋婉约派词人代表。',
+    difficulty: 8
+  },
+  {
+    id: 'judge-8-17',
+    question: '"杨柳岸，晓风残月"是柳永的词句。',
+    answer: true,
+    explanation: '正确。这是柳永《雨霖铃》中的名句。',
+    difficulty: 8
+  },
+  {
+    id: 'judge-8-18',
+    question: '"执手相看泪眼，竟无语凝噎"是柳永的词句。',
+    answer: true,
+    explanation: '正确。这是柳永《雨霖铃》中的句子。',
+    difficulty: 8
+  },
+  {
+    id: 'judge-8-19',
+    question: '"多情自古伤离别，更那堪，冷落清秋节"是柳永的词句。',
+    answer: true,
+    explanation: '正确。这是柳永《雨霖铃》中的名句。',
+    difficulty: 8
+  },
+  {
+    id: 'judge-8-20',
+    question: '"今宵酒醒何处?杨柳岸，晓风残月"是柳永的词句。',
+    answer: true,
+    explanation: '正确。这是柳永《雨霖铃》中的名句。',
+    difficulty: 8
+  },
+  // 难度9补充
+  {
+    id: 'judge-9-6',
+    question: '《牡丹亭》的作者是汤显祖。',
+    answer: true,
+    explanation: '正确。汤显祖是明代戏曲家，代表作有《牡丹亭》等。',
+    difficulty: 9
+  },
+  {
+    id: 'judge-9-7',
+    question: '《西厢记》的作者是王实甫。',
+    answer: true,
+    explanation: '正确。王实甫是元代戏曲家，代表作《西厢记》。',
+    difficulty: 9
+  },
+  {
+    id: 'judge-9-8',
+    question: '《桃花扇》的作者是关汉卿。',
+    answer: false,
+    explanation: '错误。《桃花扇》的作者是清代孔尚任，关汉卿是元代戏曲家，代表作《窦娥冤》。',
+    difficulty: 9
+  },
+  {
+    id: 'judge-9-9',
+    question: '"落霞与孤鹜齐飞，秋水共长天一色"出自《岳阳楼记》。',
+    answer: false,
+    explanation: '错误。这是王勃《滕王阁序》中的名句。',
+    difficulty: 9
+  },
+  {
+    id: 'judge-9-10',
+    question: '"先天下之忧而忧，后天下之乐而乐"是范仲淹的名言。',
+    answer: true,
+    explanation: '正确。这是范仲淹《岳阳楼记》中的名句，表达了以天下为己任的情怀。',
+    difficulty: 9
+  },
+  {
+    id: 'judge-9-11',
+    question: '"醉翁之意不在酒，在乎山水之间也"出自《醉翁亭记》。',
+    answer: true,
+    explanation: '正确。这是欧阳修《醉翁亭记》中的名句。',
+    difficulty: 9
+  },
+  {
+    id: 'judge-9-12',
+    question: '《水经注》的作者是郦道元。',
+    answer: true,
+    explanation: '正确。《水经注》是北魏郦道元为《水经》作的注，是中国古代地理名著。',
+    difficulty: 9
+  },
+  {
+    id: 'judge-9-13',
+    question: '《文心雕龙》是中国古代文学理论著作。',
+    answer: true,
+    explanation: '正确。《文心雕龙》是刘勰所著的文学理论著作。',
+    difficulty: 9
+  },
+  {
+    id: 'judge-9-14',
+    question: '《世说新语》的作者是刘义庆。',
+    answer: true,
+    explanation: '正确。《世说新语》是南朝刘义庆编撰的志人小说。',
+    difficulty: 9
+  },
+  {
+    id: 'judge-9-15',
+    question: '《搜神记》是志怪小说的代表作品。',
+    answer: true,
+    explanation: '正确。《搜神记》是东晋干宝编撰的志怪小说集。',
+    difficulty: 9
+  },
+  {
+    id: 'judge-9-16',
+    question: '"大珠小珠落玉盘"描写的是琵琶声。',
+    answer: true,
+    explanation: '正确。这是白居易《琵琶行》中的诗句，用珍珠落盘比喻琵琶声。',
+    difficulty: 9
+  },
+  {
+    id: 'judge-9-17',
+    question: '"同是天涯沦落人，相逢何必曾相识"表达了诗人与歌女的共鸣。',
+    answer: true,
+    explanation: '正确。这是白居易《琵琶行》中的名句，表达了同病相怜的情感。',
+    difficulty: 9
+  },
+  {
+    id: 'judge-9-18',
+    question: '白居易的《琵琶行》是长篇叙事诗。',
+    answer: true,
+    explanation: '正确。《琵琶行》是白居易的长篇叙事诗代表作。',
+    difficulty: 9
+  },
+  {
+    id: 'judge-9-19',
+    question: '《长恨歌》是白居易的作品。',
+    answer: true,
+    explanation: '正确。《长恨歌》是白居易的长篇叙事诗，描写唐玄宗和杨贵妃的爱情故事。',
+    difficulty: 9
+  },
+  {
+    id: 'judge-9-20',
+    question: '"天长地久有时尽，此恨绵绵无绝期"是《长恨歌》的结尾句。',
+    answer: true,
+    explanation: '正确。这是《长恨歌》的结尾句，表达了无穷无尽的遗憾。',
+    difficulty: 9
+  },
+  // 难度10：高难度扩展
+  {
+    id: 'judge-10-6',
+    question: '《资治通鉴》是编年体通史。',
+    answer: true,
+    explanation: '正确。《资治通鉴》是北宋司马光主编的编年体通史。',
+    difficulty: 10
+  },
+  {
+    id: 'judge-10-7',
+    question: '"王孙归不归?春草碧色"出自王维的诗。',
+    answer: false,
+    explanation: '错误。这是江淹《别赋》中的句子。',
+    difficulty: 10
+  },
+  {
+    id: 'judge-10-8',
+    question: '谢灵运开创了山水诗派。',
+    answer: true,
+    explanation: '正确。谢灵运是南朝诗人，开创了山水诗派。',
+    difficulty: 10
+  },
+  {
+    id: 'judge-10-9',
+    question: '鲍照是南朝著名诗人，与谢灵运并称"鲍谢"。',
+    answer: true,
+    explanation: '正确。鲍照和谢灵运并称"鲍谢"，是南朝诗坛的代表人物。',
+    difficulty: 10
+  },
+  {
+    id: 'judge-10-10',
+    question: '"可怜无定河边骨，犹是春闺梦里人"是王昌龄的诗句。',
+    answer: false,
+    explanation: '错误。这是陈陶《陇西行》中的诗句。',
+    difficulty: 10
+  },
+  {
+    id: 'judge-10-11',
+    question: '"忽如一夜春风来，千树万树梨花开"描写的是春天的梨花。',
+    answer: false,
+    explanation: '错误。这是岑参《白雪歌送武判官归京》中的诗句，描写的是冬雪。',
+    difficulty: 10
+  },
+  {
+    id: 'judge-10-12',
+    question: '"人生得意须尽欢，莫使金樽空对月"是李白的诗句。',
+    answer: true,
+    explanation: '正确。这是李白《将进酒》中的名句。',
+    difficulty: 10
+  },
+  {
+    id: 'judge-10-13',
+    question: '杜荀鹤是晚唐诗人。',
+    answer: true,
+    explanation: '正确。杜荀鹤是晚唐诗人，代表作有《山窗小史》等。',
+    difficulty: 10
+  },
+  {
+    id: 'judge-10-14',
+    question: '"枯藤老树昏鸦，小桥流水人家"是马致远的曲。',
+    answer: true,
+    explanation: '正确。这是马致远《天净沙·秋思》中的名句。',
+    difficulty: 10
+  },
+  {
+    id: 'judge-10-15',
+    question: '关汉卿是元代杂剧作家，被誉为"曲圣"。',
+    answer: true,
+    explanation: '正确。关汉卿是元代杂剧的奠基人，代表作《窦娥冤》。',
+    difficulty: 10
+  },
+  {
+    id: 'judge-10-16',
+    question: '"古道西风瘦马"出自《天净沙·秋思》。',
+    answer: true,
+    explanation: '正确。这是马致远《天净沙·秋思》中的句子。',
+    difficulty: 10
+  },
+  {
+    id: 'judge-10-17',
+    question: '张养浩是元代散曲作家。',
+    answer: true,
+    explanation: '正确。张养浩是元代散曲作家，代表作《山坡羊·潼关怀古》。',
+    difficulty: 10
+  },
+  {
+    id: 'judge-10-18',
+    question: '"兴，百姓苦；亡，百姓苦"出自《山坡羊·潼关怀古》。',
+    answer: true,
+    explanation: '正确。这是张养浩的名句，深刻揭示了封建统治的本质。',
+    difficulty: 10
+  },
+  {
+    id: 'judge-10-19',
+    question: '纳兰性德是清代词人。',
+    answer: true,
+    explanation: '正确。纳兰性德是清代著名词人，词风哀婉凄绝。',
+    difficulty: 10
+  },
+  {
+    id: 'judge-10-20',
+    question: '"人生若只如初见，何事秋风悲画扇"是纳兰性德的词。',
+    answer: true,
+    explanation: '正确。这是纳兰性德《木兰花·拟古决绝词柬友》中的名句。',
+    difficulty: 10
+  },
+  {
+    id: 'judge-10-21',
+    question: '袁枚是清代诗人，主张"性灵说"。',
+    answer: true,
+    explanation: '正确。袁枚是清代诗人，倡导"性灵说"，强调诗歌要抒发真情实感。',
+    difficulty: 10
+  },
+  {
+    id: 'judge-10-22',
+    question: '赵翼是清代诗人，提出"江山代有人才出，各领风骚数百年"。',
+    answer: true,
+    explanation: '正确。这是赵翼《论诗》中的名句，表达了对文学发展的见解。',
+    difficulty: 10
+  },
+  {
+    id: 'judge-10-23',
+    question: '龚自珍是近代思想家，提出"我劝天公重抖擞，不拘一格降人才"。',
+    answer: true,
+    explanation: '正确。这是龚自珍《己亥杂诗》中的名句。',
+    difficulty: 10
+  },
+  {
+    id: 'judge-10-24',
+    question: '"九州生气恃风雷"出自龚自珍的诗。',
+    answer: true,
+    explanation: '正确。这是龚自珍《己亥杂诗》中的名句。',
+    difficulty: 10
+  },
+  {
+    id: 'judge-10-25',
+    question: '黄遵宪是近代诗人，倡导"诗界革命"。',
+    answer: true,
+    explanation: '正确。黄遵宪是近代诗人，主张"我手写我口"，倡导诗界革命。',
+    difficulty: 10
+  },
+  {
+    id: 'judge-10-26',
+    question: '"举大计亦死"中的"大计"指起义。',
+    answer: true,
+    explanation: '正确。这句话出自《陈涉世家》，"大计"指发动起义。',
+    difficulty: 10
+  },
+  {
+    id: 'judge-10-27',
+    question: '"等死，死国可乎"中的"等"意思是等待。',
+    answer: false,
+    explanation: '错误。"等"在这里是"同样"的意思，指同样是死。',
+    difficulty: 10
+  },
+  {
+    id: 'judge-10-28',
+    question: '"借第令毋斩"中的"第"意思是府第。',
+    answer: false,
+    explanation: '错误。"第"在这里是连词，意思是"即使"、"假如"。',
+    difficulty: 10
+  },
+  {
+    id: 'judge-10-29',
+    question: '"徒属皆曰"中的"徒"意思是徒劳。',
+    answer: false,
+    explanation: '错误。"徒"在这里是名词，指部下、徒众。',
+    difficulty: 10
+  },
+  {
+    id: 'judge-10-30',
+    question: '"辍耕之垄上"中的"之"是代词。',
+    answer: false,
+    explanation: '错误。"之"在这里是动词，意思是"去"、"往"。',
+    difficulty: 10
+  },
+  {
+    id: 'judge-10-31',
+    question: '"怀怒未发"中的"怀"意思是怀念。',
+    answer: false,
+    explanation: '错误。"怀"在这里是动词，意思是"怀藏"、"怀有"。',
+    difficulty: 10
+  },
+  {
+    id: 'judge-10-32',
+    question: '"休祲降于天"中的"休"意思是休息。',
+    answer: false,
+    explanation: '错误。"休"在这里指吉祥，"休祲"指吉凶的征兆。',
+    difficulty: 10
+  },
+  {
+    id: 'judge-10-33',
+    question: '"天下缟素"中的"缟素"指白色的丝绸。',
+    answer: false,
+    explanation: '错误。"缟素"在这里指丧服，比喻天下穿丧服，为国君服丧。',
+    difficulty: 10
+  },
+  {
+    id: 'judge-10-34',
+    question: '"长跪而谢之"中的"谢"意思是感谢。',
+    answer: false,
+    explanation: '错误。"谢"在这里是道歉、认错的意思。',
+    difficulty: 10
+  },
+  {
+    id: 'judge-10-35',
+    question: '"徒以有先生也"中的"徒"意思是徒弟。',
+    answer: false,
+    explanation: '错误。"徒"在这里是副词，意思是"只"、"仅仅"。',
+    difficulty: 10
+  },
+  {
+    id: 'judge-10-36',
+    question: '《三国演义》是中国第一部长篇章回体历史演义小说。',
+    answer: true,
+    explanation: '正确。《三国演义》是中国第一部长篇历史演义小说。',
+    difficulty: 10
+  },
+  {
+    id: 'judge-10-37',
+    question: '《水浒传》的作者是施耐庵。',
+    answer: true,
+    explanation: '正确。《水浒传》是施耐庵所著的农民起义题材小说。',
+    difficulty: 10
+  },
+  {
+    id: 'judge-10-38',
+    question: '《西游记》成书于明代。',
+    answer: true,
+    explanation: '正确。《西游记》是明代吴承恩所著的神魔小说。',
+    difficulty: 10
+  },
+  {
+    id: 'judge-10-39',
+    question: '《金瓶梅》的作者是兰陵笑笑生。',
+    answer: true,
+    explanation: '正确。《金瓶梅》的作者署名为兰陵笑笑生，真实身份不详。',
+    difficulty: 10
+  },
+  {
+    id: 'judge-10-40',
+    question: '《儒林外史》是清代吴敬梓的讽刺小说。',
+    answer: true,
+    explanation: '正确。《儒林外史》是中国古代讽刺小说的巅峰之作。',
+    difficulty: 10
+  },
+  {
+    id: 'judge-10-41',
+    question: '《聊斋志异》是清代蒲松龄的文言短篇小说集。',
+    answer: true,
+    explanation: '正确。《聊斋志异》是蒲松龄所著的文言短篇小说集。',
+    difficulty: 10
+  },
+  {
+    id: 'judge-10-42',
+    question: '《镜花缘》是清代李汝珍的小说。',
+    answer: true,
+    explanation: '正确。《镜花缘》是清代李汝珍所著的神魔小说。',
+    difficulty: 10
+  },
+  {
+    id: 'judge-10-43',
+    question: '《老残游记》的作者是刘鹗。',
+    answer: true,
+    explanation: '正确。《老残游记》是清末刘鹗所著的谴责小说。',
+    difficulty: 10
+  },
+  {
+    id: 'judge-10-44',
+    question: '《孽海花》的作者是曾朴。',
+    answer: true,
+    explanation: '正确。《孽海花》是清末曾朴所著的谴责小说。',
+    difficulty: 10
+  },
+  {
+    id: 'judge-10-45',
+    question: '"晚清四大谴责小说"包括《官场现形记》。',
+    answer: true,
+    explanation: '正确。晚清四大谴责小说是《官场现形记》《二十年目睹之怪现状》《老残游记》《孽海花》。',
+    difficulty: 10
+  },
+  {
+    id: 'judge-10-46',
+    question: '"会当凌绝顶，一览众山小"出自杜甫的《望岳》。',
+    answer: true,
+    explanation: '正确。这是杜甫早年登泰山时所作，表达了不怕困难、勇于攀登的雄心。',
+    difficulty: 10
+  },
+  {
+    id: 'judge-10-47',
+    question: '"无边落木萧萧下，不尽长江滚滚来"出自杜甫的《登高》。',
+    answer: true,
+    explanation: '正确。这是杜甫《登高》中的名句，被推为古今七言律诗之首。',
+    difficulty: 10
+  },
+  {
+    id: 'judge-10-48',
+    question: '"万里悲秋常作客，百年多病独登台"表达了杜甫的忧国之情。',
+    answer: false,
+    explanation: '错误。这两句表达的是杜甫个人漂泊无依、老病孤独的悲哀。',
+    difficulty: 10
+  },
+  {
+    id: 'judge-10-49',
+    question: '"锦瑟无端五十弦，一弦一柱思华年"中的"华年"指美好的年华。',
+    answer: true,
+    explanation: '正确。这是李商隐《锦瑟》中的诗句，"华年"指青春年华。',
+    difficulty: 10
+  },
+  {
+    id: 'judge-10-50',
+    question: '"沧海月明珠有泪"引用了鲛人泣珠的典故。',
+    answer: true,
+    explanation: '正确。这一句引用了鲛人泣珠成珠的传说。',
+    difficulty: 10
+  },
+  {
+    id: 'judge-10-51',
+    question: '"蓝田日暖玉生烟"引用了良玉生烟的典故。',
+    answer: true,
+    explanation: '正确。这一句引用了蓝田良玉在阳光下生烟的传说。',
+    difficulty: 10
+  },
+  {
+    id: 'judge-10-52',
+    question: '"此情可待成追忆，只是当时已惘然"表达的是现在的追忆之情。',
+    answer: false,
+    explanation: '错误。这两句表达的是这段感情在当时就已怅惘，如今更成追忆。',
+    difficulty: 10
+  },
+  {
+    id: 'judge-10-53',
+    question: '"春江潮水连海平，海上明月共潮生"是张若虚的诗句。',
+    answer: true,
+    explanation: '正确。这是张若虚《春江花月夜》中的名句，被誉为"孤篇盖全唐"。',
+    difficulty: 10
+  },
+  {
+    id: 'judge-10-54',
+    question: '《春江花月夜》是唐诗的巅峰之作。',
+    answer: true,
+    explanation: '正确。张若虚的《春江花月夜》意境优美，被誉为"孤篇压倒全唐"。',
+    difficulty: 10
+  },
+  {
+    id: 'judge-10-55',
+    question: '"江畔何人初见月?江月何年初照人?"表达的是对宇宙的思考。',
+    answer: true,
+    explanation: '正确。这两句诗表达了诗人对宇宙起源、人生意义的哲学思考。',
+    difficulty: 10
+  },
+  {
+    id: 'judge-10-56',
+    question: '"杨柳岸，晓风残月"是柳永的词句。',
+    answer: true,
+    explanation: '正确。这是柳永《雨霖铃》中的名句，描写离别之景。',
+    difficulty: 10
+  },
+  {
+    id: 'judge-10-57',
+    question: '柳永是北宋婉约派词人的代表。',
+    answer: true,
+    explanation: '正确。柳永是北宋婉约派词人代表，词风婉约凄美。',
+    difficulty: 10
+  },
+  {
+    id: 'judge-10-58',
+    question: '"多情自古伤离别，更那堪，冷落清秋节"表达了离别之苦。',
+    answer: true,
+    explanation: '正确。这是柳永《雨霖铃》中的名句，表达离别之苦。',
+    difficulty: 10
+  },
+  {
+    id: 'judge-10-59',
+    question: '"今宵酒醒何处?杨柳岸，晓风残月"是设问句。',
+    answer: true,
+    explanation: '正确。这是词中的设问，引出想象中的离别场景。',
+    difficulty: 10
+  },
+  {
+    id: 'judge-10-60',
+    question: '"执手相看泪眼，竟无语凝噎"描写的是告别的场景。',
+    answer: true,
+    explanation: '正确。这是柳永《雨霖铃》中的句子，描写恋人告别的场景。',
+    difficulty: 10
+  },
+  {
+    id: 'judge-10-61',
+    question: '"念去去，千里烟波，暮霭沉沉楚天阔"中的"去去"意思是"去啊"。',
+    answer: false,
+    explanation: '错误。"去去"在这里是叠词，意思是"越走越远"。',
+    difficulty: 10
+  },
+  {
+    id: 'judge-10-62',
+    question: '"楚天阔"指的是天空辽阔。',
+    answer: true,
+    explanation: '正确。"楚天"指南方的天空，"楚天阔"指天空辽阔无边。',
+    difficulty: 10
+  },
+  {
+    id: 'judge-10-63',
+    question: '中国古代的"三省六部制"中，三省指中书省、门下省、尚书省。',
+    answer: true,
+    explanation: '正确。隋唐实行三省六部制，三省指中书省、门下省、尚书省。',
+    difficulty: 10
+  },
+  {
+    id: 'judge-10-64',
+    question: '六部指吏部、户部、礼部、兵部、刑部、工部。',
+    answer: true,
+    explanation: '正确。六部分别掌管官员选拔、财政、礼仪、军事、司法、工程。',
+    difficulty: 10
+  },
+  {
+    id: 'judge-10-65',
+    question: '"科举制度"始于隋朝。',
+    answer: true,
+    explanation: '正确。科举制度始于隋朝，结束于清末，存在了1300多年。',
+    difficulty: 10
+  },
+  {
+    id: 'judge-10-66',
+    question: '科举考试的最高级别是殿试。',
+    answer: true,
+    explanation: '正确。科举考试的程序是:乡试→会试→殿试，殿试是最高级别。',
+    difficulty: 10
+  },
+  {
+    id: 'judge-10-67',
+    question: '状元、榜眼、探花是殿试的前三名。',
+    answer: true,
+    explanation: '正确。殿试第一名称状元，第二名称榜眼，第三名称探花。',
+    difficulty: 10
+  },
+  {
+    id: 'judge-10-68',
+    question: '会试录取的称为"贡士"。',
+    answer: true,
+    explanation: '正确。会试录取的称为"贡士"，贡士才能参加殿试。',
+    difficulty: 10
+  },
+  {
+    id: 'judge-10-69',
+    question: '乡试录取的称为"举人"。',
+    answer: true,
+    explanation: '正确。乡试录取的称为"举人"，举人有资格参加会试。',
+    difficulty: 10
+  },
+  {
+    id: 'judge-10-70',
+    question: '秀才是科举考试的最低级别功名。',
+    answer: true,
+    explanation: '正确。秀才是县试、府试、院试合格后取得的功名。',
+    difficulty: 10
+  },
+  {
+    id: 'judge-10-71',
+    question: '丝绸之路是古代东西方贸易的重要通道。',
+    answer: true,
+    explanation: '正确。丝绸之路连接了东西方文明，促进了经济文化交流。',
+    difficulty: 10
+  },
+  {
+    id: 'judge-10-72',
+    question: '张骞出使西域开辟了丝绸之路。',
+    answer: true,
+    explanation: '正确。西汉张骞出使西域，开辟了东西方贸易通道。',
+    difficulty: 10
+  },
+  {
+    id: 'judge-10-73',
+    question: '郑和下西洋发生在明朝。',
+    answer: true,
+    explanation: '正确。郑和七次下西洋发生在明成祖时期。',
+    difficulty: 10
+  },
+  {
+    id: 'judge-10-74',
+    question: '郑和下西洋比哥伦布发现新大陆早。',
+    answer: true,
+    explanation: '正确。郑和下西洋始于1405年，比哥伦布1492年发现新大陆早87年。',
+    difficulty: 10
+  },
+  {
+    id: 'judge-10-75',
+    question: '明朝修建的紫禁城是现在的故宫。',
+    answer: true,
+    explanation: '正确。紫禁城是明清两朝的皇宫，现为故宫博物院。',
+    difficulty: 10
+  },
+  {
+    id: 'judge-10-76',
+    question: '长城的修筑始于秦始皇。',
+    answer: false,
+    explanation: '错误。长城的修筑始于战国，秦统一后将各段长城连接起来。',
+    difficulty: 10
+  },
+  {
+    id: 'judge-10-77',
+    question: '京杭大运河是世界上最早、最长的人工运河。',
+    answer: true,
+    explanation: '正确。京杭大运河是世界上开凿最早、最长的人工运河。',
+    difficulty: 10
+  },
+  {
+    id: 'judge-10-78',
+    question: '京杭大运河开凿于隋朝。',
+    answer: true,
+    explanation: '正确。隋朝开凿了贯通南北的京杭大运河。',
+    difficulty: 10
+  },
+  {
+    id: 'judge-10-79',
+    question: '"四面楚歌"的主人公是项羽。',
+    answer: true,
+    explanation: '正确。楚汉相争中，项羽被汉军包围，听到四面楚歌，知道大势已去。',
+    difficulty: 10
+  },
+  {
+    id: 'judge-10-80',
+    question: '"江郎才尽"指的是江淹的才华耗尽。',
+    answer: true,
+    explanation: '正确。江郎指江淹，原指江淹文思枯竭，后比喻才华减退。',
+    difficulty: 10
+  },
+  {
+    id: 'judge-10-81',
+    question: '"东山再起"的主人公是谢安。',
+    answer: true,
+    explanation: '正确。谢安隐居东山，后出山担任宰相，挽救了东晋危局。',
+    difficulty: 10
+  },
+  {
+    id: 'judge-10-82',
+    question: '"投笔从戎"的主人公是班超。',
+    answer: true,
+    explanation: '正确。班超扔下笔去参军，后来出使西域，功绩卓著。',
+    difficulty: 10
+  },
+  {
+    id: 'judge-10-83',
+    question: '"闻鸡起舞"中的"鸡"是公鸡。',
+    answer: true,
+    explanation: '正确。祖逖和刘琨听到鸡叫就起床练武，形容勤奋刻苦。',
+    difficulty: 10
+  },
+  {
+    id: 'judge-10-84',
+    question: '"凿壁偷光"的主人公是匡衡。',
+    answer: true,
+    explanation: '正确。匡衡家贫，凿壁借光读书，形容刻苦学习。',
+    difficulty: 10
+  },
+  {
+    id: 'judge-10-85',
+    question: '"悬梁刺股"的主人公是苏秦和孙敬。',
+    answer: true,
+    explanation: '正确。孙敬悬梁读书，苏秦刺股读书，都是刻苦学习的典故。',
+    difficulty: 10
+  },
+  {
+    id: 'judge-10-86',
+    question: '"囊萤映雪"的主人公是车胤和孙康。',
+    answer: true,
+    explanation: '正确。车胤用萤火虫照明，孙康利用雪光反射照明，都是勤学的典故。',
+    difficulty: 10
+  },
+  {
+    id: 'judge-10-87',
+    question: '"行到水穷处，坐看云起时"是王维的诗句。',
+    answer: true,
+    explanation: '正确。这是王维《终南别业》中的名句，表达禅意和豁达。',
+    difficulty: 10
+  },
+  {
+    id: 'judge-10-88',
+    question: '"行到水穷处"的"水穷处"指水流尽头。',
+    answer: true,
+    explanation: '正确。"水穷处"指溪水的源头或尽头。',
+    difficulty: 10
+  },
+  {
+    id: 'judge-10-89',
+    question: '"坐看云起时"表达的是随遇而安的豁达。',
+    answer: true,
+    explanation: '正确。这句话表达了诗人顺应自然、随遇而安的豁达心境。',
+    difficulty: 10
+  },
+  {
+    id: 'judge-10-90',
+    question: '"蝉噪林逾静，鸟鸣山更幽"运用了以动衬静的手法。',
+    answer: true,
+    explanation: '正确。王籍的这句诗通过蝉噪和鸟鸣来衬托山的幽静。',
+    difficulty: 10
+  },
+  {
+    id: 'judge-10-91',
+    question: '"蝉噪林逾静"出自王籍的《入若耶溪》。',
+    answer: true,
+    explanation: '正确。这是王籍《入若耶溪》中的名句。',
+    difficulty: 10
+  },
+  {
+    id: 'judge-10-92',
+    question: '"鸟鸣山更幽"的反衬手法被称为"以动衬静"。',
+    answer: true,
+    explanation: '正确。这是古典诗歌常用的表现手法。',
+    difficulty: 10
+  },
+  {
+    id: 'judge-10-93',
+    question: '"风急天高猿啸哀，渚清沙白鸟飞回"是杜甫的诗句。',
+    answer: true,
+    explanation: '正确。这是杜甫《登高》首联，描写秋景。',
+    difficulty: 10
+  },
+  {
+    id: 'judge-10-94',
+    question: '"无边落木萧萧下"中的"落木"指落叶。',
+    answer: true,
+    explanation: '正确。"落木"即落叶，在古诗中常用"落木"代替"落叶"。',
+    difficulty: 10
+  },
+  {
+    id: 'judge-10-95',
+    question: '"不尽长江滚滚来"中的"滚滚"形容江水翻腾的样子。',
+    answer: true,
+    explanation: '正确。这是《登高》颔联的下句，描写江水奔流不息的景象。',
+    difficulty: 10
+  },
+  {
+    id: 'judge-10-96',
+    question: '"万里悲秋常作客"中的"悲秋"指悲凉的秋天。',
+    answer: true,
+    explanation: '正确。这是杜甫晚年流寓他乡，面对秋景引发的悲愁。',
+    difficulty: 10
+  },
+  {
+    id: 'judge-10-97',
+    question: '"百年多病独登台"中的"百年"指一百年的时间。',
+    answer: false,
+    explanation: '错误。"百年"在这里指一生、暮年，不是确指一百年。',
+    difficulty: 10
+  },
+  {
+    id: 'judge-10-98',
+    question: '"艰难苦恨繁霜鬓"中的"霜鬓"指两鬓斑白。',
+    answer: true,
+    explanation: '正确。"霜鬓"比喻白发，形容年老。',
+    difficulty: 10
+  },
+  {
+    id: 'judge-10-99',
+    question: '"潦倒新停浊酒杯"中的"潦倒"指贫穷失意。',
+    answer: true,
+    explanation: '正确。"潦倒"形容处境窘迫，失意潦倒。',
+    difficulty: 10
+  },
+  {
+    id: 'judge-10-100',
+    question: '杜甫的《登高》被称为"古今七言律诗之首"。',
+    answer: true,
+    explanation: '正确。这首诗格律严谨，意境深远，被誉为古今七言律诗之冠。',
+    difficulty: 10
+  },
+  {
+    id: 'judge-10-101',
+    question: '"莫道不销魂，帘卷西风，人比黄花瘦"出自李清照《醉花阴》。',
+    answer: true,
+    explanation: '正确。这是李清照《醉花阴·薄雾浓云愁永昼》中的名句。',
+    difficulty: 10
+  },
+  {
+    id: 'judge-10-102',
+    question: '"人比黄花瘦"中的"黄花"指菊花。',
+    answer: true,
+    explanation: '正确。"黄花"是菊花的别称，这里用菊花比喻人的消瘦。',
+    difficulty: 10
+  },
+  {
+    id: 'judge-10-103',
+    question: '"帘卷西风"的意思是西风吹卷珠帘。',
+    answer: true,
+    explanation: '正确。这句话描绘了秋风吹拂帘幕的景象。',
+    difficulty: 10
+  },
+  {
+    id: 'judge-10-104',
+    question: '"寻寻觅觅，冷冷清清，凄凄惨惨戚戚"运用了叠词。',
+    answer: true,
+    explanation: '正确。七组叠词构成独特的音韵美，营造了凄清的氛围。',
+    difficulty: 10
+  },
+  {
+    id: 'judge-10-105',
+    question: '"乍暖还寒时候，最难将息"出自李清照《声声慢》。',
+    answer: true,
+    explanation: '正确。这是李清照晚年所作的词，表达国破家亡的悲痛。',
+    difficulty: 10
+  },
+  {
+    id: 'judge-10-106',
+    question: '"三杯两盏淡酒，怎敌他、晚来风急"描写的是借酒消愁。',
+    answer: true,
+    explanation: '正确。李清照想借酒消愁，但酒力不敌秋风。',
+    difficulty: 10
+  },
+  {
+    id: 'judge-10-107',
+    question: '"雁过也，正伤心，却是旧时相识"中的雁是鸿雁。',
+    answer: true,
+    explanation: '正确。鸿雁是候鸟，南飞北归，常用来寄托思乡之情。',
+    difficulty: 10
+  },
+  {
+    id: 'judge-10-108',
+    question: '"满地黄花堆积"中的黄花是菊花。',
+    answer: true,
+    explanation: '正确。菊花秋天开放，象征孤独凄凉。',
+    difficulty: 10
+  },
+  {
+    id: 'judge-10-109',
+    question: '"梧桐更兼细雨"描写的是秋雨梧桐的景象。',
+    answer: true,
+    explanation: '正确。梧桐细雨是古典诗词中常见的愁苦意象。',
+    difficulty: 10
+  },
+  {
+    id: 'judge-10-110',
+    question: '"这次第，怎一个愁字了得"中的"这次第"指这种光景。',
+    answer: true,
+    explanation: '正确。"这次第"指这种情景、这种光景。',
+    difficulty: 10
+  },
+  {
+    id: 'judge-10-111',
+    question: '"大江东去，浪淘尽，千古风流人物"出自苏轼《念奴娇·赤壁怀古》。',
+    answer: true,
+    explanation: '正确。这是苏轼豪放词的代表作。',
+    difficulty: 10
+  },
+  {
+    id: 'judge-10-112',
+    question: '"故垒西边，人道是，三国周郎赤壁"中的"周郎"指周瑜。',
+    answer: true,
+    explanation: '正确。周瑜年轻有为，人称周郎。',
+    difficulty: 10
+  },
+  {
+    id: 'judge-10-113',
+    question: '"乱石穿空，惊涛拍岸，卷起千堆雪"描写的是江景。',
+    answer: true,
+    explanation: '正确。这三句描绘了江边险要的地势和壮观的景象。',
+    difficulty: 10
+  },
+  {
+    id: 'judge-10-114',
+    question: '"卷起千堆雪"中的"雪"指浪花。',
+    answer: true,
+    explanation: '正确。"千堆雪"比喻白色的浪花。',
+    difficulty: 10
+  },
+  {
+    id: 'judge-10-115',
+    question: '"江山如画，一时多少豪杰"是议论句。',
+    answer: true,
+    explanation: '正确。这两句由写景转为议论，赞叹江山壮丽，豪杰辈出。',
+    difficulty: 10
+  },
+  {
+    id: 'judge-10-116',
+    question: '"遥想公瑾当年，小乔初嫁了"中的"公瑾"是周瑜的字。',
+    answer: true,
+    explanation: '正确。周瑜，字公瑾，三国时期吴国名将。',
+    difficulty: 10
+  },
+  {
+    id: 'judge-10-117',
+    question: '"雄姿英发，羽扇纶巾"描写的是周瑜的形象。',
+    answer: true,
+    explanation: '正确。这几句描绘了周瑜从容儒雅、英姿勃发的形象。',
+    difficulty: 10
+  },
+  {
+    id: 'judge-10-118',
+    question: '"羽扇纶巾"是武将的装束。',
+    answer: false,
+    explanation: '错误。羽扇纶巾本是文人雅士的装束，这里用来表现周瑜的儒将风度。',
+    difficulty: 10
+  },
+  {
+    id: 'judge-10-119',
+    question: '"谈笑间，樯橹灰飞烟灭"描写的是赤壁之战的场面。',
+    answer: true,
+    explanation: '正确。这几句描写了周瑜在谈笑之间，曹军樯橹化为灰烬。',
+    difficulty: 10
+  },
+  {
+    id: 'judge-10-120',
+    question: '"人生如梦，一尊还酹江月"中的"酹"是酒祭的意思。',
+    answer: true,
+    explanation: '正确。"酹"是将酒洒在地上或江中祭奠，这里指洒酒祭月。',
+    difficulty: 10
+  },
+  {
+    id: 'judge-10-121',
+    question: '"醉里挑灯看剑，梦回吹角连营"出自辛弃疾《破阵子》。',
+    answer: true,
+    explanation: '正确。这是辛弃疾《破阵子·为陈同甫赋壮词以寄之》中的句子。',
+    difficulty: 10
+  },
+  {
+    id: 'judge-10-122',
+    question: '"八百里分麾下炙"中的"八百里"指牛。',
+    answer: true,
+    explanation: '正确。"八百里"是牛的代称，语出《世说新语》。',
+    difficulty: 10
+  },
+  {
+    id: 'judge-10-123',
+    question: '"五十弦翻塞外声"中的"五十弦"指瑟。',
+    answer: true,
+    explanation: '正确。"五十弦"原指瑟，这里泛指各种乐器。',
+    difficulty: 10
+  },
+  {
+    id: 'judge-10-124',
+    question: '"马作的卢飞快"中的"的卢"是名马。',
+    answer: true,
+    explanation: '正确。"的卢"是名马名，曾载刘备逃离险境。',
+    difficulty: 10
+  },
+  {
+    id: 'judge-10-125',
+    question: '"弓如霹雳弦惊"描写的是射箭。',
+    answer: true,
+    explanation: '正确。这句形容弓弦发出的声音如霹雳，形容箭势迅猛。',
+    difficulty: 10
+  },
+  {
+    id: 'judge-10-126',
+    question: '"了却君王天下事"中的"天下事"指收复中原。',
+    answer: true,
+    explanation: '正确。"天下事"指收复中原、统一天下的国家大事。',
+    difficulty: 10
+  },
+  {
+    id: 'judge-10-127',
+    question: '"赢得生前身后名"中的"身后名"指死后的名声。',
+    answer: true,
+    explanation: '正确。"身后名"指人死后的声望、名誉。',
+    difficulty: 10
+  },
+  {
+    id: 'judge-10-128',
+    question: '"可怜白发生"表达了壮志未酬的悲凉。',
+    answer: true,
+    explanation: '正确。这句表达了诗人虽然壮志满怀，但已白发苍苍的悲凉。',
+    difficulty: 10
+  },
+  {
+    id: 'judge-10-129',
+    question: '"以子之矛，陷子之盾"出自《韩非子·难一》。',
+    answer: true,
+    explanation: '正确。这是"自相矛盾"成语的出处。',
+    difficulty: 10
+  },
+  {
+    id: 'judge-10-130',
+    question: '"自相矛盾"讲的是一个卖矛和盾的人的故事。',
+    answer: true,
+    explanation: '正确。这个人夸赞自己的矛和盾，结果被问住了，陷入矛盾。',
+    difficulty: 10
+  },
+  {
+    id: 'judge-10-131',
+    question: '"宁信度，无自信也"出自《韩非子》。',
+    answer: false,
+    explanation: '错误。这句出自《郑人买履》，是《韩非子·外储说左上》中的故事。',
+    difficulty: 10
+  },
+  {
+    id: 'judge-10-132',
+    question: '"郑人买履"讽刺的是墨守成规的人。',
+    answer: true,
+    explanation: '正确。这个寓言讽刺那些只相信教条、不顾实际的人。',
+    difficulty: 10
+  },
+  {
+    id: 'judge-10-133',
+    question: '"刻舟求剑"出自《吕氏春秋》。',
+    answer: true,
+    explanation: '正确。这个寓言出自《吕氏春秋·察今》。',
+    difficulty: 10
+  },
+  {
+    id: 'judge-10-134',
+    question: '"揠苗助长"出自《孟子》。',
+    answer: true,
+    explanation: '正确。这个寓言出自《孟子·公孙丑上》。',
+    difficulty: 10
+  },
+  {
+    id: 'judge-10-135',
+    question: '"揠苗助长"中的"揠"是拔的意思。',
+    answer: true,
+    explanation: '正确。"揠"同"拔"，意思是拔起。',
+    difficulty: 10
+  },
+  {
+    id: 'judge-10-136',
+    question: '"守株待兔"出自《韩非子·五蠹》。',
+    answer: true,
+    explanation: '正确。这个寓言出自《韩非子·五蠹》。',
+    difficulty: 10
+  },
+  {
+    id: 'judge-10-137',
+    question: '"兔走触株，折颈而死"中的"走"是跑的意思。',
+    answer: true,
+    explanation: '正确。在古文中，"走"是跑的意思，"行"才是走的意思。',
+    difficulty: 10
+  },
+  {
+    id: 'judge-10-138',
+    question: '"因释其耒而守株"中的"耒"是农具。',
+    answer: true,
+    explanation: '正确。"耒"是古代的翻土农具。',
+    difficulty: 10
+  },
+  {
+    id: 'judge-10-139',
+    question: '"因释其耒而守株"中的"释"是解释的意思。',
+    answer: false,
+    explanation: '错误。"释"在这里是放下、搁下的意思。',
+    difficulty: 10
+  },
+  {
+    id: 'judge-10-140',
+    question: '"冀复得兔"中的"冀"是希望的意思。',
+    answer: true,
+    explanation: '正确。"冀"意思是希望、期待。',
+    difficulty: 10
+  },
+  {
+    id: 'judge-10-141',
+    question: '"桃李不言，下自成蹊"出自《史记》。',
+    answer: true,
+    explanation: '正确。这是《史记·李将军列传》中的赞语。',
+    difficulty: 10
+  },
+  {
+    id: 'judge-10-142',
+    question: '"桃李不言，下自成蹊"说的是李广的故事。',
+    answer: true,
+    explanation: '正确。李广为人真诚，不用自我宣传，自然受人敬重。',
+    difficulty: 10
+  },
+  {
+    id: 'judge-10-143',
+    question: '"桃李不言，下自成蹊"中的"蹊"是道路的意思。',
+    answer: true,
+    explanation: '正确。"蹊"指小路，意思是桃李虽不说话，但树下自然走出一条路。',
+    difficulty: 10
+  },
+  {
+    id: 'judge-10-144',
+    question: '"燕雀安知鸿鹄之志哉"出自《陈涉世家》。',
+    answer: true,
+    explanation: '正确。这是陈胜起义前的豪言壮语。',
+    difficulty: 10
+  },
+  {
+    id: 'judge-10-145',
+    question: '"燕雀安知鸿鹄之志哉"中的"燕雀"指麻雀。',
+    answer: true,
+    explanation: '正确。"燕雀"指小鸟，比喻见识短浅的人。',
+    difficulty: 10
+  },
+  {
+    id: 'judge-10-146',
+    question: '"燕雀安知鸿鹄之志哉"中的"鸿鹄"指大雁。',
+    answer: false,
+    explanation: '错误。"鸿鹄"指天鹅，比喻志向远大的人。',
+    difficulty: 10
+  },
+  {
+    id: 'judge-10-147',
+    question: '"王侯将相宁有种乎"是陈胜说的。',
+    answer: true,
+    explanation: '正确。这是陈胜号召农民起义时提出的口号。',
+    difficulty: 10
+  },
+  {
+    id: 'judge-10-148',
+    question: '"王侯将相宁有种乎"中的"宁"是难道的意思。',
+    answer: true,
+    explanation: '正确。"宁"在这里表示反问，意思是"难道"。',
+    difficulty: 10
+  },
+  {
+    id: 'judge-10-149',
+    question: '"嗟乎，燕雀安知鸿鹄之志哉"中的"嗟乎"是感叹词。',
+    answer: true,
+    explanation: '正确。"嗟乎"是古文中的感叹词，相当于现代的"唉"。',
+    difficulty: 10
+  },
+  {
+    id: 'judge-10-150',
+    question: '"苟富贵，无相忘"表达了陈胜对同伴的承诺。',
+    answer: true,
+    explanation: '正确。这是陈胜做雇工时对同伴说的话，表达了对情义的重视。',
+    difficulty: 10
   }
 ];
 
