@@ -1240,23 +1240,51 @@ export default function Game({ gameMode, questionType, onBack }: GameProps) {
             </div>
           </div>
 
-          {/* 篮球 */}
+          {/* 篮球 - 3D效果 */}
           <div
-            className="absolute w-12 h-12 rounded-full bg-orange-500 border-4 border-orange-700 shadow-2xl"
+            className="absolute w-12 h-12 rounded-full shadow-2xl"
             style={{
               left: `${ballPosition.x}%`,
               top: `${ballPosition.y}%`,
               transform: `translate(-50%, -50%) rotate(${ballRotation}deg)`,
+              background: `
+                radial-gradient(circle at 30% 30%, rgba(255,255,255,0.4) 0%, rgba(255,255,255,0) 20%),
+                radial-gradient(circle at 70% 70%, rgba(0,0,0,0.3) 0%, rgba(0,0,0,0) 20%),
+                radial-gradient(circle at 50% 50%, #ff8c00 0%, #ff6600 50%, #cc5500 100%)
+              `,
+              border: '3px solid #cc5500',
+              boxShadow: `
+                inset -4px -4px 10px rgba(0,0,0,0.3),
+                inset 4px 4px 10px rgba(255,255,255,0.2),
+                0 10px 30px rgba(0,0,0,0.5)
+              `,
             }}
           >
-            {/* 篮球纹理 */}
-            <div className="absolute inset-0 flex items-center justify-center">
-              <div className="w-full h-0.5 bg-orange-700"></div>
-              <div className="absolute w-full h-0.5 bg-orange-700 rotate-90"></div>
-              {/* 横向纹理 */}
-              <div className="absolute w-full h-0.5 bg-orange-700/50 rotate-45"></div>
-              <div className="absolute w-full h-0.5 bg-orange-700/50 -rotate-45"></div>
+            {/* 篮球纹理 - 3D效果 */}
+            <div className="absolute inset-0 flex items-center justify-center rounded-full overflow-hidden">
+              {/* 水平线 */}
+              <div className="absolute w-full h-0.5 bg-[#8b4513] shadow-[0_1px_2px_rgba(0,0,0,0.5)]"></div>
+              {/* 垂直线 */}
+              <div className="absolute w-0.5 h-full bg-[#8b4513] shadow-[1px_0_2px_rgba(0,0,0,0.5)]"></div>
+              {/* 左弧线 */}
+              <div className="absolute left-0 top-1/2 -translate-y-1/2 w-1/2 h-1/2 border-t-2 border-b-2 border-[#8b4513] rounded-r-full" style={{ borderWidth: '2px', borderLeft: 'none' }}></div>
+              {/* 右弧线 */}
+              <div className="absolute right-0 top-1/2 -translate-y-1/2 w-1/2 h-1/2 border-t-2 border-b-2 border-[#8b4513] rounded-l-full" style={{ borderWidth: '2px', borderRight: 'none' }}></div>
+              {/* 额外的弧线增强3D感 */}
+              <div className="absolute top-1/4 left-1/4 w-1/2 h-1/2 border-2 border-[#8b4513]/30 rounded-full" style={{ transform: 'rotate(-30deg)' }}></div>
+              <div className="absolute top-1/4 left-1/4 w-1/2 h-1/2 border-2 border-[#8b4513]/30 rounded-full" style={{ transform: 'rotate(30deg)' }}></div>
             </div>
+            {/* 高光效果 */}
+            <div
+              className="absolute rounded-full"
+              style={{
+                width: '30%',
+                height: '30%',
+                top: '20%',
+                left: '20%',
+                background: 'radial-gradient(circle, rgba(255,255,255,0.6) 0%, rgba(255,255,255,0) 70%)',
+              }}
+            ></div>
           </div>
 
           {/* 抛物线预览 */}
