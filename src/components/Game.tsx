@@ -361,6 +361,7 @@ export default function Game({ gameMode, questionType, onBack }: GameProps) {
   const [isDragging, setIsDragging] = useState(false); // 是否正在拖拽轨迹
   const [ballRotation, setBallRotation] = useState(0); // 篮球旋转角度
   const [streak, setStreak] = useState(0); // 连进次数
+  const [ballInHoop, setBallInHoop] = useState(false); // 篮球是否在篮筐中
   const gameAreaRef = useRef<HTMLDivElement | null>(null); // 游戏区域引用
 
   // 初始化天梯赛题目
@@ -487,6 +488,7 @@ export default function Game({ gameMode, questionType, onBack }: GameProps) {
     setTrajectoryOffset({ x: 0, y: -30 }); // 原始轨迹偏移
     setThrowPower(6.0); // 重置力度到默认值
     setBallRotation(0); // 重置旋转角度
+    setBallInHoop(false); // 重置篮筐状态
   };
 
   // ========== 天梯赛模式函数 ==========
@@ -564,8 +566,9 @@ export default function Game({ gameMode, questionType, onBack }: GameProps) {
           setAnimationId(null);
         }
 
-        // 重置连进计数
+        // 重置连进计数和篮筐状态
         setStreak(0);
+        setBallInHoop(false);
 
         // 延迟后重置篮球，允许看到落地效果
         setTimeout(() => {
@@ -620,11 +623,13 @@ export default function Game({ gameMode, questionType, onBack }: GameProps) {
     setLadderResult(result);
     setLadderShowResult(true);
 
-    // 立即处理连进计数：答对增加，答错立即重置
+    // 立即处理连进计数和篮筐状态：答对增加并标记在篮筐中，答错立即重置
     if (result === 'correct') {
       setStreak(prev => prev + 1);
+      setBallInHoop(true);
     } else {
       setStreak(0);
+      setBallInHoop(false);
     }
 
     // 播放结果音效
@@ -653,6 +658,7 @@ export default function Game({ gameMode, questionType, onBack }: GameProps) {
       resetBall();
       setLadderShowResult(false);
       setLadderResult(null);
+      setBallInHoop(false);
     }, 2000);
   };
 
@@ -1496,7 +1502,7 @@ export default function Game({ gameMode, questionType, onBack }: GameProps) {
             }}
           >
             {/* 连进火焰效果 */}
-            {streak > 0 && (
+            {streak > 0 && ballInHoop && (
               <>
                 {/* 火焰层1 - 内层 */}
                 <div
