@@ -436,9 +436,9 @@ export default function Game({ gameMode, questionType, onBack }: GameProps) {
 
   // 重置篮球位置
   const resetBall = () => {
-    setBallPosition({ x: 50, y: 80 });
+    setBallPosition({ x: 50, y: 20 }); // 调整到篮筐上方（篮筐在y: 45-55）
     setIsBallThrown(false);
-    setTrajectoryOffset({ x: 0, y: -30 });
+    setTrajectoryOffset({ x: 0, y: 25 }); // 向下的初始方向
     setThrowPower(6.0); // 重置力度到默认值
     setBallRotation(0); // 重置旋转角度
   };
@@ -511,7 +511,7 @@ export default function Game({ gameMode, questionType, onBack }: GameProps) {
       }
 
       // 检测是否落地（超过篮筐高度）
-      if (currentY > 85) {
+      if (currentY > 60) {
         // 落地但没有命中任何篮筐，重置篮球
         if (animationId) {
           cancelAnimationFrame(animationId);
@@ -537,10 +537,10 @@ export default function Game({ gameMode, questionType, onBack }: GameProps) {
 
   // 检测碰撞 - 返回玩家选择的篮筐
   const checkCollision = (x: number, y: number): 'left' | 'right' | null => {
-    // 左篮筐（玩家认为正确）：x: 10-25, y: 42-52（垂直居中）
-    const leftHoop = { xMin: 10, xMax: 25, yMin: 42, yMax: 52 };
-    // 右篮筐（玩家认为错误）：x: 75-90, y: 42-52（垂直居中）
-    const rightHoop = { xMin: 75, xMax: 90, yMin: 42, yMax: 52 };
+    // 左篮筐（玩家认为正确）：x: 5-15（在左侧20%区域的中心），y: 45-55（垂直居中，flex布局）
+    const leftHoop = { xMin: 5, xMax: 15, yMin: 45, yMax: 55 };
+    // 右篮筐（玩家认为错误）：x: 85-95（在右侧20%区域的中心），y: 45-55（垂直居中，flex布局）
+    const rightHoop = { xMin: 85, xMax: 95, yMin: 45, yMax: 55 };
 
     // 检测是否命中左篮筐
     if (x >= leftHoop.xMin && x <= leftHoop.xMax && y >= leftHoop.yMin && y <= leftHoop.yMax) {
