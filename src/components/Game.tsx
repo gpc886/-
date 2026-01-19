@@ -57,7 +57,7 @@ const playSoundEffect = (type: 'correct' | 'wrong') => {
 };
 
 // 321并发语音提示函数
-const play321 = () => {
+const play321 = (onVoiceComplete: () => void) => {
   console.log('🎤 播放321倒计时...');
   if (typeof window !== 'undefined' && 'speechSynthesis' in window) {
     try {
@@ -90,6 +90,18 @@ const play321 = () => {
         window.speechSynthesis.speak(start);
       };
 
+      // 监听"开始"播放完成后调用回调
+      start.onend = () => {
+        console.log('▶️ "开始"语音播放完成');
+        onVoiceComplete();
+      };
+
+      // 如果语音播放失败，也要调用回调
+      start.onerror = () => {
+        console.log('❌ "开始"语音播放失败，强制开始游戏');
+        setTimeout(onVoiceComplete, 100);
+      };
+
       // 并发播放321
       window.speechSynthesis.speak(count3);
       window.speechSynthesis.speak(count2);
@@ -98,7 +110,13 @@ const play321 = () => {
       console.log('▶️ 321语音已并发播放');
     } catch (error) {
       console.log('❌ 321语音播放失败:', error);
+      // 出错也要开始游戏
+      setTimeout(onVoiceComplete, 500);
     }
+  } else {
+    // 浏览器不支持语音，直接开始
+    console.log('❌ 浏览器不支持语音，直接开始游戏');
+    setTimeout(onVoiceComplete, 100);
   }
 };
 
@@ -180,6 +198,13 @@ export default function Game({ gameMode, questionType, onBack }: GameProps) {
 
   // 显示视觉提示"3 2 1"
   const [showCountdown, setShowCountdown] = useState(false);
+
+  // 游戏开始回调函数（在"开始"语音播放完成后调用）
+  const startGameAfterVoice = () => {
+    console.log('🎮 "开始"语音播放完成，游戏开始');
+    setShowCountdown(false);
+    setGameStarted(true);
+  };
 
   // 最后5秒语音倒计时（仅双人模式）
   useEffect(() => {
@@ -451,16 +476,13 @@ export default function Game({ gameMode, questionType, onBack }: GameProps) {
               <Button
                 onClick={() => {
                   // 播放321语音
-                  play321();
+                  play321(() => {
+                    // 语音播放完成后，隐藏视觉提示并开始游戏
+                    startGameAfterVoice();
+                  });
 
                   // 显示321视觉提示
                   setShowCountdown(true);
-
-                  // 1.5秒后隐藏视觉提示并开始游戏
-                  setTimeout(() => {
-                    setShowCountdown(false);
-                    setGameStarted(true);
-                  }, 1500);
                 }}
                 className="w-full text-lg py-6"
                 size="lg"
