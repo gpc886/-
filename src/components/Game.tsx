@@ -1058,8 +1058,8 @@ export default function Game({ gameMode, questionType, onBack }: GameProps) {
     }
   }
 
-  // 如果游戏还未开始，显示开始按钮
-  if (!gameStarted) {
+  // 如果游戏还未开始且不是天梯赛模式（天梯赛模式有独立的姓名输入界面），显示开始按钮
+  if (!gameStarted && gameMode !== 'ladder') {
     return (
       <div className="min-h-screen bg-gradient-to-br from-blue-50 via-purple-50 to-pink-50 dark:from-gray-900 dark:via-purple-900 dark:to-blue-900 flex items-center justify-center p-4">
         {/* 321 视觉提示 */}
