@@ -810,8 +810,8 @@ export default function Game({ gameMode, questionType, onBack }: GameProps) {
   useEffect(() => {
     let timer: NodeJS.Timeout | null = null;
 
-    // 只有在321倒计时完成后（showCountdown为false）才启动滴答音效
-    if (gameMode === 'multi' && timeLeft > 0 && !gameEnded && !showCountdown) {
+    // 只有在321倒计时完成后（showCountdown为false）且游戏正式开始（gameStarted为true）才启动滴答音效和倒计时
+    if (gameMode === 'multi' && timeLeft > 0 && !gameEnded && !showCountdown && gameStarted) {
       // 启动滴答音效
       if (!tickTimerRef.current) {
         const tickTimer = setInterval(() => {
@@ -854,7 +854,7 @@ export default function Game({ gameMode, questionType, onBack }: GameProps) {
         tickTimerRef.current = null;
       }
     };
-  }, [gameMode, timeLeft, gameEnded, showCountdown]);
+  }, [gameMode, timeLeft, gameEnded, showCountdown, gameStarted]);
 
   // 赛跑动画（仅双人模式）
   useEffect(() => {
